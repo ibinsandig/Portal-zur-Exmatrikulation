@@ -46,8 +46,9 @@
 
 | Datum | Besonderheit / ToDo |
 |-------|---------------------|
-[23.03.26] | Festlegen Koordinatensysteme // SW_Architektur // Rahmenbedingungen festlegen
-[30.03.26] | Ausbesserung auf Bäziz des gegivenen Fhädbäcks // Initialisieren des Repos und Ordnerstruktur anhand der SW
+[16.03.26] | Initialisieren des Repos
+[23.03.26] | Festlegen Koordinatensysteme // Rahmenbedingungen festlegen
+[30.03.26] | Ausbesserung auf Bäziz des gegivenen Fhädbäcks // Ordnerstruktur anhand der SW // SW_Architektur
 [06.04.26] | Kick-Off Präsentation
 [13.04.26] | ROS-Struktur für Portalroboter- und Kamera-Modul Knoten
 [20.04.26] | 
@@ -59,10 +60,10 @@
 [01.06.26] | 
 [08.06.26] | 
 [15.06.26] | Kamera-Modul (logic)
-[22.06.26] | BigBang integration (Gesamttest aller Module)
-[29.06.26] | 
+[22.06.26] | 
+[29.06.26] | BigBang integration (Gesamttest aller Module)
 [06.07.26] | 
-[10.07.26] | Letzer Vorlesungstag // Präsentation und Finale Dokumentation erstellen
+[13.07.26] | (Letzer Vorlesungstag) // Präsentation und Finale Dokumentation erstellen
 [17.07.26] |
 [24.07.26] | Finale Präsentation & Abgabe Schriftliche Ausarbeitung
 
