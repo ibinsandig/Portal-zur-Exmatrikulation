@@ -1,21 +1,30 @@
 # Funktionale Anforderungen
 
-• Sortierung
+    • Sortierung
+    • Rate korrekt sortierter Teile > 90%
+    • Rate falsch sortierter Teil < 5%
+    • Geschwindigkeit Förderband > 0,01m/s
+    • Fail-safemode
 
-• Rate korrekt sortierter Teile > 90%
+# Nicht funktionale Anforderungen
 
-• Rate falsch sortierter Teil < 5%
+    • Projektplan vor Arbeitsstart
+    • Ableitung von Anforderungen schriftlich und abgesprochen mit Stakeholdern
+    • Architektur und Designentscheidung aus abgeleiteten Anforderungen
+    • Anforderungen müssen getestet werden
 
-• Geschwindigkeit Förderband > 0,01m/s
+# Pflichtmeilensteine
+    • Notwendige Koordinatensysteme festgelegt
+    • Ausgabe der prädizierten Positionen im definierten Weltkoordinatensytem inkl. Test
+    • Regelung auf einen Punkt im definierten Weltkoordinatensystem inkl. Test
 
-• Fail-safemode
 
-Nicht funktionale Anforderungen
+1. **Projektplan vor Arbeitsstart**
 
-• Projektplan vor Arbeitsstart
+- Koordinatensysteme
+- NAsprache der einzelnen Komponennten
 
-• Ableitung von Anforderungen schriftlich und abgesprochen mit Stakeholdern
 
-• Architektur und Designentscheidung aus abgeleiteten Anforderungen
 
-• Anforderungen müssen getestet werden
+
+Ablauf
