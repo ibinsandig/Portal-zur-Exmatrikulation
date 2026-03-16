@@ -25,6 +25,17 @@
 - NAsprache der einzelnen Komponennten
 
 
+# Physischer Ablauf
+
+- Einlegen des Teils (entweder Katze oder Einhorn)
+- Band läuft kontinuierlich 
+- Kamera erkennt Bauteil
+- SW-KameraModul erkennt ob Katze, Einhorn oder Ausschuss
+- Kamera gibt Position zum Greifen. 
+- Portalroboter fährt auf die vorhergesagte Postion
+- Sauger saugt Teil an und hebt es an (min. höhe sind die Kisten)
+- Fährt über passende Kiste und lässt Teil los
+- Fährt wieder auf Default-Position
 
 
-Ablauf
+
