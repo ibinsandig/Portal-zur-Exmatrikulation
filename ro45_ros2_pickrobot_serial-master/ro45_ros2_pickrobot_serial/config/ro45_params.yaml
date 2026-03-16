@@ -1,0 +1,82 @@
+command_subscriber:
+ ros__parameters:
+   backend_comms: "uart"          # Which backend to use for communications;
+                                  # 'uart' and 'udp' are currently supported.
+   device: "/dev/ttyACM0"         # Which device to use for communications;
+                                  # only used when backend is 'uart'.
+   baudrate: 9600                 # The baudrate to set on the device; if
+                                  # set to 0, setting baudrate is skipped.
+                                  # Only used when backend is 'uart'.
+   read_poll_ms: 50               # How many milliseconds to wait for new
+                                  # data to come in from the serial port.
+                                  # Larger numbers can use less CPU time,
+                                  # but affect the responsiveness of the
+                                  # program.  The default value of 100 is
+                                  # a good compromise between
+                                  # responsiveness and CPU time.
+   ring_buffer_size: 8192         # The number of bytes to use for the
+                                  # internal read buffer.  Larger values
+                                  # allow larger messages to be transmitted
+                                  # at the cost of more memory.
+   dynamic_serial_mapping_ms: -1  # How many milliseconds to wait to get
+                                  # dynamic ROS2-to-serial mapping from the
+                                  # serial side.  If less than 0, dynamic
+                                  # mapping is disabled and the topics
+                                  # below will be used.  If exactly 0, wait
+                                  # forever for the other side to respond.
+                                  # If greater than 0, wait that many
+                                  # milliseconds for a response before
+                                  # failing.  If this config is >= 0, the
+                                  # any topics configured below will be
+                                  # ignored.
+   backend_protocol: "cobs"       # The backend protocol to use.  Currently
+                                  # available protocols are 'px4'
+                                  # and 'cobs'.
+   topics:                        # The list of topics to map; only used
+                                  # if dynamic_serial_mapping_ms is < 0.
+     robot_command:
+       serial_mapping: 2
+       type: ro45_portalrobot_interfaces/RobotCmd 
+       direction: ROS2ToSerial
+
+
+position_publisher:
+  ros__parameters:
+    backend_comms: "uart"          # Which backend to use for communications;
+                                   # 'uart' and 'udp' are currently supported.
+    device: "/dev/ttyUSB0"         # Which device to use for communications;
+                                   # only used when backend is 'uart'.
+    baudrate: 115200               # The baudrate to set on the device; if
+                                   # set to 0, setting baudrate is skipped.
+                                   # Only used when backend is 'uart'.
+    read_poll_ms: 50               # How many milliseconds to wait for new
+                                   # data to come in from the serial port.
+                                   # Larger numbers can use less CPU time,
+                                   # but affect the responsiveness of the
+                                   # program.  The default value of 100 is
+                                   # a good compromise between
+                                   # responsiveness and CPU time.
+    ring_buffer_size: 8192         # The number of bytes to use for the
+                                   # internal read buffer.  Larger values
+                                   # allow larger messages to be transmitted
+                                   # at the cost of more memory.
+    dynamic_serial_mapping_ms: -1  # How many milliseconds to wait to get
+                                   # dynamic ROS2-to-serial mapping from the
+                                   # serial side.  If less than 0, dynamic
+                                   # mapping is disabled and the topics
+                                   # below will be used.  If exactly 0, wait
+                                   # forever for the other side to respond.
+                                   # If greater than 0, wait that many
+                                   # milliseconds for a response before
+                                   # failing.  If this config is >= 0, the
+                                   # any topics configured below will be
+                                   # ignored.
+    backend_protocol: "cobs"       # The backend protocol to use.  Currently
+                                   # available protocols are 'px4'
+                                   # and 'cobs'.
+    topics:                        # The list of topics to map; only used
+                                   # if dynamic_serial_mapping_ms is < 0.
+      robot_position:
+        serial_mapping: 3
+        type: ro45_portalrobot_interfaces/RobotPos 
+        direction: SerialToROS2
