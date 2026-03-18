@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="lf76-IhNj8pxZl0U97lq" name="Page-1">
-        <mxGraphModel dx="1333" dy="2031" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="958" dy="931" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -29,9 +29,6 @@
                 </mxCell>
                 <mxCell id="15" value="/SerialMapping" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF3333;fontColor=#ffffff;strokeColor=#A50040;" parent="1" vertex="1">
                     <mxGeometry x="1130" y="340" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="16" value="ros spezifisch" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF3333;fontColor=#ffffff;strokeColor=#A50040;" parent="1" vertex="1">
-                    <mxGeometry x="590" y="-30" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="17" value="Kamera Node" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF3333;fontColor=#ffffff;strokeColor=#A50040;" parent="1" vertex="1">
                     <mxGeometry x="400" y="190" width="120" height="60" as="geometry"/>
