@@ -1,0 +1,5 @@
+eigenschaften bestimmen
+
+logistische Regression
+entscheidungsbäume
+clustering
