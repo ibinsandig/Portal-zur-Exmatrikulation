@@ -74,6 +74,19 @@
 - Fährt über passende Kiste und lässt Teil los
 - Fährt wieder auf Default-Position
 
+
+# Technischer Ablauf
+- Kamera Node:
+  - Ein Bild wird von der Kamera aufgenommen
+  - Vorverarbeitung des Bildes (Grauwerte, entrauschen etc.)
+  - Koordinaten Berechnung im Welt Koordiantensystem
+  - Klassifizierung des Objekts
+  - Publishen auf /obj_data (type, pos, speed)
+
+- 
+
+
+
 # Wichtige Punkte
 
 ## Koordinatensysteme
