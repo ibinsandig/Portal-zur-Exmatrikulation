@@ -106,22 +106,23 @@
 | Datum | Besonderheit / ToDo |
 |-------|---------------------|
 [16.03.26] | Initialisieren des Repos
-[23.03.26] | Festlegen Koordinatensysteme // Rahmenbedingungen festlegen
-[30.03.26] | Ausbesserung auf Bäziz des gegivenen Fhädbäcks // Ordnerstruktur anhand der SW // SW_Architektur
-[06.04.26] | Kick-Off Präsentation
-[13.04.26] | ROS-Struktur für Portalroboter- und Kamera-Modul Knoten
+[23.03.26] | 
+[30.03.26] | Kick-OFF Präsentation 
+[06.04.26] | ROS-Struktur für Portalroboter- und Kamera-Modul Knoten
+[13.04.26] | 
 [20.04.26] | 
-[27.04.26] | Motor- / Roboteransteuerung (Logic)
+[27.04.26] | 
 [04.05.26] | 
-[11.05.26] | Motor- / Roboteransteuerung (Regler)
-[18.05.26] | 
-[25.05.26] | Pfingsferien - Puff-her für nicht erledigte Meilensteine
+[11.05.26] | 
+[18.05.26] | Regelung auf einen Punkt im def. Koordinatensystem inkls TEST 
+[25.05.26] | 
 [01.06.26] | 
 [08.06.26] | 
-[15.06.26] | Kamera-Modul (logic)
-[22.06.26] | 
-[29.06.26] | BigBang integration (Gesamttest aller Module)
+[15.06.26] | 
+[22.06.26] | Kameramodul mit Logic mit Ausgabe der prädizierten Position im def. Weltkoordinatensystem+test
+[29.06.26] | 
 [06.07.26] | 
+[10.07.26] | Debugging des Gesamtsystems erfolgreich beendet
 [13.07.26] | (Letzer Vorlesungstag) // Präsentation und Finale Dokumentation erstellen
 [17.07.26] |
 [24.07.26] | Finale Präsentation & Abgabe Schriftliche Ausarbeitung
