@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="2">
+  <name>ro45_ros2_pickrobot_serial</name>
+  <version>0.1.0</version>
+  <description>ROS 2 serial bridge to communicate with pickrobot in RO45 project. Adapted from https://github.com/osrf/ros2_serial_example.</description>
+  <maintainer email="127616095+matl-hsk@users.noreply.github.com">ML</maintainer>
+  <license>Apache License 2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>python3</buildtool_depend>
+
+  <depend>fastcdr</depend>
+  <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
+  <depend>ros2_serial_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>ro45_portalrobot_interfaces</depend>
+
+  <test_depend>ament_cmake_gtest</test_depend>
+
+  <exec_depend>ros2launch</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
