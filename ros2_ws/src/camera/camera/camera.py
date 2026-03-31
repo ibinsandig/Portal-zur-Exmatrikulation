@@ -6,7 +6,7 @@ class Camera(Node):
     def init(self):
         super().__init__('camera')
 
-        self.publisher = self.create_publisher(Image, '/obj_data', 10)
+        self.publisher = self.create_publisher(ImageData, '/obj_data', 10)
         timer_time = 1/30   # sek
 
         path_camera = 0     # /dev/video0 
@@ -23,10 +23,13 @@ class Camera(Node):
 
         self.get_logger().info('Camera-Node gestartet')
 
-    def read_camera():
-        pass
+
 
     def timer_callback(self):
+        pass
+    
+
+    def read_camera():
         pass
 
 def main()
