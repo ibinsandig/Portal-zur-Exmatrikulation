@@ -1,1 +1,0 @@
-# eintragen der python pkg

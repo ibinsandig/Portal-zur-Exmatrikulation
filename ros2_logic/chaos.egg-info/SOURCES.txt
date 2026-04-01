@@ -1,0 +1,5 @@
+setup.py
+chaos.egg-info/PKG-INFO
+chaos.egg-info/SOURCES.txt
+chaos.egg-info/dependency_links.txt
+chaos.egg-info/top_level.txt
