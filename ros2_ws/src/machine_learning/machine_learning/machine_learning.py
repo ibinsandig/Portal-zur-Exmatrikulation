@@ -4,6 +4,7 @@ from chaos_interfaces.msg import ObjDataDeluxe
 from chaos_interfaces.msg import ObjData
 
 class Machine_learning(Node):
+    
     def __init__(self):
         super().__init__('machine_learning')
 
@@ -19,8 +20,11 @@ class Machine_learning(Node):
         self.get_logger().info("Machine Learning Node gestartet...")
 
     def listener_callback(self, msg):
-        pub_data = msg
-        self.publisher.publish(pub_data)
+        pub_data_before = msg
+
+        pub_data_test = ObjDataDeluxe()
+
+        self.publisher.publish(pub_data_test)
 
 def main():
     rclpy.init(args=None)

@@ -2,7 +2,9 @@ import rclpy
 from rclpy.node import Node
 import cv2 as cv
 from chaos_interfaces.msg import ObjData
+
 class Camera(Node):
+
     def __init__(self):
         super().__init__('camera')
 
@@ -23,10 +25,8 @@ class Camera(Node):
 
         self.get_logger().info('Camera-Node gestartet')
 
-
-
     def timer_callback(self):
-        msg = 0
+        msg = ObjData()
         self.publisher.publish(msg)    
     
     def read_camera(self):

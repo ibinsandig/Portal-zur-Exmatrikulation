@@ -19,7 +19,10 @@ class Mainy(Node):
         self.get_logger().info("Mainy Node gestartet...")
 
     def listener_callback(self, msg):
-        pub_data = msg
+        self.pub_data_before = msg
+
+        self.pub_data_test = GoalData()
+
         self.publisher.publish(pub_data)
 
 def main():
