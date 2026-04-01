@@ -11,7 +11,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
     ],
-    install_requires=['setuptools'],
+    install_requires=['setuptools', 'rclpy'],
     zip_safe=True,
     maintainer='lbraun',
     maintainer_email='lbraun0203@gmail.com',
@@ -24,6 +24,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'mainy = portal.mainy:main',
+            'portal = portal.portal:main',
         ],
     },
 )
