@@ -128,3 +128,6 @@
 [24.07.26] | Finale Präsentation & Abgabe Schriftliche Ausarbeitung
 
 
+# Zusatz zur Planung
+
+- Aufschlüsselung: was soll in den Einzelnen Nodes drinnen stehen/ was sollen sie können? [ToDo 30.03.2026]
