@@ -20,6 +20,8 @@ class Portal(Node):
 
         self.publisher = self.create_publisher(RobotCmd, 'robot_command', 10)
 
+        self.publisher = 
+
         self.get_logger().info("Portal Node gestartet...")
 
     def callback1(self, msg):
