@@ -8,7 +8,7 @@ class Camera(Node):
     def __init__(self):
         super().__init__('camera')
 
-        self.publisher = self.create_publisher(ObjData, '/obj_data', 10)
+        self.pub_obj_data = self.create_publisher(ObjData, '/obj_data', 10)
         timer_time = 1/30   # sek
 
         path_camera = 0     # /dev/video0 
@@ -27,7 +27,7 @@ class Camera(Node):
 
     def timer_callback(self):
         msg = ObjData()
-        self.publisher.publish(msg)    
+        self.pub_obj_data.publish(msg)    
     
     def read_camera(self):
         

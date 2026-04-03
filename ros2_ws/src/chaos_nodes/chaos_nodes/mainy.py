@@ -1,20 +1,28 @@
 import rclpy
 from rclpy.node import Node
-from chaos_interfaces.msg import GoalData, GoalDataDeluxe
+from chaos_interfaces.msg import GoalData, ObjDataDeluxe,  GoalState
+
 class Mainy(Node):
     def __init__(self):
 
         super().__init__('Mainy')
 
-        self.subscription = self.create_subscription(
-            GoalDataDeluxe,
+        self.sub_obj_data_deluxe = self.create_subscription(
+            ObjDataDeluxe,
             '/obj_data_deluxe',
             self.listener_callback,
             10)
         
-        self.subscription
+        self.sub_goal_state = self.create_subscription(
+            GoalState,
+            '/goal_state',
+            self.listener_callback,
+            10)
         
-        self.publisher = self.create_publisher(GoalData, '/goal_data', 10)
+        self.sub_obj_data_deluxe
+        self.sub_goal_state
+
+        self.pub_goal_data = self.create_publisher(GoalData, '/goal_data', 10)
 
         self.get_logger().info("Mainy Node gestartet...")
 
@@ -23,7 +31,7 @@ class Mainy(Node):
 
         self.pub_data_test = GoalData()
 
-        self.publisher.publish(pub_data)
+        self.pub_goal_data.publish(self.pub_data_test)
 
 def main():
     rclpy.init(args=None)

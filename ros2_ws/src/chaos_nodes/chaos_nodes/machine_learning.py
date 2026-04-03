@@ -8,14 +8,14 @@ class Machine_learning(Node):
     def __init__(self):
         super().__init__('machine_learning')
 
-        self.subscription = self.create_subscription(
+        self.sub_obj_data = self.create_subscription(
             ObjData,
             '/obj_data',
             self.listener_callback,
             10)
-        self.subscription
+        self.sub_obj_data
         
-        self.publisher = self.create_publisher(ObjDataDeluxe, '/obj_data_deluxe', 10)
+        self.pub_obj_data_deluxe = self.create_publisher(ObjDataDeluxe, '/obj_data_deluxe', 10)
 
         self.get_logger().info("Machine Learning Node gestartet...")
 
@@ -24,7 +24,7 @@ class Machine_learning(Node):
 
         pub_data_test = ObjDataDeluxe()
 
-        self.publisher.publish(pub_data_test)
+        self.pub_obj_data_deluxe.publish(pub_data_test)
 
 def main():
     rclpy.init(args=None)
