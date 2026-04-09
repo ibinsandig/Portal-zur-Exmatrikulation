@@ -31,9 +31,33 @@ D    |   Wunschdämpfung      |        D=1 → kein Überschwingen
 Sanfteres Anlaufen: Da der P-Anteil nicht direkt auf den Sollwertsprung wirkt (kein "Proportional Kick"), folgt der Motor der Beschleunigungsrampe wesentlich sauberer.
 Störunterdrückung: Er verhält sich extrem robust gegenüber Lastwechseln, was bei Robotern (z. B. wechselnder Untergrund oder Gewicht) entscheidend ist.
 
-> Integrator: $I_{sum} = I_{sum} + (v_{soll} - v_{ist})$
-
-> Stellgröße: $u = (K_i \cdot I_{sum}) - (K_p \cdot v_{ist})$
 
 ## Zweite Version (auch Programmtechnisch umgesetzt)
 
+Regler als Funktion in eigener Datei ausgelagert:
+
+**def ffw_controller()**
+
+**Mitzugebende Variablen:**
+- goal_pos (zielposition, von mainy)
+- curr_pos (aktuelle Position, von /RoboPos)
+- last_pos (vorherige Position, bei start einfach 0)
+
+**Zurückgegebener Wert:**
+- beschleunigung des jeweiligen Motors
+
+
+FeedForWard Regler 
+```
+def ffw_controller(goal_pos, curr_pos, last_pos):
+    restpos = goal_pos - curr_pos
+    excel = kp * restpos - kd * mcqueen + ffw 
+    return excel 
+```
+Zur Faktor Einstellung: 
+```
+delta_t = None      
+ffw = None          
+kp = None           
+kd = None 
+```
