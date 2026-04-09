@@ -39,4 +39,4 @@ restpos = goal_pos - curr_pos
 
 mcqueen = (curr_pos - last_pos) / delta_s
 
-excel = kp * restpos + kd * mcqueen + ffw 
+excel = kp * restpos - kd * mcqueen + ffw 

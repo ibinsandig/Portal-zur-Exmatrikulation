@@ -34,3 +34,6 @@ Störunterdrückung: Er verhält sich extrem robust gegenüber Lastwechseln, was
 > Integrator: $I_{sum} = I_{sum} + (v_{soll} - v_{ist})$
 
 > Stellgröße: $u = (K_i \cdot I_{sum}) - (K_p \cdot v_{ist})$
+
+## Zweite Version (auch Programmtechnisch umgesetzt)
+
