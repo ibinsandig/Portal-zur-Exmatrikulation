@@ -5,9 +5,9 @@ from chaos_interfaces.msg import GoalState
 from ro45_portalrobot_interfaces.msg import RobotCmd
 from ro45_portalrobot_interfaces.msg import RobotPos
 
-class Portal(Node):
+class Motion(Node):
     def __init__(self):
-        super().__init__('Portal')
+        super().__init__('Motion')
 
         self.sub_goal_data = self.create_subscription(
             GoalData,
@@ -31,7 +31,7 @@ class Portal(Node):
 
 
 
-        self.get_logger().info("Portal Node gestartet...")
+        self.get_logger().info("Motion Node gestartet...")
 
     def callback1(self, msg):
         pass
