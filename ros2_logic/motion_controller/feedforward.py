@@ -1,17 +1,10 @@
 
 #****************** Faktor einstellung **************************************************************************************
 
-delta_s = None      
+delta_t = None      
 ffw = None          
 kp = None           
-kd = None           
-
-#****************** Über Interfaces  ****************************************************************************************
-
-goal_pos = None     
-curr_pos = None     
-last_pos = 0        
-excel = None        
+kd = None                        
 
 #****************** Regler berechnung ***************************************************************************************
 
@@ -33,10 +26,17 @@ curr_pos =     Akutelle von /RobotPos gegebene Position
 last_pos =     Letze bekannte Position. Bei Start, mit 0 initialisiert!
 excel =        Berechnete beschleunigung 
 
+
+TODO: Optimierungsbedarf: 
+- Reale Zeitdifferenz für ESP32 verzögerung einrechnen: dass machen wir am besten beim initialisieren über eine Abfrage der aktuellen zeit und sobald die Funktion aufgerufen wird, schauen wir die dann herschende Zeit an und ziehen die voneinander ab. Hier wäre ein Tiefpassfilter möglich bei der Berechnung der Geschwindigkeit (mcqueen) 
+-> raw_velocity = (curr_pos - last_pos) / delta_s mcqueen = (alpha * last_velocity) + ((1.0 - alpha) * raw_velocity) # Tiefpassfilter
 '''
 
-restpos = goal_pos - curr_pos
+def ffw_controller(goal_pos, curr_pos, last_pos):
 
-mcqueen = (curr_pos - last_pos) / delta_s
+    restpos = goal_pos - curr_pos
+    mcqueen = (curr_pos - last_pos) / delta_t
+    excel = kp * restpos - kd * mcqueen + ffw 
 
-excel = kp * restpos - kd * mcqueen + ffw 
+    return excel
+
