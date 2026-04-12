@@ -3,7 +3,7 @@
 ## motion (controller)
 
 [SerialMapping]
-sendet an motion: Roboterpositionsdaten (float Xr_ist, float Yr_ist, float Zr_ist, Bool greifer_ist)
+sendet an motion: Roboterpositionsdaten (float Xr_ist, float Yr_ist, float Zr_ist)
 bekommt von motion: Achsbeschleunigung (float Xa, float Ya, float Za, Bool greifer)
 
 [main_node]
