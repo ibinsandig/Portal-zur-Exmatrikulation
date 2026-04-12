@@ -38,39 +38,37 @@ class Motion(Node):
         Yr_soll = msg.accel_y
         Zr_soll = msg.accel_z
         gripper_soll = msg.activate_gripper
-        motion_order.getter_should_pos(Xr_soll, Yr_soll, Zr_soll, gripper_soll)
-        if (should_is_comp == True) {
+        self.motion_order.getter_should_pos(Xr_soll, Yr_soll, Zr_soll, gripper_soll)
+        
+        if self.motion_order.should_is_comp(): 
             self.robot_cmd.accel_x = 0.0
             self.robot_cmd.accel_y = 0.0
             self.robot_cmd.accel_z = 0.0
             self.robot_cmd.activate_gripper = gripper_soll
             self.publisher_cmd.publish(self.robot_cmd)
-            self.goal_state.job_finished = True
-            self.publisher_state.publish(self.goal_state)          
-        }
-        else {
-            #Funktion zur errechnung der Beschleunigung aller Achsen
+            send_state(True)         
+        
+        else:
+            x,y,z = self.motion_order.wanted_accel()
+
             self.robot_cmd.accel_x = x
             self.robot_cmd.accel_y = y
             self.robot_cmd.accel_z = z
-            self.robot_cmd.activate_gripper = picky 
-            
+            self.robot_cmd.activate_gripper = gripper_soll 
             self.publisher_cmd.publish(self.robot_cmd)
-        }
+            
+
+            self.motion_order.should_is_comp()
+            send_state(False)
+            #TODO: Hier MUSS die ABBRUCH/ZIELEREICHT? - Abfrage unweigerlich durch Callback2 getriggert werden (evt durch eine variable ziel_erreicht oder fahre_gerade)
 
     def callback2(self, msg):
         Xr_ist = msg.pos_x
         Yr_ist = msg.pos_y
         Zr_ist = msg.pos_z
-        motion_order.getter_is_pos(Xr_ist, Yr_ist, Zr_ist)
+        self.motion_order.getter_is_pos(Xr_ist, Yr_ist, Zr_ist)
 
-
-#    def send_it_accel(self,x,y,z,picky):       "Wird vorrausichlicht oben in die Callback1 integriert"
-#        self.robot_cmd.accel_x = x
-#        self.robot_cmd.accel_y = y
-#        self.robot_cmd.accel_z = z
-#        self.robot_cmd.activate_gripper = picky
-#        self.publisher_cmd.publish(self.robot_cmd)
+        #TODO Vergleich SOll-IST und schreiben der ABBRUCH/ZIELERREICHT Variable
 
 
     def send_state(self, state):
@@ -80,9 +78,9 @@ class Motion(Node):
 
 def main():
     rclpy.init(args=None)
-    glados = Portal()
-    rclpy.spin(glados)
-    glados.destroy_node()
+    motion = Motion()
+    rclpy.spin(motion)
+    motion.destroy_node()
     rclpy.shutdown()
 
 if __name__ == '__main__':

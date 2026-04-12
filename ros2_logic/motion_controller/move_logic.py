@@ -1,9 +1,9 @@
 '''
  Wichtige Punkte, die noch überdacht werden müssen:
     - [def should_is_comp] Wie gehen wir damit um, wenn die IST_WERTE mit extrem wankenden Nachkommastellen ankommen, unsere SOLL aber nur ganzzahlen sind?
-
+    - [def wanted_accel] Wenn wir mal nicht sauber zum Ziel kommen, müsste der "self.last_pos..." entweder wieder auf 0 oder auf den ehemaligen wert zurück gesetzt werden.
 '''
-
+from motion_controller.feedforward import ffw_controller #Bei problemen hier nur "from .feedforward import ffw_controller" schreiben
 
 
 Class MotionOrder():
@@ -22,14 +22,19 @@ Class MotionOrder():
 
 
     def __init__(self): 
-        self.Xr_ist
-        self.Yr_ist
-        self.Zr_ist
+        self.Xr_ist = 0.0
+        self.Yr_ist = 0.0
+        self.Zr_ist = 0.0
 
         self.Xr_soll
         self.Yr_soll
         self.Zr_soll
         self.gripper_soll
+
+        self.last_pos_x = 0.0
+        self.last_pos_y = 0.0
+        self.last_pos_z = 0.0
+
 
     def getter_is_pos(Xr_ist, Yr_ist, Zr_ist):
         self.Xr_ist = Xr_ist
@@ -51,4 +56,14 @@ Class MotionOrder():
         else  { 
             return False
         }
+    
+    def wanted_accel():
+    
+        accelofx = ffw_controller(self.Xr_soll, self.Xr_ist, self.last_pos_x)
+        self.last_pos_x = self.Xr_soll              #Bisschen Shady, dass hier schon festzulegen, weil wir hier noch nicht mal losgefahren sind, geschweige denn am ziel angekommen sind.
+        accelofy = ffw_controller(self.Yr_soll, self.Yr_ist, self.last_pos_y)
+        self.last_pos_y = self.Yr_soll
+        accelofz = ffw_controller(self.Zr_soll, self.Zr_ist, self.last_pos_z)
+        self.last_pos_z = self.Zr_soll
 
+        return accelofx, accelofy, accelofz
