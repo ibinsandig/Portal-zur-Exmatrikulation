@@ -4,3 +4,6 @@
 [submodule "ros2_ws/src/ro45_ros2_pickrobot_serial"]
 	path = ros2_ws/src/ro45_ros2_pickrobot_serial
 	url = https://github.com/matl-hsk/ro45_ros2_pickrobot_serial.git
+[submodule "misc/ml_preperation/RO45RobotikImages"]
+	path = misc/ml_preperation/RO45RobotikImages
+	url = https://github.com/CrazyTurtle375/RO45RobotikImages.git
