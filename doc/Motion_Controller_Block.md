@@ -9,23 +9,6 @@ Er verlagert die Differenzelemnt (D-Anteil) in die Rückführung und reagiert so
 
 Es handelt sich um ein PT2-Strecvkenmodell (weil wir zweimal integrieren: Beschleunigung -> Geschwindigkeit -> Position)
 
-> s² + 2·D·ω₀·s + ω₀² = 0
-
-Zusammenfassung:
-
-
-Größe  | Bedeutung    |               Wirkung
-
-Fehler | Sollposition − Istposition | Eingang für P
-
-Kp    |  Verstärkung P-Anteil    |    Größer → schneller, aber mehr Überschwingen
-
-Kd    |  Verstärkung D-Anteil   |     Größer → mehr Dämpfung, weniger Überschwingen
-
-ω₀    |  Wunschgeschwindigkeit   |    Bestimmt beide K-Werte  
-
-D    |   Wunschdämpfung      |        D=1 → kein Überschwingen
-
 *Warum PDF statt PID bei Beschleunigungsvorgaben?*
 
 Sanfteres Anlaufen: Da der P-Anteil nicht direkt auf den Sollwertsprung wirkt (kein "Proportional Kick"), folgt der Motor der Beschleunigungsrampe wesentlich sauberer.
@@ -60,4 +43,36 @@ delta_t = None
 ffw = None          
 kp = None           
 kd = None 
+
 ```
+
+---
+---
+
+#  Motion Node
+
+## Publisher Logic
+
+### Warum die MSG deklaration (Zeile 29 & 30) in der Init?
+
+>        self.robot_cmd = RobotCmd()
+>        self.goal_state = GoalState()
+*So bleiben die Informationen bis zum erneuten Funktionsaufruf in der Instanzvariable erhalten! 
+
+### Alternative Version:
+
+Die Declaration wird in die Funktion geschrieben.
+Hier werden die Informationen immer nach Ende der Funktion gelöscht!
+
+```
+def send_it_accel(self,x,y,z,picky):
+    msg = RobotCmd()
+    msg.accel_x = x
+    msg.accel_y = y
+    msg.accel_z = z 
+    msg.activate_gripper = picky
+    self.publisher_cmd.publish(msg)
+```
+
+## Nächste 
+

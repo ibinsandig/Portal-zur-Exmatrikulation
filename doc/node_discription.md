@@ -16,7 +16,7 @@ bekommt von motion: Zielstatus (Bool job_fineshed)
 Motion bekommt grundlegned nur einen Punkt im RKS zum Anfahren. Regelt dort hin und meldet sich zurück ob der Punkt erreicht wurde oder nicht. 
 '''
 
-- Fragen dauerhaft nach Zieldaten
+- Fragen dauerhaft nach Zieldaten (von /goal_data)
 - Empfangen die aktuelle Positon des Robis
 - Bei erhalt von neuen Zieldaten (Roboterkoordinaten), soll er diese Anfahren
 - Überprüfen durch akutelle Roboter_ist_positon, ob wir das Ziel erreicht haben (evt sicherung durch Abschalten nach zu langer Zeit nicht erreichen)

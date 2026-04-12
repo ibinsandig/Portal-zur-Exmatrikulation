@@ -20,8 +20,8 @@ class Motion(Node):
             self.callback2,
             10)
         
-        self.sub_goal_data
-        self.sub_robot_position
+        #self.sub_goal_data
+        #self.sub_robot_position
 
         self.publisher_cmd = self.create_publisher(RobotCmd, '/robot_command', 10)
         self.publisher_state = self.create_publisher(GoalState, '/goal_state', 10)
@@ -34,12 +34,14 @@ class Motion(Node):
         self.get_logger().info("Motion Node gestartet...")
 
     def callback1(self, msg):
+        #goal_data kommt rein
+        #Funktionsaufruf von move_logic mit (msg) übergabe
         pass
 
     def callback2(self, msg):
         pass
 
-    def send_it_accel(self,x,y,z, picky):
+    def send_it_accel(self,x,y,z,picky):
         self.robot_cmd.accel_x = x
         self.robot_cmd.accel_y = y
         self.robot_cmd.accel_z = z
