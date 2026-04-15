@@ -31,14 +31,21 @@ class Motion(Node):
 
         self.motion_order = MotionOrder()
 
+        self.ontheway = False
+        self.gripper_soll = False
+
         self.get_logger().info("Motion Node gestartet...")
 
     def callback1(self, msg):
-        Xr_soll = msg.accel_x
-        Yr_soll = msg.accel_y
-        Zr_soll = msg.accel_z
-        gripper_soll = msg.activate_gripper
-        self.motion_order.getter_should_pos(Xr_soll, Yr_soll, Zr_soll, gripper_soll)
+        '''
+        Bringt den Auftragseingang. Setzt bei noch nicht erreichtem Ziel ein Flag. 
+        Gripper FLAG für AN/AUS wird in Instanzvariable gesetzt. 
+        '''
+        Xr_soll = msg.x
+        Yr_soll = msg.y
+        Zr_soll = msg.z
+        self.gripper_soll = msg.grip
+        self.motion_order.getter_should_pos(Xr_soll, Yr_soll, Zr_soll)
         
         if self.motion_order.should_is_comp(): 
             self.robot_cmd.accel_x = 0.0
@@ -46,35 +53,48 @@ class Motion(Node):
             self.robot_cmd.accel_z = 0.0
             self.robot_cmd.activate_gripper = gripper_soll
             self.publisher_cmd.publish(self.robot_cmd)
-            send_state(True)         
-        
-        else:
-            x,y,z = self.motion_order.wanted_accel()
 
-            self.robot_cmd.accel_x = x
-            self.robot_cmd.accel_y = y
-            self.robot_cmd.accel_z = z
-            self.robot_cmd.activate_gripper = gripper_soll 
-            self.publisher_cmd.publish(self.robot_cmd)
+            self.goal_state.job_finished = True
+            self.publisher_state.publish(self.goal_state)          
             
+        else:
+            self.ontheway = True
 
-            self.motion_order.should_is_comp()
-            send_state(False)
-            #TODO: Hier MUSS die ABBRUCH/ZIELEREICHT? - Abfrage unweigerlich durch Callback2 getriggert werden (evt durch eine variable ziel_erreicht oder fahre_gerade)
 
-    def callback2(self, msg):
+            
+    def callback2(self, msg):       #TODO: HIER KOMMEN VERMUTLICH NUR INDIREKTE DATEN AN.... heißt heir muss eine sauber vorverarbeitung mit evt umrechnung ins Koordinatensystem erfolgen.... danke benji
         Xr_ist = msg.pos_x
         Yr_ist = msg.pos_y
         Zr_ist = msg.pos_z
         self.motion_order.getter_is_pos(Xr_ist, Yr_ist, Zr_ist)
 
-        #TODO Vergleich SOll-IST und schreiben der ABBRUCH/ZIELERREICHT Variable
+
+        if self.ontheway == True: 
+
+            if not self.motion_order.should_is_comp():
+                accelofx, accelofy, accelofz = self.motion_order.wanted_accel()
+
+                if accelofx >= 0.1 or accelofy >= 0.1 or accelofz >= 0.1:
+                    self.get_logger().info("Berechnete Beschleunigung ist ueber 0.1!")
+                    return
+                
+                else:
+                    self.robot_cmd.accel_x = accelofx
+                    self.robot_cmd.accel_y = accelofy
+                    self.robot_com.accel_z = accelofz
+                    self.robot_cmd.activate_gripper = self.gripper_soll     #TODO: Kann evt auch als einzele Logic optimiert werden.
+                    self.publisher_cmd.publish(self.robot_cmd)
+            
+            else:
+                self.ontheway = False
+                self.goal_state.job_finished = True
+                self.publisher_state.publish(self.goal_state)
 
 
-    def send_state(self, state):
-        self.goal_state.job_finished = state
+#   def send_state(self, state):
+#       self.goal_state.job_finished = state
+#       self.publisher_state.publish(self.goal_state)
 
-        self.publisher_state.publish(self.goal_state)
 
 def main():
     rclpy.init(args=None)

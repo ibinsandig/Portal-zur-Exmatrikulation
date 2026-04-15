@@ -1,13 +1,9 @@
-'''
- Wichtige Punkte, die noch überdacht werden müssen:
-    - [def should_is_comp] Wie gehen wir damit um, wenn die IST_WERTE mit extrem wankenden Nachkommastellen ankommen, unsere SOLL aber nur ganzzahlen sind?
-    - [def wanted_accel] Wenn wir mal nicht sauber zum Ziel kommen, müsste der "self.last_pos..." entweder wieder auf 0 oder auf den ehemaligen wert zurück gesetzt werden.
-'''
 from motion_controller.feedforward import ffw_controller #Bei problemen hier nur "from .feedforward import ffw_controller" schreiben
 
 
-Class MotionOrder():
-'''
+class MotionOrder():
+
+    '''
     Grober Funktionsablauf:
     - IST-Daten werden dauerhaft aktuallisiert (max.20Hz)
     - Soll-Daten kommen rein (goal_data)
@@ -18,7 +14,13 @@ Class MotionOrder():
         - versende die Daten über "send_it_accel" an den Roboter
         - if (IST != SOLL) {THROW NE EXEPTION} [TODO: hier könnte man ein erneuten anfahrversuch machen, in einer Schleife]
             ELSE {def send_state(self, state) = true publishen}
-'''
+    
+     Wichtige Punkte, die noch überdacht werden müssen:
+    - [def should_is_comp] Wie gehen wir damit um, wenn die IST_WERTE mit extrem wankenden Nachkommastellen ankommen, unsere SOLL aber nur ganzzahlen sind?
+    - [def wanted_accel] Wenn wir mal nicht sauber zum Ziel kommen, müsste der "self.last_pos..." entweder wieder auf 0 oder auf den ehemaligen wert zurück gesetzt werden.
+
+            
+    '''
 
 
     def __init__(self): 
@@ -29,7 +31,6 @@ Class MotionOrder():
         self.Xr_soll
         self.Yr_soll
         self.Zr_soll
-        self.gripper_soll
 
         self.last_pos_x = 0.0
         self.last_pos_y = 0.0
@@ -42,27 +43,25 @@ Class MotionOrder():
         self.Zr_ist = Zr_ist
         return True
 
-    def getter_should_pos(Xr_soll, Yr_soll, Zr_soll, gripper_soll)
+    def getter_should_pos(Xr_soll, Yr_soll, Zr_soll):
         self.Xr_soll = Xr_soll
         self.Yr_soll = Yr_soll
         self.Zr_soll = Zr_soll
-        self.gripper_soll = gripper_soll
 
     
-    def should_is_comp():                           
-        if (self.Xr_ist == self.Xr_soll and self.Yr_ist == self.Yr_soll and self.Zr_ist == self.Zr_soll){
+    def should_is_comp():                                    
+        if abs(self.Xr_ist - self.Xr_soll) < 0.2 and (self.Yr_ist - self.Yr_soll) < 0.2 and (self.Zr_ist - self.Zr_soll) < 0.2:
             return True
-        }
-        else  { 
+        else: 
             return False
-        }
+        
     
     def wanted_accel():
     
         accelofx = ffw_controller(self.Xr_soll, self.Xr_ist, self.last_pos_x)
-        self.last_pos_x = self.Xr_soll              #Bisschen Shady, dass hier schon festzulegen, weil wir hier noch nicht mal losgefahren sind, geschweige denn am ziel angekommen sind.
+        self.last_pos_x = self.Xr_ist             
         accelofy = ffw_controller(self.Yr_soll, self.Yr_ist, self.last_pos_y)
-        self.last_pos_y = self.Yr_soll
+        self.last_pos_y = self.Yr_ist
         accelofz = ffw_controller(self.Zr_soll, self.Zr_ist, self.last_pos_z)
         self.last_pos_z = self.Zr_soll
 
