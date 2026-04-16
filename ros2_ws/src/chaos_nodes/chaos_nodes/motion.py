@@ -46,7 +46,7 @@ class Motion(Node):
         Zr_soll = msg.z
         self.gripper_soll = msg.grip
         self.motion_order.getter_should_pos(Xr_soll, Yr_soll, Zr_soll)
-        
+
         if self.motion_order.should_is_comp(): 
             self.robot_cmd.accel_x = 0.0
             self.robot_cmd.accel_y = 0.0
@@ -59,6 +59,7 @@ class Motion(Node):
             
         else:
             self.ontheway = True
+            self.get_logger().info("CB1: Onetheway-flag ist True")
 
 
             
@@ -84,6 +85,7 @@ class Motion(Node):
                     self.robot_com.accel_z = accelofz
                     self.robot_cmd.activate_gripper = self.gripper_soll     #TODO: Kann evt auch als einzele Logic optimiert werden.
                     self.publisher_cmd.publish(self.robot_cmd)
+                    self.get_logger().info("CB2: Neue Beschleunigung wurde übergeben")
             
             else:
                 self.ontheway = False
