@@ -51,11 +51,12 @@ class Motion(Node):
             self.robot_cmd.accel_x = 0.0
             self.robot_cmd.accel_y = 0.0
             self.robot_cmd.accel_z = 0.0
-            self.robot_cmd.activate_gripper = gripper_soll
+            self.robot_cmd.activate_gripper = self.gripper_soll
             self.publisher_cmd.publish(self.robot_cmd)
 
             self.goal_state.job_finished = True
-            self.publisher_state.publish(self.goal_state)          
+            self.publisher_state.publish(self.goal_state)  
+            self.get_logger().info("CB1: Robter ")        
             
         else:
             self.ontheway = True

@@ -18,13 +18,13 @@ publisher = node.create_publisher(
 x = float(input("X: "))
 y = float(input("Y: "))
 z = float(input("Z: "))
-gripper = bool(input("Gripper (True/Flase): "))
+#   gripper = bool(input("Gripper (True/Flase): "))
 
 msg = GoalData()
 msg.x = x
 msg.y = y
 msg.z = z
-msg.grip = gripper
+#   msg.grip = gripper
 
 publisher.publish(msg)
 

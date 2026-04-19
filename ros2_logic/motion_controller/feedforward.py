@@ -40,3 +40,11 @@ def ffw_controller(goal_pos, curr_pos, last_pos):
 
     return excel
 
+
+'''
+Alternative:
+- c(S) = kp + kd * (s/Tf*s+1) 
+
+Regler in Matlab auslegen.
+'''
+

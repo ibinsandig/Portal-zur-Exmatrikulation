@@ -1,5 +1,5 @@
 from motion_controller.feedforward import ffw_controller #Bei problemen hier nur "from .feedforward import ffw_controller" schreiben
-
+import logging
 
 class MotionOrder():
 
@@ -24,39 +24,49 @@ class MotionOrder():
 
 
     def __init__(self): 
+
+        self.logger = logging.getLogger("MotionOrder")
+        logging.basicConfig(level=logging.INFO)
+
+        self.logger.info("MotionOrder aufgerufen!")
+
         self.Xr_ist = 0.0
         self.Yr_ist = 0.0
         self.Zr_ist = 0.0
 
-        self.Xr_soll
-        self.Yr_soll
-        self.Zr_soll
+        self.Xr_soll = 0.0 
+        self.Yr_soll = 0.0
+        self.Zr_soll = 0.0
 
         self.last_pos_x = 0.0
         self.last_pos_y = 0.0
         self.last_pos_z = 0.0
 
 
-    def getter_is_pos(Xr_ist, Yr_ist, Zr_ist):
+    def getter_is_pos(self, Xr_ist, Yr_ist, Zr_ist):
         self.Xr_ist = Xr_ist
         self.Yr_ist = Yr_ist
         self.Zr_ist = Zr_ist
+        self.logger.info("getter_is_pos: Ist-Pos wurd in Logic geladen!")
         return True
 
-    def getter_should_pos(Xr_soll, Yr_soll, Zr_soll):
+    def getter_should_pos(self, Xr_soll, Yr_soll, Zr_soll):
         self.Xr_soll = Xr_soll
         self.Yr_soll = Yr_soll
         self.Zr_soll = Zr_soll
+        self.logger.info("getter_should_pos: Soll Pos ist in Logic geladen!")
 
     
-    def should_is_comp():                                    
+    def should_is_comp(self):                                    
         if abs(self.Xr_ist - self.Xr_soll) < 0.2 and (self.Yr_ist - self.Yr_soll) < 0.2 and (self.Zr_ist - self.Zr_soll) < 0.2:
+            self.logger.info("comparrer: Ist - Soll vergleich ist unter der Toleranz (< 0.2)")
             return True
         else: 
+            self.logger.info("comparrer: Ist-SOll vergleich hat keine Übereinstimmung festgestellt!")
             return False
         
     
-    def wanted_accel():
+    def wanted_accel(self):
     
         accelofx = ffw_controller(self.Xr_soll, self.Xr_ist, self.last_pos_x)
         self.last_pos_x = self.Xr_ist             
@@ -64,5 +74,7 @@ class MotionOrder():
         self.last_pos_y = self.Yr_ist
         accelofz = ffw_controller(self.Zr_soll, self.Zr_ist, self.last_pos_z)
         self.last_pos_z = self.Zr_soll
+
+        self.logger.info("wanted_accel: x,y,z beschleunigung sind berechnet worden")
 
         return accelofx, accelofy, accelofz
