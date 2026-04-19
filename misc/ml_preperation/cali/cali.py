@@ -159,3 +159,6 @@ if ret:
 
 else:
     print("❌ Kalibrierung fehlgeschlagen!")
+
+
+impo
