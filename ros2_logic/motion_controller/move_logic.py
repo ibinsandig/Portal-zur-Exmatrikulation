@@ -58,7 +58,7 @@ class MotionOrder():
 
     
     def should_is_comp(self):                                    
-        if abs(self.Xr_ist - self.Xr_soll) < 0.2 and (self.Yr_ist - self.Yr_soll) < 0.2 and (self.Zr_ist - self.Zr_soll) < 0.2:
+        if abs(self.Xr_ist - self.Xr_soll) < 0.2 and abs(self.Yr_ist - self.Yr_soll) < 0.2 and abs(self.Zr_ist - self.Zr_soll) < 0.2:
             self.logger.info("comparrer: Ist - Soll vergleich ist unter der Toleranz (< 0.2)")
             return True
         else: 
@@ -73,7 +73,7 @@ class MotionOrder():
         accelofy = ffw_controller(self.Yr_soll, self.Yr_ist, self.last_pos_y)
         self.last_pos_y = self.Yr_ist
         accelofz = ffw_controller(self.Zr_soll, self.Zr_ist, self.last_pos_z)
-        self.last_pos_z = self.Zr_soll
+        self.last_pos_z = self.Zr_ist
 
         self.logger.info("wanted_accel: x,y,z beschleunigung sind berechnet worden")
 

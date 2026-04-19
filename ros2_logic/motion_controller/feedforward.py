@@ -1,10 +1,10 @@
 
 #****************** Faktor einstellung **************************************************************************************
 
-delta_t = None      
-ffw = None          
-kp = None           
-kd = None                        
+delta_t = 0.05      
+ffw = 0.0          
+kp = 0.01           
+kd = 0.0         #erhöhen für abbremsen               
 
 #****************** Regler berechnung ***************************************************************************************
 
@@ -16,7 +16,7 @@ Berechnung des Pseudo-PD Reglers (auch Feedforward)
 2. Geschwindigkeit über letzte Position errechnen (D-Anteil)
 3. beschleunigung mit feedforward
 
-delta_s =      Eingestellte Zeit zwischen zwei Reglerdurchläufen ( basicly die timer_callback zeit?)
+delta_s =      Eingestellte Zeit zwischen zwei Reglerdurchläufen ( basicly die timer_callback zeit?  ~ über callback2 -> 20hz)
 ffw =          Feedforward - Statischer Wert, der zur kompensation von Außeneinflüssen ist. Ist hier hauptsächlich für die Z-Achse interessant. 
 kp =           Faktor für Proportionalwert (Für die Beschleunigung. Je weiter weg, desto schneller fahren wir an)
 kd =           Faktor für Differentialwert (Je schneller wir uns dem Ziel nähern, desto mehr bremsen wir)

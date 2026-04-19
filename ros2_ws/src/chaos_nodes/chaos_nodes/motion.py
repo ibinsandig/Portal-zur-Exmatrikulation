@@ -6,6 +6,8 @@ from ro45_portalrobot_interfaces.msg import RobotCmd
 from ro45_portalrobot_interfaces.msg import RobotPos
 from motion_controller.move_logic import MotionOrder #Hier nochmal schauen ob nicht doch ros2_logic.move_logic....
 
+# Bei Verbingungsproblemem mit des Microcontrollern: > sudo apt-get remove -y brltty (bereits passiert bei PaW)
+
 class Motion(Node):
     def __init__(self):
         super().__init__('Motion')
@@ -31,7 +33,7 @@ class Motion(Node):
 
         self.motion_order = MotionOrder()
 
-        self.ontheway = False
+        self.has_goal = False
         self.gripper_soll = False
 
         self.get_logger().info("Motion Node gestartet...")
@@ -56,40 +58,40 @@ class Motion(Node):
 
             self.goal_state.job_finished = True
             self.publisher_state.publish(self.goal_state)  
-            self.get_logger().info("CB1: Robter ")        
+            #self.has_goal = True ?
+            self.get_logger().info("CB1: Robter ist bereits am Ziel ")        
             
         else:
-            self.ontheway = True
+            self.has_goal = True
             self.get_logger().info("CB1: Onetheway-flag ist True")
 
 
             
-    def callback2(self, msg):       #TODO: HIER KOMMEN VERMUTLICH NUR INDIREKTE DATEN AN.... heißt heir muss eine sauber vorverarbeitung mit evt umrechnung ins Koordinatensystem erfolgen.... danke benji
+    def callback2(self, msg):       #TODO: HIER KOMMEN VERMUTLICH NUR INDIREKTE DATEN AN.... evt umrechnung in anders KKS 
         Xr_ist = msg.pos_x
         Yr_ist = msg.pos_y
         Zr_ist = msg.pos_z
         self.motion_order.getter_is_pos(Xr_ist, Yr_ist, Zr_ist)
 
 
-        if self.ontheway == True: 
+        if self.has_goal == True: 
 
             if not self.motion_order.should_is_comp():
                 accelofx, accelofy, accelofz = self.motion_order.wanted_accel()
 
-                if accelofx >= 0.1 or accelofy >= 0.1 or accelofz >= 0.1:
+                if abs(accelofx >= 0.1) or abs(accelofy >= 0.1) or abs(accelofz >= 0.1):
                     self.get_logger().info("Berechnete Beschleunigung ist ueber 0.1!")
                     return
                 
                 else:
                     self.robot_cmd.accel_x = accelofx
                     self.robot_cmd.accel_y = accelofy
-                    self.robot_com.accel_z = accelofz
+                    self.robot_cmd.accel_z = accelofz
                     self.robot_cmd.activate_gripper = self.gripper_soll     #TODO: Kann evt auch als einzele Logic optimiert werden.
                     self.publisher_cmd.publish(self.robot_cmd)
                     self.get_logger().info("CB2: Neue Beschleunigung wurde übergeben")
             
             else:
-                self.ontheway = False
                 self.goal_state.job_finished = True
                 self.publisher_state.publish(self.goal_state)
 
