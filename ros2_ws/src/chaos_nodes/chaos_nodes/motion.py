@@ -29,7 +29,7 @@ class Motion(Node):
         self.publisher_state = self.create_publisher(GoalState, '/goal_state', 10)
 
         self.robot_cmd = RobotCmd()
-        self.goal_state = GoalState() #Warum brauchen wir ne CustomMSG für EINEN BOOL
+        self.goal_state = GoalState() #Warum brauchen wir ne CustomMSG für EINEN BOOL TODO:
 
         self.motion_order = MotionOrder()
 
@@ -38,7 +38,7 @@ class Motion(Node):
 
         self.get_logger().info("Motion Node gestartet...")
 
-    def callback1(self, msg):
+    def callback1(self, msg): #TODO: Neuer Name für callback1 sinngemäß
         '''
         Bringt den Auftragseingang. Setzt bei noch nicht erreichtem Ziel ein Flag. 
         Gripper FLAG für AN/AUS wird in Instanzvariable gesetzt. 
@@ -58,7 +58,7 @@ class Motion(Node):
 
             self.goal_state.job_finished = True
             self.publisher_state.publish(self.goal_state)  
-            #self.has_goal = True ?
+            #self.has_goal = True ? TODO:
             self.get_logger().info("CB1: Robter ist bereits am Ziel ")        
             
         else:
@@ -81,8 +81,9 @@ class Motion(Node):
             if not self.motion_order.should_is_comp():
                 accelofx, accelofy, accelofz = self.motion_order.wanted_accel()
 
-                if abs(accelofx >= 0.1) or abs(accelofy >= 0.1) or abs(accelofz >= 0.1):
+                if (abs(accelofx) >= 0.1) or (abs(accelofy) >= 0.1) or (abs(accelofz) >= 0.1):
                     self.get_logger().info("Berechnete Beschleunigung ist ueber 0.1!")
+                    # TODO: klammern weg. Hier soll beschleunigung eher begrenzt und weiter gegeben werden. Nicht einfach weggeschluckt. Werte würden ignoieriert und die Geschwindigkeit unverändert!
                     return
                 
                 else:

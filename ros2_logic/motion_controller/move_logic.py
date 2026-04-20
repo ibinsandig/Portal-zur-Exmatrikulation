@@ -43,14 +43,14 @@ class MotionOrder():
         self.last_pos_z = 0.0
 
 
-    def getter_is_pos(self, Xr_ist, Yr_ist, Zr_ist):
+    def getter_is_pos(self, Xr_ist, Yr_ist, Zr_ist):    #TODO: nicht getter sondern SET
         self.Xr_ist = Xr_ist
         self.Yr_ist = Yr_ist
         self.Zr_ist = Zr_ist
         self.logger.info("getter_is_pos: Ist-Pos wurd in Logic geladen!")
         return True
 
-    def getter_should_pos(self, Xr_soll, Yr_soll, Zr_soll):
+    def getter_should_pos(self, Xr_soll, Yr_soll, Zr_soll): #TODO nicht getter sondern SET
         self.Xr_soll = Xr_soll
         self.Yr_soll = Yr_soll
         self.Zr_soll = Zr_soll
@@ -58,7 +58,7 @@ class MotionOrder():
 
     
     def should_is_comp(self):                                    
-        if abs(self.Xr_ist - self.Xr_soll) < 0.2 and abs(self.Yr_ist - self.Yr_soll) < 0.2 and abs(self.Zr_ist - self.Zr_soll) < 0.2:
+        if abs(self.Xr_ist - self.Xr_soll) < 0.2 and abs(self.Yr_ist - self.Yr_soll) < 0.2 and abs(self.Zr_ist - self.Zr_soll) < 0.2: #TODO: die schwellwerte sollen in eine Variable OBEN zum einstellen
             self.logger.info("comparrer: Ist - Soll vergleich ist unter der Toleranz (< 0.2)")
             return True
         else: 

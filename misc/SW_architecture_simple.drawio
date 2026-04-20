@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="RYESPkPOrQwAhbx9FNro" name="Page-1">
-        <mxGraphModel dx="951" dy="779" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0" adaptiveColors="auto">
+        <mxGraphModel dx="866" dy="634" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0" adaptiveColors="auto">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -14,7 +14,7 @@
                     <mxGeometry y="280" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="5" value="coord_prediction" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#04cef6, #43ba43);fontColor=#ffffff;strokeColor=#005700;" parent="1" vertex="1">
-                    <mxGeometry x="400" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="365" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="6" value="" style="shape=flexArrow;endArrow=classic;startArrow=classic;html=1;" parent="1" source="58" target="4" edge="1">
                     <mxGeometry width="100" height="100" relative="1" as="geometry">
@@ -117,7 +117,7 @@
                 <mxCell id="40" value="/goal_data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#000000, #ff7777);fontColor=#ffffff;strokeColor=#A50040;" parent="1" vertex="1">
                     <mxGeometry x="480" y="490" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="42" value="motion" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF3333;fontColor=#ffffff;strokeColor=#A50040;" parent="1" vertex="1">
+                <mxCell id="42" value="motion&lt;div&gt;(könnte als&amp;nbsp;&lt;/div&gt;&lt;div&gt;Aktion gebaut werden)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF3333;fontColor=#ffffff;strokeColor=#A50040;" parent="1" vertex="1">
                     <mxGeometry x="410" y="599.02" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="45" value="move_logic" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#04cef6, #43ba43);fontColor=#ffffff;strokeColor=#005700;" parent="1" vertex="1">

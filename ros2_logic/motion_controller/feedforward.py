@@ -41,6 +41,8 @@ def ffw_controller(goal_pos, curr_pos, last_pos):
     return excel
 
 
+# TODO: Hier nochmal nachVOrlesung. FFW macht keinen Sinn. Teile des Reglers funktionieren. Gesamt aber nicht. 
+
 '''
 Alternative:
 - c(S) = kp + kd * (s/Tf*s+1) 
