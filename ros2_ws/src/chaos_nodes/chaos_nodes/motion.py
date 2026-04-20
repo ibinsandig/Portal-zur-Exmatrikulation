@@ -72,6 +72,8 @@ class Motion(Node):
         Yr_ist = msg.pos_y
         Zr_ist = msg.pos_z
         self.motion_order.getter_is_pos(Xr_ist, Yr_ist, Zr_ist)
+        self.get_logger().info("========  Roboterdaten: ")
+        self.get_logger().info(str(msg))
 
 
         if self.has_goal == True: 
@@ -90,6 +92,7 @@ class Motion(Node):
                     self.robot_cmd.activate_gripper = self.gripper_soll     #TODO: Kann evt auch als einzele Logic optimiert werden.
                     self.publisher_cmd.publish(self.robot_cmd)
                     self.get_logger().info("CB2: Neue Beschleunigung wurde übergeben")
+                    self.get_logger().info(str(self.robot_cmd))
             
             else:
                 self.goal_state.job_finished = True
