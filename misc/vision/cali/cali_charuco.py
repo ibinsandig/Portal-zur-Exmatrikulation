@@ -29,7 +29,7 @@ all_charuco_ids = []
 image_size = None
 
 # Kamera initialisieren
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(4)
 # Optional: Höhere Auflösung
 # cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
 # cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
@@ -75,11 +75,20 @@ cap.release()
 
 print("\nStarte Kalibrierung...")
 
-# Kalibrierung durchführen
-ret, camera_matrix, dist_coeffs, rvecs, tvecs = cv2.aruco.calibrateCameraCharuco(
-    all_charuco_corners,
-    all_charuco_ids,
-    board,
+# Konvertiere CharUco Ecken in 3D Objektpunkte für moderne OpenCV Versionen
+object_points = []
+image_points = []
+
+for charuco_corners, charuco_ids in zip(all_charuco_corners, all_charuco_ids):
+    # Hole 3D Punkte für die erkannten Marker
+    obj_pts = board.getChessboardCorners()[charuco_ids.flatten()]
+    object_points.append(obj_pts)
+    image_points.append(charuco_corners)
+
+# Kalibrierung durchführen mit cv2.calibrateCamera
+ret, camera_matrix, dist_coeffs, rvecs, tvecs = cv2.calibrateCamera(
+    object_points,
+    image_points,
     image_size,
     None,
     None
