@@ -15,21 +15,20 @@ class Motion(Node):
         self.sub_goal_data = self.create_subscription(
             GoalData,
             '/goal_data',
-            self.callback1,
+            self.auftragseingang,
             10)
         self.sub_robot_position = self.create_subscription(
             RobotPos,
             '/robot_position',
-            self.callback2,
+            self.ist_pos_uebergabe,
             10)
         
         self.current_pos = None
 
         self.publisher_cmd = self.create_publisher(RobotCmd, '/robot_command', 10)
-        self.publisher_state = self.create_publisher(GoalState, '/goal_state', 10)
+        self.publisher_state = self.create_publisher(bool, '/goal_state', 10)
 
         self.robot_cmd = RobotCmd()
-        self.goal_state = GoalState() #Warum brauchen wir ne CustomMSG für EINEN BOOL TODO:
 
         self.motion_order = MotionOrder()
 
@@ -38,7 +37,7 @@ class Motion(Node):
 
         self.get_logger().info("Motion Node gestartet...")
 
-    def callback1(self, msg): #TODO: Neuer Name für callback1 sinngemäß
+    def auftragseingang(self, msg):
         '''
         Bringt den Auftragseingang. Setzt bei noch nicht erreichtem Ziel ein Flag. 
         Gripper FLAG für AN/AUS wird in Instanzvariable gesetzt. 
@@ -67,7 +66,7 @@ class Motion(Node):
 
 
             
-    def callback2(self, msg):       #TODO: HIER KOMMEN VERMUTLICH NUR INDIREKTE DATEN AN.... evt umrechnung in anders KKS 
+    def ist_pos_uebergabe(self, msg):       #TODO: HIER KOMMEN VERMUTLICH NUR INDIREKTE DATEN AN.... evt umrechnung in anders KKS 
         Xr_ist = msg.pos_x
         Yr_ist = msg.pos_y
         Zr_ist = msg.pos_z

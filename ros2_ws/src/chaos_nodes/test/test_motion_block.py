@@ -4,7 +4,7 @@ from chaos_interfaces.msg import GoalData
 from chaos_interfaces.msg import GoalState
 
 #Testversion OHNE Klasse 
-# Aufruf im terminal: "python3 test_motion_block.py" (vorher sourcen dikka)
+# Aufruf im terminal: "python3 test_motion_block.py" (vorher sourcen )
 
 rclpy.init()
 node = rclpy.create_node('test_motion_block')

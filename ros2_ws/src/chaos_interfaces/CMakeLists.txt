@@ -30,7 +30,6 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/ObjData.msg"
   "msg/ObjDataDeluxe.msg"
   "msg/GoalData.msg"
-  "msg/GoalState.msg"
 )
 
 ament_package()
