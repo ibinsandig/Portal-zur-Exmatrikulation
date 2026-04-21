@@ -1,0 +1,21 @@
+# Init - Datei 
+
+## Grundaufbau 
+
+1. langsame Beschleunigung aller Achsen in Endanschlag. 
+2. Beschleunigung aller Achsen nach gewisser Zeit auf 0 setzten (Achsen stehen hier theoretisch bereits im Endanschlag)
+3. Offsetwert festlegen und in Motion-Datei übergeben
+4. Default-Platz anfahren
+5. init-abschluss
+
+## Anfängliche Test-Variante
+
+* Fungiert erstmal komplett autark ohne MAIN-Statemachine 
+
+- Publish der Achsbeschleunigungen = "kleiner Wert"
+- Zeit abwarten
+- Publish der Achsbeschleunigungen = 0
+- Offset Wert berechnen
+- Offset Wert zu Motion-Block schicken (Muss noch integriert werden in move_logic)
+- (NUR TEST) Publish eines "GoalData" zum Anfahren der Default position (evt mit vorgegebener Geschwindigkeit --> Die Reglerlogic is noch maximal shaidy)
+

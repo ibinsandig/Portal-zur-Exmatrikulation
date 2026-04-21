@@ -66,7 +66,7 @@ class Motion(Node):
 
 
             
-    def ist_pos_uebergabe(self, msg):       #TODO: HIER KOMMEN VERMUTLICH NUR INDIREKTE DATEN AN.... evt umrechnung in anders KKS 
+    def ist_pos_uebergabe(self, msg):       #TODO: HIER KOMMEN VERMUTLICH NUR INDIREKTE DATEN AN. Umrechnen oder glätten der Werte?
         Xr_ist = msg.pos_x
         Yr_ist = msg.pos_y
         Zr_ist = msg.pos_z
@@ -89,7 +89,7 @@ class Motion(Node):
                     self.robot_cmd.accel_x = accelofx
                     self.robot_cmd.accel_y = accelofy
                     self.robot_cmd.accel_z = accelofz
-                    self.robot_cmd.activate_gripper = self.gripper_soll     #TODO: Kann evt auch als einzele Logic optimiert werden.
+                    self.robot_cmd.activate_gripper = self.gripper_soll     #TODO: Greifer-schließ logic muss überdacht werden - evt eigene Funktion
                     self.publisher_cmd.publish(self.robot_cmd)
                     self.get_logger().info("CB2: Neue Beschleunigung wurde übergeben")
                     self.get_logger().info(str(self.robot_cmd))
