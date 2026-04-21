@@ -1,0 +1,9 @@
+# Mainy - Statemachin
+
+Wie wird das Starten des Systems umgesetzt? 
+
+- Option 1 --> einfach in der __init__ der Node. einmal die init funktionen aufrufen
+
+- Option 2 --> timer einbauen, der EINMAL am anfang (o.o, funktion) aufgerufen und damit INIT abspielt
+
+- Option 3 --> den GANZEN Systemablauf nicht nur mit "launchdatei", sondern mit "lifecycle" steuern (launchdatei starte alle nodes und auch lifecycle. lifecyle steuert dann die Nodes an)  [VERMUTLICHER OVERKILL]
