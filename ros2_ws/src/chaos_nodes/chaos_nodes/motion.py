@@ -1,7 +1,8 @@
 import rclpy
 from rclpy.node import Node
-from chaos_interfaces.msg import GoalData
-from chaos_interfaces.msg import GoalState
+
+from geometry_msgs.msg import Point32
+
 from ro45_portalrobot_interfaces.msg import RobotCmd
 from ro45_portalrobot_interfaces.msg import RobotPos
 from motion_controller.move_logic import MotionOrder #Hier nochmal schauen ob nicht doch ros2_logic.move_logic....
@@ -12,9 +13,9 @@ class Motion(Node):
     def __init__(self):
         super().__init__('Motion')
 
-        self.sub_goal_data = self.create_subscription(
-            GoalData,
-            '/goal_data',
+        self.sub_goal_coordinates = self.create_subscription(
+            Point32,   
+            '/goal_coordinates',
             self.auftragseingang,
             10)
         self.sub_robot_position = self.create_subscription(
@@ -22,6 +23,12 @@ class Motion(Node):
             '/robot_position',
             self.ist_pos_uebergabe,
             10)
+        self.sub_goal_gripper = self.create_subscription(
+            bool,
+            '/goal_gripper',
+            callbackIII,    #Name kommt, bei erstellung der Funktion
+            10
+        )
         
         self.current_pos = None
 

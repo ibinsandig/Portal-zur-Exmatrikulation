@@ -29,7 +29,6 @@ find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/ObjData.msg"
   "msg/ObjDataDeluxe.msg"
-  "msg/GoalData.msg"
 )
 
 ament_package()
