@@ -1,2 +1,2 @@
 int8 timestamp
-geometry_msgs/Point position
+geometry_msgs/Pose2D Pose2D
