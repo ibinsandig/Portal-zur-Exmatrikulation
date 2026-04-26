@@ -1,0 +1,2 @@
+int8 timestamp
+geometry_msgs/Point position
