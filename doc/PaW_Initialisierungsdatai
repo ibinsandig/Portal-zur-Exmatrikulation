@@ -17,10 +17,11 @@
 - Publishen einer Beschleunigung (kurz ~0.005, dann 0.0)
 -(alternative: x,y,z jeweils 999 setzen)
 - Bei erreichen der "ENDposGOAL" werte für OFFSET Berechnen 
-- Offset weiter geben und init-beenden
+- Offset weiter geben
+- init beenden (evt in der mainy noch auf default fahren)
 
 ## optionen für anfang
 
 - timer im konstruktor
-- extra state machine mit dem ROBO POS 
+- extra state machine mit dem ROBO POS (umgesetzt)
 

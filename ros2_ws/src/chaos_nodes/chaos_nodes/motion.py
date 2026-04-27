@@ -33,16 +33,12 @@ class Motion(Node):
             '/goal_gripper',
             callbackIII,    #Name kommt, bei erstellung der Funktion
             10)
-        self.sub_init_run = self.create_subscription(
-            Bool,
-            '/init_run',
-            self.init_run,
-            10)
 
         #========================================================
 
         self.publisher_cmd = self.create_publisher(RobotCmd, '/robot_command', 10)
-        self.publisher_state = self.create_publisher(bool, '/goal_state', 10)
+        self.publisher_state = self.create_publisher(Bool, '/goal_state', 10)
+        self.publisher_init = self.create_publisher(Bool, '/init_done', 10)
 
         #========================================================
 
@@ -98,15 +94,22 @@ class Motion(Node):
 #================================================================================================================
             
     def ist_pos_uebergabe(self, msg):       #TODO: HIER KOMMEN VERMUTLICH NUR INDIREKTE DATEN AN. Umrechnen oder glätten der Werte?
-        Xr_ist = msg.pos_x
-        Yr_ist = msg.pos_y
-        Zr_ist = msg.pos_z
-        self.motion_order.set_is_pos(Xr_ist, Yr_ist, Zr_ist)
-        self.init_order.set_rob_is_pos(Xr_ist, Yr_ist, Zr_ist)
-        self.get_logger().info("========  Roboterdaten: ")
-        self.get_logger().info(str(msg))
+
+        if self.init_state == "init_done":
+            Xr_ist_offset = msg.pos_x + self.pos_x_offset
+            Yr_ist_offset = msg.pos_y + self.pos_y_offset
+            Zr_ist_offset = msg.pos_z + self.pos_z_offset
+            self.motion_order.set_is_pos(Xr_ist_offset, Yr_ist_offset, Zr_ist_offset)
+            self.get_logger().info("======== RoboKoordinaten+Offset: ")
+            self.get_logger().info(str(msg))
 
 #----------------Ab-hier-INIT-------------------------------------------------------
+
+        if not self.init_state == "init_done":
+            Xr_ist_raw = msg.pos_x
+            Yr_ist_raw = msg.pos_y
+            Zr_ist_raw = msg.pos_z
+            self.init_order.set_init_is_pos(Xr_ist_raw, Yr_ist_raw, Zr_ist_raw)
 
         if self.init_state == "init_start":
             accel_x, accel_y, accel_z = self.init_order.endpoint_accel_rise()
@@ -124,6 +127,9 @@ class Motion(Node):
                 self.pos_x_offset, self.pos_y_offset, self.pos_z_offset = self.init_order.offset_calc()
                 #TODO: In der MAINY jetzt noch bei der init phase auf Default_POS fahren!
                 self.init_state == "init_done"
+                msg = Bool()
+                msg.data = True
+                self.publisher_init.publish(msg) 
             else: 
                 pass
 
@@ -153,17 +159,6 @@ class Motion(Node):
                 else:
                     self.goal_state.job_finished = True
                     self.publisher_state.publish(self.goal_state)
-
-#================================================================================================================
-
-    def init_run(self, msg):
-        if msg.data == True:
-        
-            init_accel_x, init_accel_y, init_accel_z  = self.init_order.endpunkt_anfahren()  #Ab hier wird die Flag "endlagenabfrage" =True gesetzt.
-            self.robot_cmd.accel_x = init_accel_x
-            self.robot_cmd.accel_y = init_accel_y
-            self.robot_cmd.accel_z = init_accel_z
-            self.publisher_cmd.publish(self.robot_cmd)
 
             
 

@@ -34,7 +34,7 @@ class Init():
         self.endlagenabfrage = False
         
 #================================================================================================================
-    def set_rob_is_pos(self, Xr_ist, Yr_ist, Zr_ist):    #wird dauerhaft von MotionNode aufgerufen.
+    def set_init_is_pos(self, Xr_ist, Yr_ist, Zr_ist):    #wird dauerhaft von MotionNode aufgerufen.
         
         self.Xr_ist = Xr_ist
         self.Yr_ist = Yr_ist
@@ -83,8 +83,3 @@ class Init():
         pos_z_offset = self.Zr_ist
         return pos_x_offset, pos_y_offset, pos_z_offset
 
-
-
-#================================================================================================================
-
-#================================================================================================================

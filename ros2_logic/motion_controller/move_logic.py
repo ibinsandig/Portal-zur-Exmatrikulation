@@ -49,7 +49,6 @@ class MotionOrder():
         self.Xr_ist = Xr_ist
         self.Yr_ist = Yr_ist
         self.Zr_ist = Zr_ist
-        #TODO: Offset von INIT muss hier mit eingerechnet werden! Sonst fahren wir mit den Rando-hardware-koordinaten vom Roboter und nicht von unserem genullten Roboter-Koordinatensystem!
         self.logger.info("setter_is_pos: Ist-Pos wurd in Logic geladen und mit Offset addiert!")
         return True
 

@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="RYESPkPOrQwAhbx9FNro" name="Page-1">
-        <mxGraphModel dx="1717" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="#ffffff" math="0" shadow="1" adaptiveColors="auto">
+        <mxGraphModel dx="2284" dy="827" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="#ffffff" math="0" shadow="1" adaptiveColors="auto">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -77,11 +77,8 @@
                 <mxCell id="27" value="/SerialMapping" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF3333;fontColor=#ffffff;strokeColor=#A50040;" parent="1" vertex="1">
                     <mxGeometry x="409.9999999999999" y="790" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="112" style="edgeStyle=none;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="28" target="108">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
                 <mxCell id="28" value="/RobotPos&lt;div&gt;(CUSTOM)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#000000;fontColor=#ffffff;strokeColor=#A50040;" parent="1" vertex="1">
-                    <mxGeometry x="550" y="700" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="510" y="690" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="29" value="Test" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-50.000000000000114" y="495" width="120" height="80" as="geometry"/>
@@ -120,7 +117,7 @@
                 <mxCell id="40" value="/goal_coordiantes&lt;div&gt;(Point)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#000000, #ff7777);fontColor=#ffffff;strokeColor=#A50040;" parent="1" vertex="1">
                     <mxGeometry x="340" y="490" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="118" style="edgeStyle=none;html=1;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="42" target="94">
+                <mxCell id="118" style="edgeStyle=none;html=1;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="42" target="94" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="42" value="motion&lt;div&gt;(könnte als&amp;nbsp;&lt;/div&gt;&lt;div&gt;Aktion gebaut werden)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF3333;fontColor=#ffffff;strokeColor=#A50040;" parent="1" vertex="1">
@@ -277,46 +274,38 @@
                         <mxPoint x="16" y="-4" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="119" style="edgeStyle=none;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="94" target="13">
+                <mxCell id="119" style="edgeStyle=none;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="94" target="13" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="94" value="/init_dun&lt;div&gt;(bool)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
+                <mxCell id="94" value="/init_done&lt;div&gt;(bool)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#000000;fontColor=#ffffff;strokeColor=#2D7600;" parent="1" vertex="1">
                     <mxGeometry x="600" y="490" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="101" value="Keine CUSTOM-MSG mehr nötig" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
-                    <mxGeometry x="730" y="480" width="230" height="80" as="geometry"/>
+                <mxCell id="101" value="Keine CUSTOM-MSG mehr nötig" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
+                    <mxGeometry x="960" y="480" width="230" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="107" value="Fürs Greifen&lt;div&gt;1. erst über den Punkt fahren&lt;/div&gt;&lt;div&gt;2. dann beim Greifprozess, nach unten fahren&amp;nbsp;&lt;/div&gt;&lt;div&gt;und in der geschwindigkeit des Teils (mit uebergeben) in x verfahren.&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
-                    <mxGeometry x="610" y="810" width="390" height="70" as="geometry"/>
+                <mxCell id="107" value="Fürs Greifen&lt;div&gt;1. erst über den Punkt fahren&lt;/div&gt;&lt;div&gt;2. dann beim Greifprozess, nach unten fahren&amp;nbsp;&lt;/div&gt;&lt;div&gt;und in der geschwindigkeit des Teils (mit uebergeben) in x verfahren.&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="810" y="810" width="390" height="70" as="geometry"/>
                 </mxCell>
-                <mxCell id="108" value="init_robo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
-                    <mxGeometry x="619.9999999999999" y="599.02" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="109" value="" style="shape=flexArrow;endArrow=classic;startArrow=classic;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="108">
-                    <mxGeometry width="100" height="100" relative="1" as="geometry">
-                        <mxPoint x="530" y="630" as="sourcePoint"/>
-                        <mxPoint x="655" y="550" as="targetPoint"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="111" value="Die MOtion sollte den gesamten INit machen.&lt;div&gt;Auch zur übergabe für den Offset.&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Bestenfalls beimhochfahren mit INfo an die main&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+                <mxCell id="111" value="Die MOtion sollte den gesamten INit machen.&lt;div&gt;Auch zur übergabe für den Offset.&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Bestenfalls beimhochfahren mit INfo an die main&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="670" y="910" width="280" height="70" as="geometry"/>
                 </mxCell>
-                <mxCell id="113" value="sub" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="1">
-                    <mxGeometry x="500.00352673887784" y="690.0027375824167" as="geometry">
-                        <mxPoint x="149" y="-12" as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="116" value="INIT_robo&amp;nbsp;&lt;div&gt;- Ausführung beim hochfahren der Motion&lt;/div&gt;&lt;div&gt;- Gibt bei erfolg nur info an MAINY weiter&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
-                    <mxGeometry x="810" y="599.02" width="240" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="120" value="sub" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="1">
+                <mxCell id="120" value="sub" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="1" vertex="1" connectable="0">
                     <mxGeometry x="534.2107221637143" y="580.5755199776288" as="geometry">
                         <mxPoint x="51" y="-134" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="121" value="pub" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="1">
+                <mxCell id="121" value="pub" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="1" vertex="1" connectable="0">
                     <mxGeometry x="520.5" y="474" as="geometry">
                         <mxPoint x="78" y="101" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="122" value="init.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#04cef6, #43ba43);fontColor=#ffffff;strokeColor=#005700;" vertex="1" parent="1">
+                    <mxGeometry x="630" y="599.02" width="130" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="125" value="" style="shape=flexArrow;endArrow=classic;startArrow=classic;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="122" target="42">
+                    <mxGeometry width="100" height="100" relative="1" as="geometry">
+                        <mxPoint x="420" y="639" as="sourcePoint"/>
+                        <mxPoint x="330" y="639" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
             </root>
