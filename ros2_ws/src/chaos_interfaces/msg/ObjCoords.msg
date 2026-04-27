@@ -1,2 +1,2 @@
-geometry_msgs/Pose2D Pose2D
+geometry_msgs/Pose2D pose2d
 int32 timestamp
