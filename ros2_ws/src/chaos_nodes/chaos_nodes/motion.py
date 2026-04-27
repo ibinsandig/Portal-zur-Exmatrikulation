@@ -41,8 +41,6 @@ class Motion(Node):
 
         #========================================================
 
-        self.current_pos = None
-
         self.publisher_cmd = self.create_publisher(RobotCmd, '/robot_command', 10)
         self.publisher_state = self.create_publisher(bool, '/goal_state', 10)
 
@@ -53,10 +51,19 @@ class Motion(Node):
         self.init_order = Init()    
         
         #========================================================
-
+        self.current_pos = None
         self.has_goal = False
         self.gripper_soll = False
+        
+        self.init_state = "init_start"
+        self.pos_x_offset = 0.0
+        self.pos_y_offset = 0.0
+        self.pos_z_offset = 0.0
 
+        #========================================================   
+
+
+        #========================================================
         self.get_logger().info("Motion Node gestartet...")
 
 #================================================================================================================
@@ -99,29 +106,53 @@ class Motion(Node):
         self.get_logger().info("========  Roboterdaten: ")
         self.get_logger().info(str(msg))
 
+#----------------Ab-hier-INIT-------------------------------------------------------
 
-        if self.has_goal == True: 
+        if self.init_state == "init_start":
+            accel_x, accel_y, accel_z = self.init_order.endpoint_accel_rise()
+            self.publisher_cmd(accel_x, accel_y, accel_z, False)
+            self.init_state == "accel_rise"
 
-            if not self.motion_order.should_is_comp():
-                accelofx, accelofy, accelofz = self.motion_order.wanted_accel()
+        elif self.init_state == "accel_rise":
+            accel_x, accel_y, accel_z = self.init_order.endpoint_accel_zero()
+            self.publisher_cmd(accel_x, accel_y, accel_z, False)
+            self.init_state == "accel_zero"
 
-                if (abs(accelofx) >= 0.1) or (abs(accelofy) >= 0.1) or (abs(accelofz) >= 0.1):
-                    self.get_logger().info("Berechnete Beschleunigung ist ueber 0.1!")
-                    # TODO: klammern weg. Hier soll beschleunigung eher begrenzt und weiter gegeben werden. Nicht einfach weggeschluckt. Werte würden ignoieriert und die Geschwindigkeit unverändert!
-                    return
+        elif self.init_state == "accel_zero":
+            endlagenerreicht = self.init_order.endablageerreicht()
+            if endlagenerreicht == True:
+                self.pos_x_offset, self.pos_y_offset, self.pos_z_offset = self.init_order.offset_calc()
+                #TODO: In der MAINY jetzt noch bei der init phase auf Default_POS fahren!
+                self.init_state == "init_done"
+            else: 
+                pass
+
+#----------------Bis-hier-INIT-------------------------------------------------------
+#----------------Ab-hier-Punkt-anfahren----------------------------------------------
+
+        elif self.init_state == "init_done": 
+            if self.has_goal == True: 
+
+                if not self.motion_order.should_is_comp():
+                    accelofx, accelofy, accelofz = self.motion_order.wanted_accel()
+
+                    if (abs(accelofx) >= 0.1) or (abs(accelofy) >= 0.1) or (abs(accelofz) >= 0.1):
+                        self.get_logger().info("Berechnete Beschleunigung ist ueber 0.1!")
+                        # TODO: klammern weg. Hier soll beschleunigung eher begrenzt und weiter gegeben werden. Nicht einfach weggeschluckt. Werte würden ignoieriert und die Geschwindigkeit unverändert!
+                        return
+                    
+                    else:
+                        self.robot_cmd.accel_x = accelofx
+                        self.robot_cmd.accel_y = accelofy
+                        self.robot_cmd.accel_z = accelofz
+                        self.robot_cmd.activate_gripper = self.gripper_soll     #TODO: Greifer-schließ logic muss überdacht werden - evt eigene Funktion
+                        self.publisher_cmd.publish(self.robot_cmd)
+                        self.get_logger().info("CB2: Neue Beschleunigung wurde übergeben")
+                        self.get_logger().info(str(self.robot_cmd))
                 
                 else:
-                    self.robot_cmd.accel_x = accelofx
-                    self.robot_cmd.accel_y = accelofy
-                    self.robot_cmd.accel_z = accelofz
-                    self.robot_cmd.activate_gripper = self.gripper_soll     #TODO: Greifer-schließ logic muss überdacht werden - evt eigene Funktion
-                    self.publisher_cmd.publish(self.robot_cmd)
-                    self.get_logger().info("CB2: Neue Beschleunigung wurde übergeben")
-                    self.get_logger().info(str(self.robot_cmd))
-            
-            else:
-                self.goal_state.job_finished = True
-                self.publisher_state.publish(self.goal_state)
+                    self.goal_state.job_finished = True
+                    self.publisher_state.publish(self.goal_state)
 
 #================================================================================================================
 

@@ -12,10 +12,15 @@
 
 * Fungiert erstmal komplett autark ohne MAIN-Statemachine 
 
-- Publish der Achsbeschleunigungen = "kleiner Wert"
-- Zeit abwarten/berechnen ob achswerte sich ändern
-- Publish der Achsbeschleunigungen = 0
-- Offset Wert berechnen
-- Offset Wert zu Motion-Block schicken (Muss noch integriert werden in move_logic)
-- (NUR TEST) Publish eines "GoalData" zum Anfahren der Default position (evt mit vorgegebener Geschwindigkeit --> Die Reglerlogic is noch maximal shaidy)
+- Beim start von Motion-Node: Init wird einmal durchgeführt
+- Dauerhafter Vergleich zwischen IST_SOLL_POS als "ENDposGOAL"
+- Publishen einer Beschleunigung (kurz ~0.005, dann 0.0)
+-(alternative: x,y,z jeweils 999 setzen)
+- Bei erreichen der "ENDposGOAL" werte für OFFSET Berechnen 
+- Offset weiter geben und init-beenden
+
+## optionen für anfang
+
+- timer im konstruktor
+- extra state machine mit dem ROBO POS 
 
