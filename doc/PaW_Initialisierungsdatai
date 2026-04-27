@@ -13,7 +13,7 @@
 * Fungiert erstmal komplett autark ohne MAIN-Statemachine 
 
 - Publish der Achsbeschleunigungen = "kleiner Wert"
-- Zeit abwarten
+- Zeit abwarten/berechnen ob achswerte sich ändern
 - Publish der Achsbeschleunigungen = 0
 - Offset Wert berechnen
 - Offset Wert zu Motion-Block schicken (Muss noch integriert werden in move_logic)

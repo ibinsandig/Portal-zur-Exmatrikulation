@@ -36,7 +36,7 @@ def ffw_controller(goal_pos, curr_pos, last_pos):
 
     restpos = goal_pos - curr_pos
     mcqueen = (curr_pos - last_pos) / delta_t
-    excel = kp * restpos - kd * mcqueen + ffw 
+    excel = kp * restpos - kd * mcqueen + ffw #nur +ffw macht keinen sinn
 
     return excel
 

@@ -61,8 +61,10 @@ class MotionOrder():
         return True
 
     
-    def should_is_comp(self):                                    
-        if abs(self.Xr_ist - self.Xr_soll) < th and abs(self.Yr_ist - self.Yr_soll) < th and abs(self.Zr_ist - self.Zr_soll) < th: 
+    def should_is_comp(self):                                
+        if (abs(self.Xr_ist - self.Xr_soll) < th 
+            and abs(self.Yr_ist - self.Yr_soll) < th 
+            and abs(self.Zr_ist - self.Zr_soll) < th): 
             self.logger.info("comparrer: Ist - Soll vergleich ist unter der Toleranz (< 0.2)")
             return True
         else: 

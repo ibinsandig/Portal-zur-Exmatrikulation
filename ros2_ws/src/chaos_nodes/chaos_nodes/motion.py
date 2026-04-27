@@ -1,17 +1,22 @@
 import rclpy
 from rclpy.node import Node
-
 from geometry_msgs.msg import Point32
+from std_msgs.msg import Bool
 
 from ro45_portalrobot_interfaces.msg import RobotCmd
 from ro45_portalrobot_interfaces.msg import RobotPos
+
 from motion_controller.move_logic import MotionOrder #Hier nochmal schauen ob nicht doch ros2_logic.move_logic....
+from motion_controller.init import Init
 
-# Bei Verbingungsproblemem mit des Microcontrollern: > sudo apt-get remove -y brltty (bereits passiert bei PaW)
+# Bei Verbingungsproblemem mit dem Microcontrollern: > sudo apt-get remove -y brltty (bereits passiert bei PaW)
 
+#================================================================================================================
 class Motion(Node):
     def __init__(self):
         super().__init__('Motion')
+
+        #========================================================
 
         self.sub_goal_coordinates = self.create_subscription(
             Point32,   
@@ -24,25 +29,37 @@ class Motion(Node):
             self.ist_pos_uebergabe,
             10)
         self.sub_goal_gripper = self.create_subscription(
-            bool,
+            Bool,
             '/goal_gripper',
             callbackIII,    #Name kommt, bei erstellung der Funktion
-            10
-        )
-        
+            10)
+        self.sub_init_run = self.create_subscription(
+            Bool,
+            '/init_run',
+            self.init_run,
+            10)
+
+        #========================================================
+
         self.current_pos = None
 
         self.publisher_cmd = self.create_publisher(RobotCmd, '/robot_command', 10)
         self.publisher_state = self.create_publisher(bool, '/goal_state', 10)
 
-        self.robot_cmd = RobotCmd()
+        #========================================================
 
+        self.robot_cmd = RobotCmd()
         self.motion_order = MotionOrder()
+        self.init_order = Init()    
+        
+        #========================================================
 
         self.has_goal = False
         self.gripper_soll = False
 
         self.get_logger().info("Motion Node gestartet...")
+
+#================================================================================================================
 
     def auftragseingang(self, msg):
         '''
@@ -53,7 +70,7 @@ class Motion(Node):
         Yr_soll = msg.y
         Zr_soll = msg.z
         self.gripper_soll = msg.grip
-        self.motion_order.getter_should_pos(Xr_soll, Yr_soll, Zr_soll)
+        self.motion_order.set_should_pos(Xr_soll, Yr_soll, Zr_soll)
 
         if self.motion_order.should_is_comp(): 
             self.robot_cmd.accel_x = 0.0
@@ -71,13 +88,14 @@ class Motion(Node):
             self.has_goal = True
             self.get_logger().info("CB1: Onetheway-flag ist True")
 
-
+#================================================================================================================
             
     def ist_pos_uebergabe(self, msg):       #TODO: HIER KOMMEN VERMUTLICH NUR INDIREKTE DATEN AN. Umrechnen oder glätten der Werte?
         Xr_ist = msg.pos_x
         Yr_ist = msg.pos_y
         Zr_ist = msg.pos_z
-        self.motion_order.getter_is_pos(Xr_ist, Yr_ist, Zr_ist)
+        self.motion_order.set_is_pos(Xr_ist, Yr_ist, Zr_ist)
+        self.init_order.set_rob_is_pos(Xr_ist, Yr_ist, Zr_ist)
         self.get_logger().info("========  Roboterdaten: ")
         self.get_logger().info(str(msg))
 
@@ -105,11 +123,20 @@ class Motion(Node):
                 self.goal_state.job_finished = True
                 self.publisher_state.publish(self.goal_state)
 
+#================================================================================================================
 
-#   def send_state(self, state):
-#       self.goal_state.job_finished = state
-#       self.publisher_state.publish(self.goal_state)
+    def init_run(self, msg):
+        if msg.data == True:
+        
+            init_accel_x, init_accel_y, init_accel_z  = self.init_order.endpunkt_anfahren()  #Ab hier wird die Flag "endlagenabfrage" =True gesetzt.
+            self.robot_cmd.accel_x = init_accel_x
+            self.robot_cmd.accel_y = init_accel_y
+            self.robot_cmd.accel_z = init_accel_z
+            self.publisher_cmd.publish(self.robot_cmd)
 
+            
+
+#================================================================================================================
 
 def main():
     rclpy.init(args=None)
