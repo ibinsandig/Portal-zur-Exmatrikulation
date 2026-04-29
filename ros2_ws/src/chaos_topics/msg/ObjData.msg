@@ -1,5 +1,5 @@
+int8 id
+int32 timestamp_grippoint_data
 int8 obj_type
 geometry_msgs/Point gripping_point
-
-#timestamp_arrival
-#speed object
+int8 obj_speed
