@@ -1,11 +1,26 @@
 import rclpy
 from rclpy.node import Node
-from chaos_interfaces.msg import ObjData 
-from planner.preprocessing import PlanPreprocessor
+from chaos_topics.msg import ObjType
+from chaos_topics.msg import FuturePosition
+from chaos_topics.msg import ObjData
+from planner.preprocessing import PostProcessor
 
 class Planner(Node):
     def __init__(self):
         super().__init__('planner')
+
+        self.sub_obj_type = self.create_subscription(
+            ObjType,
+            '/obj_type',
+            self.timer_callback,
+            10)
+        
+        self.sub_future_position = self.create_subscription(
+            FuturePosition,
+            '/future_position',
+            self.timer_callback_callback,
+            10
+        ) 
 
         self.pub_obj_data = self.create_publisher(ObjData, '/obj_data', 10)
         timer_time = 1/30   # sek

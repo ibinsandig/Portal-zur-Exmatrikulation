@@ -1,3 +1,3 @@
-class Classfier:
+class CoordinatesPrediction:
     def __init__(self):
         pass

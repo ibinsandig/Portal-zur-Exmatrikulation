@@ -1,15 +1,18 @@
 import rclpy
 from rclpy.node import Node
 import cv2 as cv
-from chaos_interfaces.msg import ObjData
+from chaos_topics.msg import ObjCoords
+from chaos_topics.msg import ObjFeatures
 from camera.preprocessing import ImagePreprocessor
+# from camera.coordtransformation import xxxxx
 
 class Camera(Node):
 
     def __init__(self):
         super().__init__('camera')
 
-        self.pub_obj_data = self.create_publisher(ObjData, '/obj_data', 10)
+        self.pub_obj_coords = self.create_publisher(ObjCoords, '/obj_coords', 10)
+        self.pub_obj_festures = self.create_publisher(ObjFeatures, '/obj_features', 10)
         timer_time = 1/30   # sek
 
         path_camera = 0     # PortalCam = /dev/video4

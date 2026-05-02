@@ -1,21 +1,22 @@
 import rclpy
 from rclpy.node import Node
-from chaos_interfaces.msg import ObjDataDeluxe
-from chaos_interfaces.msg import ObjData
+from chaos_topics.msg import ObjType
+from chaos_topics.msg import ObjFeatures
+from machine_learning.classify import Classifier
 
 class Machine_learning(Node):
     
     def __init__(self):
         super().__init__('machine_learning')
 
-        self.sub_obj_data = self.create_subscription(
-            ObjData,
-            '/obj_data',
+        self.sub_obj_features = self.create_subscription(
+            ObjFeatures,
+            '/obj_features',
             self.listener_callback,
             10)
-        self.sub_obj_data
+        self.sub_obj_features
         
-        self.pub_obj_data_deluxe = self.create_publisher(ObjDataDeluxe, '/obj_data_deluxe', 10)
+        self.pub_obj_type = self.create_publisher(ObjType, '/obj_type', 10)
 
         self.get_logger().info("Machine Learning Node gestartet...")
 
@@ -24,7 +25,7 @@ class Machine_learning(Node):
 
         pub_data_test = ObjDataDeluxe()
 
-        self.pub_obj_data_deluxe.publish(pub_data_test)
+        self.pub_obj_type.publish(pub_data_test)
 
 def main():
     rclpy.init(args=None)
