@@ -24,17 +24,7 @@ class CoordPred(Node):
         self.get_logger().info('CoordPred-Node gestartet')
 
     def timer_callback(self):
-        """Timer Callback - führt die Koordinatenprädiktionslogik aus"""
-        # Hier wird die Logik zum Prädizieren der Koordinaten basierend auf den empfangenen Daten implementiert
-        
-        # Beispiel: Generiere einen Dummy-Objektdaten-String
-        dummy_obj_data = ObjData()
-        dummy_obj_data.name = "dummy_object"
-        dummy_obj_data.x = 0.5
-        dummy_obj_data.y = 0.5
-        dummy_obj_data.z = 0.0
-        
-        self.pub_obj_data.publish(dummy_obj_data)
+        pass
 
 def main(args=None):
     rclpy.init(args=args)
