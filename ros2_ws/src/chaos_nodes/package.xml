@@ -14,7 +14,7 @@
 
 
 #Packageabhänigkeiten herstellen: 
-  <depend>ros2_logic</depend>
+#  <depend>ros2_logic</depend>
   <depend>geometry_msgs</depend>
 
 

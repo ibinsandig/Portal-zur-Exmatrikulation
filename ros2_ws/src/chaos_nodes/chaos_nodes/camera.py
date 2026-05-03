@@ -17,7 +17,11 @@ class Camera(Node):
 
         path_camera = 0     # PortalCam = /dev/video4
 
-        self.PrePro = ImagePreprocessor()
+        try:
+            self.PrePro = ImagePreprocessor()
+        except Exception as e:
+            self.get_logger().error(f'Fehler bei ImagePRepocessor: {str(e)}')
+            raise e            
 
         try:
             self.img = cv.VideoCapture(path_camera)
