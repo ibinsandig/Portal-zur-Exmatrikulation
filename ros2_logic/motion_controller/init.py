@@ -40,7 +40,7 @@ class Init():
         self.Yr_ist = Yr_ist
         self.Zr_ist = Zr_ist
         
-        if self.endlagenabfrage:        #TODO
+        if self.endlagenabfrage:        #TODO th besser bennen
             if ((abs(self.last_pos_x - self.Xr_ist) < th) 
                 and (abs(self.last_pos_y - self.Yr_ist) < th) 
                 and (abs(self.last_pos_z - self.Zr_ist) < th)):  

@@ -116,7 +116,7 @@ class Motion(Node):
             self.publisher_cmd(accel_x, accel_y, accel_z, False)
             self.init_state == "accel_rise"
 
-        elif self.init_state == "accel_rise":
+        elif self.init_state == "accel_rise": #Zu kurz beschleunigt TODO
             accel_x, accel_y, accel_z = self.init_order.endpoint_accel_zero()
             self.publisher_cmd(accel_x, accel_y, accel_z, False)
             self.init_state == "accel_zero"

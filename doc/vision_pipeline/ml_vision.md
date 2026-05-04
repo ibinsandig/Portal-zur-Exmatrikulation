@@ -12,7 +12,7 @@ Output:
 
         aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_250)  # oder z.B. DICT_4X4_50
         parameters = cv2.aruco.DetectorParameters()
-        detector = cv2.aruco.ArucoDetector(aruco_dict, parameters)
+        detector = cv2.aruco.ArucoDetector(aruco_dict)
 
         corners, ids, rejected = detector.detectMarkers(image)
 
