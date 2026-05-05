@@ -77,6 +77,6 @@ def send_it_accel(self,x,y,z,picky):
 # TODO 
 
 - Greifer Logic umsetzten [Prio: NIEDRIG]
-- PHYSISCH AUF Defaultpunkt fahren [PRIO: HIGH]
+- PHYSISCH AUF Defaultpunkt fahren [PRIO: HIGH] --> Done
 - Regler auslegen  [PRIO: EXORBITANT]
 

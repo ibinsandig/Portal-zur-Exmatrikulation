@@ -42,9 +42,11 @@ class Motion(Node):
         self.publisher_init = self.create_publisher(Bool, '/init_done', 10)
 
         #========================================================
-
-        self.motion_order = MotionOrder()
-        self.init_order = Init()    
+        
+        #        Default Position des Roboters nach der INIT: 
+        self.default_x_pos = 5
+        self.default_y_pos = -2
+        self.default_z_pos = 0   
         
         #========================================================
         self.current_pos = None
@@ -58,10 +60,8 @@ class Motion(Node):
 
         #========================================================   
             
-        #        Default Position des Roboters nach der INIT: 
-        self.default_x_pos = 5
-        self.default_y_pos = -2
-        self.default_z_pos = 0
+        self.motion_order = MotionOrder()
+        self.init_order = Init() 
 
         #========================================================
         self.get_logger().info("Motion Node gestartet...")
