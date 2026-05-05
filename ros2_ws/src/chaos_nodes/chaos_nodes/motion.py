@@ -44,9 +44,9 @@ class Motion(Node):
         #========================================================
         
         #        Default Position des Roboters nach der INIT: 
-        self.default_x_pos = 5
-        self.default_y_pos = -2
-        self.default_z_pos = 0   
+        self.default_x_pos = 5.0
+        self.default_y_pos = -2.0
+        self.default_z_pos = 0.0   
         
         #========================================================
         self.current_pos = None
@@ -76,7 +76,7 @@ class Motion(Node):
         Xr_soll = msg.x
         Yr_soll = msg.y
         Zr_soll = msg.z
-        self.gripper_soll = msg.grip
+        #self.gripper_soll logic hier umdenken mit eigenem topic
         self.motion_order.set_should_pos(Xr_soll, Yr_soll, Zr_soll)
 
         if self.motion_order.should_is_comp():
@@ -183,13 +183,14 @@ class Motion(Node):
                         return
                     
                     else:
-                        self.robot_cmd.accel_x = accelofx
-                        self.robot_cmd.accel_y = accelofy
-                        self.robot_cmd.accel_z = accelofz
-                        self.robot_cmd.activate_gripper = self.gripper_soll     #TODO: Greifer-schließ logic muss überdacht werden - evt eigene Funktion
-                        self.publisher_cmd.publish(self.robot_cmd)
-                        self.get_logger().info("CB2: Neue Beschleunigung wurde übergeben")
-                        self.get_logger().info(str(self.robot_cmd))
+                        robot_cmd = RobotCmd()
+                        robot_cmd.accel_x = accelofx
+                        robot_cmd.accel_y = accelofy
+                        robot_cmd.accel_z = accelofz
+                        robot_cmd.activate_gripper = self.gripper_soll     #TODO: Greifer-schließ logic muss überdacht werden - evt eigene Funktion
+                        self.publisher_cmd.publish(robot_cmd)
+                        self.get_logger().info("Ist_Pos_übergabe: Neue Beschleunigung wurde übergeben")
+                        self.get_logger().info(str(robot_cmd))
                 
                 else:
                     self.goal_state.job_finished = True

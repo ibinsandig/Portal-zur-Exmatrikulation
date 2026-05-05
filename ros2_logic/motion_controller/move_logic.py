@@ -30,8 +30,6 @@ class MotionOrder():
         self.logger = logging.getLogger("MotionOrder")
         logging.basicConfig(level=logging.INFO)
 
-        self.logger.info("MotionOrder aufgerufen!")
-
         self.Xr_ist = 0.0
         self.Yr_ist = 0.0
         self.Zr_ist = 0.0
@@ -64,10 +62,10 @@ class MotionOrder():
         if (abs(self.Xr_ist - self.Xr_soll) < th 
             and abs(self.Yr_ist - self.Yr_soll) < th 
             and abs(self.Zr_ist - self.Zr_soll) < th): 
-            self.logger.info("comparrer: Ist - Soll vergleich ist unter der Toleranz (< 0.2)")
+            self.logger.info(" [Motion]: Ist - Soll vergleich in Toleranz (< 0.2)")
             return True
         else: 
-            self.logger.info("comparrer: Ist-SOll vergleich hat keine Übereinstimmung festgestellt!")
+            self.logger.info(" [Motion]: Ist-soll-Vergleich - keine Übereinstimmung!")
             return False
         
     
@@ -80,6 +78,6 @@ class MotionOrder():
         accelofz = ffw_controller(self.Zr_soll, self.Zr_ist, self.last_pos_z)
         self.last_pos_z = self.Zr_ist
 
-        self.logger.info("wanted_accel: x,y,z beschleunigung sind berechnet worden")
+        self.logger.info(" [Motion]: wanted_accel: x,y,z beschleunigung sind berechnet worden")
 
         return accelofx, accelofy, accelofz
