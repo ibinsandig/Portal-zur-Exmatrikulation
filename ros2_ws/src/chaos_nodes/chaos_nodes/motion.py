@@ -1,4 +1,5 @@
 import rclpy
+
 from rclpy.node import Node
 from geometry_msgs.msg import Point32
 from std_msgs.msg import Bool
@@ -6,7 +7,7 @@ from std_msgs.msg import Bool
 from ro45_portalrobot_interfaces.msg import RobotCmd
 from ro45_portalrobot_interfaces.msg import RobotPos
 
-from motion_controller.move_logic import MotionOrder #Hier nochmal schauen ob nicht doch ros2_logic.move_logic....
+from motion_controller.move_logic import MotionOrder # Benötigt 'pip install -e .'
 from motion_controller.init import Init
 
 # Bei Verbingungsproblemem mit dem Microcontrollern: > sudo apt-get remove -y brltty (bereits passiert bei PaW)
@@ -42,7 +43,6 @@ class Motion(Node):
 
         #========================================================
 
-        self.robot_cmd = RobotCmd()
         self.motion_order = MotionOrder()
         self.init_order = Init()    
         
@@ -51,7 +51,7 @@ class Motion(Node):
         self.has_goal = False
         self.gripper_soll = False
         
-        self.init_state = "init_start"
+        self.init_state = "init_rise"
         self.pos_x_offset = 0.0
         self.pos_y_offset = 0.0
         self.pos_z_offset = 0.0
@@ -75,33 +75,40 @@ class Motion(Node):
         self.gripper_soll = msg.grip
         self.motion_order.set_should_pos(Xr_soll, Yr_soll, Zr_soll)
 
-        if self.motion_order.should_is_comp(): 
-            self.robot_cmd.accel_x = 0.0
-            self.robot_cmd.accel_y = 0.0
-            self.robot_cmd.accel_z = 0.0
-            self.robot_cmd.activate_gripper = self.gripper_soll
-            self.publisher_cmd.publish(self.robot_cmd)
+        if self.motion_order.should_is_comp():
+            robot_cmd = RobotCmd()
+            robot_cmd.accel_x = 0.0
+            robot_cmd.accel_y = 0.0
+            robot_cmd.accel_z = 0.0
+            robot_cmd.activate_gripper = self.gripper_soll
+            self.publisher_cmd.publish(robot_cmd)
 
             self.goal_state.job_finished = True
             self.publisher_state.publish(self.goal_state)  
             #self.has_goal = True ? TODO:
-            self.get_logger().info("CB1: Robter ist bereits am Ziel ")        
+            self.get_logger().info("auftragseingang: Roboter ist an bereits an Zielpos! x-0=0, y-0=0, z-0=0")        
             
         else:
             self.has_goal = True
-            self.get_logger().info("CB1: Onetheway-flag ist True")
+            self.get_logger().info("auftragseingang: has_goal Flag ist gesetzt")
 
 #================================================================================================================
             
     def ist_pos_uebergabe(self, msg):       #TODO: HIER KOMMEN VERMUTLICH NUR INDIREKTE DATEN AN. Umrechnen oder glätten der Werte?
+        '''
+        Empfängt die IST_Position des Portalroboters. 
+        Erfüllt die Funktion für die Initialsisierung und den normalen ablauf.
+
+        '''
+
 
         if self.init_state == "init_done":
-            Xr_ist_offset = msg.pos_x + self.pos_x_offset
-            Yr_ist_offset = msg.pos_y + self.pos_y_offset
-            Zr_ist_offset = msg.pos_z + self.pos_z_offset
+            Xr_ist_offset = msg.pos_x - self.pos_x_offset
+            Yr_ist_offset = -(msg.pos_y - self.pos_y_offset) #TODO Testen ob beim verfahren vom NULLPUNKT die Zahl kleiner wird!
+            Zr_ist_offset = msg.pos_z - self.pos_z_offset
             self.motion_order.set_is_pos(Xr_ist_offset, Yr_ist_offset, Zr_ist_offset)
-            self.get_logger().info("======== RoboKoordinaten+Offset: ")
-            self.get_logger().info(str(msg))
+            self.get_logger().info("============== RoboKoordinaten+Offset: ==============")
+            self.get_logger().info(f"Xr+offset: {Xr_ist_offset}, Yr+offset: {Yr_ist_offset}, Zr+offset: {Zr_ist_offset}")
 
 #----------------Ab-hier-INIT-------------------------------------------------------
 
@@ -111,22 +118,40 @@ class Motion(Node):
             Zr_ist_raw = msg.pos_z
             self.init_order.set_init_is_pos(Xr_ist_raw, Yr_ist_raw, Zr_ist_raw)
 
-        if self.init_state == "init_start":
+        if self.init_state == "init_rise":
             accel_x, accel_y, accel_z = self.init_order.endpoint_accel_rise()
-            self.publisher_cmd(accel_x, accel_y, accel_z, False)
-            self.init_state == "accel_rise"
+            robot_cmd = RobotCmd()
+            robot_cmd.accel_x = accel_x
+            robot_cmd.accel_y = accel_y
+            robot_cmd.accel_z = accel_z
+            robot_cmd.activate_gripper = self.gripper_soll
+            self.publisher_cmd.publish(robot_cmd)
 
-        elif self.init_state == "accel_rise": #Zu kurz beschleunigt TODO
+            if self.init_order.counter_start() == True:
+                self.init_state = "init_zero"
+                self.get_logger().info("state -> init_zero")
+
+        elif self.init_state == "init_zero": 
             accel_x, accel_y, accel_z = self.init_order.endpoint_accel_zero()
-            self.publisher_cmd(accel_x, accel_y, accel_z, False)
-            self.init_state == "accel_zero"
+            robot_cmd = RobotCmd()
+            robot_cmd.accel_x = accel_x
+            robot_cmd.accel_y = accel_y
+            robot_cmd.accel_z = accel_z
+            robot_cmd.activate_gripper = self.gripper_soll
+            self.publisher_cmd.publish(robot_cmd)
 
-        elif self.init_state == "accel_zero":
+            if self.init_order.counter_rise() == True:
+                self.init_state = "init_endpoint"
+                self.get_logger().info("state -> init_endpoint")
+
+        elif self.init_state == "init_endpoint":
+            self.init_order.endablagenabfrage()
             endlagenerreicht = self.init_order.endablageerreicht()
             if endlagenerreicht == True:
                 self.pos_x_offset, self.pos_y_offset, self.pos_z_offset = self.init_order.offset_calc()
-                #TODO: In der MAINY jetzt noch bei der init phase auf Default_POS fahren!
-                self.init_state == "init_done"
+                #TODO: In der MAINY jetzt noch bei der init phase auf Default_POS fahren! Oder Doch hier?
+                self.init_state = "init_done"
+                self.get_logger().info("state -> init_done")
                 msg = Bool()
                 msg.data = True
                 self.publisher_init.publish(msg) 
@@ -160,7 +185,10 @@ class Motion(Node):
                     self.goal_state.job_finished = True
                     self.publisher_state.publish(self.goal_state)
 
-            
+#================================================================================================================
+
+def callbackIII():
+    pass
 
 #================================================================================================================
 

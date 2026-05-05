@@ -74,5 +74,9 @@ def send_it_accel(self,x,y,z,picky):
     self.publisher_cmd.publish(msg)
 ```
 
-## Nächste 
+# TODO 
+
+- Greifer Logic umsetzten [Prio: NIEDRIG]
+- PHYSISCH AUF Defaultpunkt fahren [PRIO: HIGH]
+- Regler auslegen  [PRIO: EXORBITANT]
 

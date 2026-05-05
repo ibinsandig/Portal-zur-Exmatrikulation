@@ -8,7 +8,7 @@ init_accel_y = 0.005
 init_accel_z = -0.005   #Bei Z-Positiv nach unten! KEIN ANSCHLAG!
 
     #Threshhold für Bewegungsabfrage:
-th = 0.001
+th_endlagenabfrage = 0.001
 
 #========================================================
 class Init():
@@ -27,6 +27,9 @@ class Init():
         self.last_pos_x = 0.0
         self.last_pos_y = 0.0
         self.last_pos_z = 0.0
+
+        self.count_start = 0
+        self.count_rise = 0
     #========================================================
 
         self.counter = 0
@@ -40,11 +43,12 @@ class Init():
         self.Yr_ist = Yr_ist
         self.Zr_ist = Zr_ist
         
-        if self.endlagenabfrage:        #TODO th besser bennen
-            if ((abs(self.last_pos_x - self.Xr_ist) < th) 
-                and (abs(self.last_pos_y - self.Yr_ist) < th) 
-                and (abs(self.last_pos_z - self.Zr_ist) < th)):  
+        if self.endlagenabfrage == True:       
+            if ((abs(self.last_pos_x - self.Xr_ist) < th_endlagenabfrage) 
+                and (abs(self.last_pos_y - self.Yr_ist) < th_endlagenabfrage) 
+                and (abs(self.last_pos_z - self.Zr_ist) < th_endlagenabfrage)):  
                 self.counter += 1
+                self.logger.info(f" [INIT] Counter_endlagenabfrage: {self.counter}")
                 if self.counter >= 5:
                     self.endlageerreicht = True
                     self.endlagenabfrage = False
@@ -58,18 +62,22 @@ class Init():
         accel_x = init_accel_x
         accel_y = init_accel_y
         accel_z = init_accel_z
-        self.logger.info(f"Kurze Beschleunigung Richtung Endpunkt. Beschleunigung = {init_accel_x}")
-        self.endlagenabfrage = True #TODO: FÜr den fall das das Anfahren zu lange dauert und die Endlagenabfrage ungewollt 3 mal hoch zählt --> Variable erst in accel_zero auf TRUE setzen!
+        self.logger.info(f" [INIT] endpoint_accel_rise: {init_accel_x}, {init_accel_y}, {init_accel_z}")
         return accel_x, accel_y, accel_z
 
     def endpoint_accel_zero(self):
         accel_x = 0.0
         accel_y = 0.0
         accel_z = 0.0
-        self.logger.info(f"Beschleunigung Richtung Endpunkte beenden. Beschleunigung = {init_accel_x}")
+        self.logger.info(f" [INIT] endpoint_accel_zero: {accel_x}, {accel_y}, {accel_z}")
         #self.endlagenabfrage = True 
         return accel_x, accel_y, accel_z
     
+#================================================================================================================
+
+    def endablagenabfrage(self):
+        self.endlagenabfrage = True
+
 #================================================================================================================
 
     def endablageerreicht(self):
@@ -83,3 +91,19 @@ class Init():
         pos_z_offset = self.Zr_ist
         return pos_x_offset, pos_y_offset, pos_z_offset
 
+#================================================================================================================
+    def counter_start(self):
+        self.count_start += 1
+        if self.count_start >= 10:
+            self.logger.info(" [INIT] counter_start: ist bei 10 angekommen")
+            return True
+        return False
+    
+    def counter_rise(self):
+        self.count_rise += 1
+        if self.count_rise >= 10:
+            self.logger.info(" [INIT] counter_rise: ist bei 10 angekommen")
+            return True
+        return False
+
+#================================================================================================================

@@ -49,14 +49,14 @@ class MotionOrder():
         self.Xr_ist = Xr_ist
         self.Yr_ist = Yr_ist
         self.Zr_ist = Zr_ist
-        self.logger.info("setter_is_pos: Ist-Pos wurd in Logic geladen und mit Offset addiert!")
+        self.logger.info("[Motion]: MotionOrder: set_is_pos")
         return True
 
     def set_should_pos(self, Xr_soll, Yr_soll, Zr_soll): 
         self.Xr_soll = Xr_soll
         self.Yr_soll = Yr_soll
         self.Zr_soll = Zr_soll
-        self.logger.info("setter_should_pos: Soll Pos ist in Logic geladen!")
+        self.logger.info("[Motion]: MotionOrder: setter_should_pos")
         return True
 
     
