@@ -57,7 +57,11 @@ class Motion(Node):
         self.pos_z_offset = 0.0
 
         #========================================================   
-
+            
+        #        Default Position des Roboters nach der INIT: 
+        self.default_x_pos = 5
+        self.default_y_pos = -2
+        self.default_z_pos = 0
 
         #========================================================
         self.get_logger().info("Motion Node gestartet...")
@@ -149,7 +153,13 @@ class Motion(Node):
             endlagenerreicht = self.init_order.endablageerreicht()
             if endlagenerreicht == True:
                 self.pos_x_offset, self.pos_y_offset, self.pos_z_offset = self.init_order.offset_calc()
-                #TODO: In der MAINY jetzt noch bei der init phase auf Default_POS fahren! Oder Doch hier?
+                
+                default = Point32()
+                default.x = self.default_x_pos
+                default.y = self.default_y_pos
+                default.z = self.default_z_pos
+                self.auftragseingang(default)
+                
                 self.init_state = "init_done"
                 self.get_logger().info("state -> init_done")
                 msg = Bool()
