@@ -28,7 +28,7 @@ class Camera(Node):
         except Exception as e:
             self.get_logger().error(f'Fehler beim Initialiesieren der Kamera: {str(e)}')
             raise e
-        
+
         self.img.set(cv.CAP_PROP_BUFFERSIZE, 1)
         self.data = self.create_timer(timer_time, self.timer_callback)
         self.get_logger().info('Camera-Node gestartet')
@@ -54,6 +54,10 @@ class Camera(Node):
                 
         except Exception as e:
             self.get_logger().error(f'Fehler bei der Bildverarbeitung: {str(e)}')
+
+    def read_camera(self):
+        _ , frame = self.img.read()
+        self.img_rotated = cv.rotate(frame, 2)
 
 def main(args=None):
     rclpy.init(args=args)
