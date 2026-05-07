@@ -27,4 +27,3 @@ Output:
     - Bild in Graufarben konvertieren
     - Segmentierungssteps durchführen
     - Wichtige Attribute extrahieren fürs ml
-    - 
