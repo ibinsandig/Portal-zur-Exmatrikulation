@@ -1,8 +1,9 @@
 
+
 #****************** Faktor einstellung **************************************************************************************
 
-delta_t = 0.05      
-ffw = 0.0          
+delta_t = 0.1    
+gravity_offset = 0.0          
 kp = 0.1           
 kd = 0.0         #erhöhen für abbremsen               
 
@@ -32,16 +33,52 @@ TODO: Optimierungsbedarf:
 -> raw_velocity = (curr_pos - last_pos) / delta_s mcqueen = (alpha * last_velocity) + ((1.0 - alpha) * raw_velocity) # Tiefpassfilter
 '''
 
-def ffw_controller(goal_pos, curr_pos, last_pos):
+
+class Controller():
+    def __init__(self):
+        self.delta_t = delta_t 
+        self.gravity_offset = gravity_offset
+        self.kp = kp
+        self.kd = kd
+
+
+
+def controller_x_axes(self, goal_pos, curr_pos, last_pos):
 
     restpos = goal_pos - curr_pos
-    mcqueen = (curr_pos - last_pos) / delta_t
-    excel = kp * restpos - kd * mcqueen + ffw #nur +ffw macht keinen sinn
+
+    mcqueen = (curr_pos - last_pos) / self.delta_t
+
+    excel = self.kp * restpos - self.kd * mcqueen
 
     return excel
 
 
-# TODO: Hier nochmal nachVOrlesung. FFW macht keinen Sinn. Teile des Reglers funktionieren. Gesamt aber nicht. 
+
+def controller_y_axes(self, goal_pos, curr_pos, last_pos):
+    
+    restpos = goal_pos - curr_pos
+
+    mcqueen = (curr_pos - last_pos) / self.delta_t
+
+    excel = self.kp * restpos - self.kd * mcqueen
+
+    return excel
+
+
+
+def controller_z_axes(self, goal_pos, curr_pos, last_pos):
+
+    restpos = goal_pos - curr_pos
+
+    mcqueen = (curr_pos - last_pos) / self.delta_t
+
+    excel = self.kp * restpos - self.kd * mcqueen + self.gravity_offset
+
+    return excel
+
+
+# TODO: 
 
 '''
 Alternative:

@@ -1,11 +1,11 @@
-from motion_controller.feedforward import ffw_controller #Bei problemen hier nur "from .feedforward import ffw_controller" schreiben
+from motion_controller.feedforward import Controller
 import logging
 
 #=============================================================
 
 # Soll ist Vergleich Schwellwert: 
 
-th = 0.2
+th_move_logic= 0.2
 
 #=============================================================
 
@@ -42,6 +42,8 @@ class MotionOrder():
         self.last_pos_y = 0.0
         self.last_pos_z = 0.0
 
+        self.controller = Controller()
+
     
     def set_is_pos(self, Xr_ist, Yr_ist, Zr_ist):    
         self.Xr_ist = Xr_ist
@@ -59,9 +61,9 @@ class MotionOrder():
 
     
     def should_is_comp(self):                                
-        if (abs(self.Xr_ist - self.Xr_soll) < th 
-            and abs(self.Yr_ist - self.Yr_soll) < th 
-            and abs(self.Zr_ist - self.Zr_soll) < th): 
+        if (abs(self.Xr_ist - self.Xr_soll) < th_move_logic
+            and abs(self.Yr_ist - self.Yr_soll) < th_move_logic 
+            and abs(self.Zr_ist - self.Zr_soll) < th_move_logic): 
             self.logger.info(" [Motion]: Ist - Soll vergleich in Toleranz (< 0.2)")
             return True
         else: 
@@ -71,11 +73,11 @@ class MotionOrder():
     
     def wanted_accel(self):
     
-        accelofx = ffw_controller(self.Xr_soll, self.Xr_ist, self.last_pos_x)
+        accelofx = self.controller.controller_x_axes(self.Xr_soll, self.Xr_ist, self.last_pos_x)
         self.last_pos_x = self.Xr_ist             
-        accelofy = ffw_controller(self.Yr_soll, self.Yr_ist, self.last_pos_y)
+        accelofy = self.controller.controller_y_axes(self.Yr_soll, self.Yr_ist, self.last_pos_y)
         self.last_pos_y = self.Yr_ist
-        accelofz = ffw_controller(self.Zr_soll, self.Zr_ist, self.last_pos_z)
+        accelofz = self.controller.controller_z_axes(self.Zr_soll, self.Zr_ist, self.last_pos_z)
         self.last_pos_z = self.Zr_ist
 
         self.logger.info(" [Motion]: wanted_accel: x,y,z beschleunigung sind berechnet worden")
