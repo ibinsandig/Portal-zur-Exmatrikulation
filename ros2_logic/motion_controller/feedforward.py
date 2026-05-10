@@ -1,11 +1,10 @@
 
 
 #****************** Faktor einstellung **************************************************************************************
-
-delta_t = 0.1    
+   
 gravity_offset = 0.0          
-kp = 0.1           
-kd = 0.0         #erhöhen für abbremsen               
+kp = 0.1                #power = mit vollgas losfahren
+kd = 0.0                #dämfen = abbremsen bei näherkommen des Ziels            
 
 #****************** Regler berechnung ***************************************************************************************
 
@@ -36,18 +35,17 @@ TODO: Optimierungsbedarf:
 
 class Controller():
     def __init__(self):
-        self.delta_t = delta_t 
         self.gravity_offset = gravity_offset
         self.kp = kp
         self.kd = kd
 
 
 
-def controller_x_axes(self, goal_pos, curr_pos, last_pos):
+def controller_x_axes(self, goal_pos, curr_pos, last_pos, delta_t):
 
     restpos = goal_pos - curr_pos
 
-    mcqueen = (curr_pos - last_pos) / self.delta_t
+    mcqueen = (curr_pos - last_pos) / delta_t
 
     excel = self.kp * restpos - self.kd * mcqueen
 
@@ -55,11 +53,11 @@ def controller_x_axes(self, goal_pos, curr_pos, last_pos):
 
 
 
-def controller_y_axes(self, goal_pos, curr_pos, last_pos):
+def controller_y_axes(self, goal_pos, curr_pos, last_pos, delta_t):
     
     restpos = goal_pos - curr_pos
 
-    mcqueen = (curr_pos - last_pos) / self.delta_t
+    mcqueen = (curr_pos - last_pos) / delta_t
 
     excel = self.kp * restpos - self.kd * mcqueen
 
@@ -67,18 +65,17 @@ def controller_y_axes(self, goal_pos, curr_pos, last_pos):
 
 
 
-def controller_z_axes(self, goal_pos, curr_pos, last_pos):
+def controller_z_axes(self, goal_pos, curr_pos, last_pos, delta_t):
 
     restpos = goal_pos - curr_pos
 
-    mcqueen = (curr_pos - last_pos) / self.delta_t
+    mcqueen = (curr_pos - last_pos) / delta_t
 
     excel = self.kp * restpos - self.kd * mcqueen + self.gravity_offset
 
     return excel
 
 
-# TODO: 
 
 '''
 Alternative:

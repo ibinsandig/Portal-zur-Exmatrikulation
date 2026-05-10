@@ -1,5 +1,6 @@
 from motion_controller.feedforward import Controller
 import logging
+import time
 
 #=============================================================
 
@@ -42,6 +43,10 @@ class MotionOrder():
         self.last_pos_y = 0.0
         self.last_pos_z = 0.0
 
+        self.time_stamp = None
+        self.last_time_stamp = None
+        self.time_step = 0.1
+
         self.controller = Controller()
 
     
@@ -50,6 +55,7 @@ class MotionOrder():
         self.Yr_ist = Yr_ist
         self.Zr_ist = Zr_ist
         self.logger.info("[Motion]: MotionOrder: set_is_pos")
+        self.time_step_calc()
         return True
 
     def set_should_pos(self, Xr_soll, Yr_soll, Zr_soll): 
@@ -69,15 +75,29 @@ class MotionOrder():
         else: 
             self.logger.info(" [Motion]: Ist-soll-Vergleich - keine Übereinstimmung!")
             return False
+    
+    def time_step_calc(self):
+        self.time_stamp = time.time()
         
+        if self.last_time_stamp == None:
+            self.time_step = 0.1
+            self.last_time_stamp = self.time_stamp
+            return True
+        
+        else:
+            self.time_step = abs(self.time_stamp - self.last_time_stamp)
+            self.last_time_stamp = self.time_stamp
+            return True
+    
+
     
     def wanted_accel(self):
     
-        accelofx = self.controller.controller_x_axes(self.Xr_soll, self.Xr_ist, self.last_pos_x)
+        accelofx = self.controller.controller_x_axes(self.Xr_soll, self.Xr_ist, self.last_pos_x, self.time_step)
         self.last_pos_x = self.Xr_ist             
-        accelofy = self.controller.controller_y_axes(self.Yr_soll, self.Yr_ist, self.last_pos_y)
+        accelofy = self.controller.controller_y_axes(self.Yr_soll, self.Yr_ist, self.last_pos_y, self.time_step)
         self.last_pos_y = self.Yr_ist
-        accelofz = self.controller.controller_z_axes(self.Zr_soll, self.Zr_ist, self.last_pos_z)
+        accelofz = self.controller.controller_z_axes(self.Zr_soll, self.Zr_ist, self.last_pos_z, self.time_step)
         self.last_pos_z = self.Zr_ist
 
         self.logger.info(" [Motion]: wanted_accel: x,y,z beschleunigung sind berechnet worden")
