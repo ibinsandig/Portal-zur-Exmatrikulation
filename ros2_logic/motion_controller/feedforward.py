@@ -41,39 +41,39 @@ class Controller():
 
 
 
-def controller_x_axes(self, goal_pos, curr_pos, last_pos, delta_t):
+    def controller_x_axes(self, goal_pos, curr_pos, last_pos, delta_t):
 
-    restpos = goal_pos - curr_pos
+        restpos = goal_pos - curr_pos
 
-    mcqueen = (curr_pos - last_pos) / delta_t
+        mcqueen = (curr_pos - last_pos) / delta_t
 
-    excel = self.kp * restpos - self.kd * mcqueen
+        excel = self.kp * restpos - self.kd * mcqueen
 
-    return excel
-
-
-
-def controller_y_axes(self, goal_pos, curr_pos, last_pos, delta_t):
-    
-    restpos = goal_pos - curr_pos
-
-    mcqueen = (curr_pos - last_pos) / delta_t
-
-    excel = self.kp * restpos - self.kd * mcqueen
-
-    return excel
+        return excel
 
 
 
-def controller_z_axes(self, goal_pos, curr_pos, last_pos, delta_t):
+    def controller_y_axes(self, goal_pos, curr_pos, last_pos, delta_t):
+        
+        restpos = goal_pos - curr_pos
 
-    restpos = goal_pos - curr_pos
+        mcqueen = (curr_pos - last_pos) / delta_t
 
-    mcqueen = (curr_pos - last_pos) / delta_t
+        excel = self.kp * restpos - self.kd * mcqueen
 
-    excel = self.kp * restpos - self.kd * mcqueen + self.gravity_offset
+        return excel
 
-    return excel
+
+
+    def controller_z_axes(self, goal_pos, curr_pos, last_pos, delta_t):
+
+        restpos = goal_pos - curr_pos
+
+        mcqueen = (curr_pos - last_pos) / delta_t
+
+        excel = self.kp * restpos - self.kd * mcqueen + self.gravity_offset
+
+        return excel
 
 
 

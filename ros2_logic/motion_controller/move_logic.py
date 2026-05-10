@@ -78,7 +78,7 @@ class MotionOrder():
     
     def time_step_calc(self):
         self.time_stamp = time.time()
-        
+
         if self.last_time_stamp == None:
             self.time_step = 0.1
             self.last_time_stamp = self.time_stamp
@@ -100,6 +100,6 @@ class MotionOrder():
         accelofz = self.controller.controller_z_axes(self.Zr_soll, self.Zr_ist, self.last_pos_z, self.time_step)
         self.last_pos_z = self.Zr_ist
 
-        self.logger.info(" [Motion]: wanted_accel: x,y,z beschleunigung sind berechnet worden")
+        self.logger.info(f" [Motion]: wanted_accel: x,y,z berechnet {accelofx, accelofy, accelofz }")
 
         return accelofx, accelofy, accelofz
