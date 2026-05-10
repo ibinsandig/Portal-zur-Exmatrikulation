@@ -186,27 +186,31 @@ class Motion(Node):
 
                     if (accelofx) >= 0.1:
                         self.accel_x_over = 0.05
-                        self.get_logger().info("Berechnete Beschleunigung ist ueber 0.1!")
+                        self.get_logger().info("accel_x > 0.1!")
                     elif (accelofx <= -0.1):
                         self.accel_x_over = -0.05
+                        self.get_logger().info("accel_x < -0.1!")
                     else: 
                         self.accel_x_over = accelofx
 
                     if (accelofy) >= 0.1:
                         self.accel_y_over = 0.05
-                        self.get_logger().info("Berechnete Beschleunigung ist ueber 0.1!")
+                        self.get_logger().info("accel_y > 0.1!")
                     elif (accelofy <= -0.1):
                         self.accel_y_over = -0.05
+                        self.get_logger().info("accel_y < -0.1!")
                     else: 
                         self.accel_y_over = accelofy
 
                     if (accelofz) >= 0.1:
                         self.accel_z_over = 0.05
-                        self.get_logger().info("Berechnete Beschleunigung ist ueber 0.1!")
+                        self.get_logger().info("accel_z > 0.1!")
                     elif (accelofz <= -0.1):
                         self.accel_z_over = -0.05
+                        self.get_logger().info("accel_z < -0.1!")
                     else: 
                         self.accel_z_over = accelofz
+
 
                     robot_cmd = RobotCmd()
                     robot_cmd.accel_x = self.accel_x_over
@@ -214,7 +218,7 @@ class Motion(Node):
                     robot_cmd.accel_z = self.accel_z_over
                     robot_cmd.activate_gripper = self.gripper_soll     #TODO: Greifer-schließ logic muss überdacht werden - evt eigene Funktion
                     self.publisher_cmd.publish(robot_cmd)
-                    self.get_logger().info("Ist_Pos_übergabe: Neue Beschleunigung wurde übergeben")
+                    self.get_logger().info("Ist_Pos_übergabe: accelx,y,z übergeben")
                     self.get_logger().info(str(robot_cmd))
                     return True
 
