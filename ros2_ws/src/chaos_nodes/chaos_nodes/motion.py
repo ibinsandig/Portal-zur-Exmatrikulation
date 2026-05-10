@@ -65,9 +65,9 @@ class Motion(Node):
 
         #========================================================
 
-        self.accel_x_over = None
-        self.accel_y_over = None
-        self.accel_z_over = None
+        self.accel_x_over = 0.05
+        self.accel_y_over = 0.05
+        self.accel_z_over = 0.05
     
 
         #========================================================
@@ -184,43 +184,41 @@ class Motion(Node):
                 if not self.motion_order.should_is_comp():
                     accelofx, accelofy, accelofz = self.motion_order.wanted_accel()
 
-                    if (abs(accelofx) >= 0.1) or (abs(accelofy) >= 0.1) or (abs(accelofz) >= 0.1):
+                    if (accelofx) >= 0.1:
+                        self.accel_x_over = 0.05
                         self.get_logger().info("Berechnete Beschleunigung ist ueber 0.1!")
+                    elif (accelofx <= -0.1):
+                        self.accel_x_over = -0.05
+                    else: 
+                        self.accel_x_over = accelofx
 
-                        if (accelofx) >= 0.1:
-                            self.accel_x_over = 0.05
-                        elif (accelofx <= -0.1):
-                            self.accel_x_over = -0.05
+                    if (accelofy) >= 0.1:
+                        self.accel_y_over = 0.05
+                        self.get_logger().info("Berechnete Beschleunigung ist ueber 0.1!")
+                    elif (accelofy <= -0.1):
+                        self.accel_y_over = -0.05
+                    else: 
+                        self.accel_y_over = accelofy
 
-                        if (accelofy) >= 0.1:
-                            self.accel_y_over = 0.05
-                        elif (accelofy <= -0.1):
-                            self.accel_y_over = -0.05
+                    if (accelofz) >= 0.1:
+                        self.accel_z_over = 0.05
+                        self.get_logger().info("Berechnete Beschleunigung ist ueber 0.1!")
+                    elif (accelofz <= -0.1):
+                        self.accel_z_over = -0.05
+                    else: 
+                        self.accel_z_over = accelofz
 
-                        if (accelofz) >= 0.1:
-                            self.accel_z_over = 0.05
-                        elif (accelofz <= -0.1):
-                            self.accel_z_over = -0.05
+                    robot_cmd = RobotCmd()
+                    robot_cmd.accel_x = self.accel_x_over
+                    robot_cmd.accel_y = self.accel_y_over
+                    robot_cmd.accel_z = self.accel_z_over
+                    robot_cmd.activate_gripper = self.gripper_soll     #TODO: Greifer-schließ logic muss überdacht werden - evt eigene Funktion
+                    self.publisher_cmd.publish(robot_cmd)
+                    self.get_logger().info("Ist_Pos_übergabe: Neue Beschleunigung wurde übergeben")
+                    self.get_logger().info(str(robot_cmd))
+                    return True
 
-                        robot_cmd = RobotCmd()
-                        robot_cmd.accel_x = self.accel_x_over
-                        robot_cmd.accel_y = self.accel_y_over
-                        robot_cmd.accel_z = self.accel_z_over
-                        robot_cmd.activate_gripper = self.gripper_soll     #TODO: Greifer-schließ logic muss überdacht werden - evt eigene Funktion
-                        self.publisher_cmd.publish(robot_cmd)
 
-                        return True
-                    
-                    else:
-                        robot_cmd = RobotCmd()
-                        robot_cmd.accel_x = accelofx
-                        robot_cmd.accel_y = accelofy
-                        robot_cmd.accel_z = accelofz
-                        robot_cmd.activate_gripper = self.gripper_soll     #TODO: Greifer-schließ logic muss überdacht werden - evt eigene Funktion
-                        self.publisher_cmd.publish(robot_cmd)
-                        self.get_logger().info("Ist_Pos_übergabe: Neue Beschleunigung wurde übergeben")
-                        self.get_logger().info(str(robot_cmd))
-                
                 else:
                     self.goal_state.job_finished = True
                     self.publisher_state.publish(self.goal_state)
