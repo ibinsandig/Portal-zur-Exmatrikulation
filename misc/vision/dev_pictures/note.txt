@@ -1,0 +1,4 @@
+upper_left: 290,337         border: 262, 339        
+upper_right: 591,333        border: 620, 334
+lower_left: 657, 1636       border: 279, 1643
+lower_right: 314, 1642      border: 691, 1635
