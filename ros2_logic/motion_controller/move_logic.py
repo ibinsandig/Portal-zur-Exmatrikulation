@@ -6,7 +6,7 @@ import time
 
 # Soll ist Vergleich Schwellwert: 
 
-th_move_logic= 0.2
+th_move_logic= 0.005
 
 #=============================================================
 
@@ -70,7 +70,7 @@ class MotionOrder():
         if (abs(self.Xr_ist - self.Xr_soll) < th_move_logic
             and abs(self.Yr_ist - self.Yr_soll) < th_move_logic 
             and abs(self.Zr_ist - self.Zr_soll) < th_move_logic): 
-            self.logger.info(" [Motion]: Ist - Soll vergleich in Toleranz (< 0.2)")
+            self.logger.info(f" [Motion]: Ist - Soll vergleich in Toleranz {th_move_logic}")
             return True
         else: 
             self.logger.info(" [Motion]: Ist-soll-Vergleich - keine Übereinstimmung!")

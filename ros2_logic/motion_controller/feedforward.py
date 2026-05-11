@@ -2,9 +2,9 @@
 
 #****************** Faktor einstellung **************************************************************************************
    
-#gravity_offset = 0.0   Kann rausgelassen werden, weil das in diesem Setup nicht nötig ist.         
-kp = 0.1                #power = mit vollgas losfahren
-kd = 0.0                #dämfen = abbremsen bei näherkommen des Ziels            
+#gravity_offset = 0.0          
+kp = 0.05                #power = mit vollgas losfahren
+kd = 0.1                #dämfen = abbremsen bei näherkommen des Ziels            
 
 #****************** Regler berechnung ***************************************************************************************
 
@@ -35,6 +35,7 @@ TODO: Optimierungsbedarf:
 
 class Controller():
     def __init__(self):
+        #self.gravity_offset = gravity_offset
         #self.gravity_offset = gravity_offset
         self.kp = kp
         self.kd = kd
@@ -72,7 +73,7 @@ class Controller():
 
         mcqueen = (curr_pos - last_pos) / delta_t
 
-        excel = self.kp * restpos - self.kd * mcqueen + self.gravity_offset
+        excel = self.kp * restpos - self.kd * mcqueen
 
         return excel
 
