@@ -36,10 +36,12 @@ TODO: Optimierungsbedarf:
 class Controller():
     def __init__(self):
         #self.gravity_offset = gravity_offset
+        #self.gravity_offset = gravity_offset
         self.kp = kp
         self.kd = kd
 
-
+# eher eine Funktion als 3 - also hier eher 3 mal instanzieren als 3 einzelne funktionen aufrufen.
+# Die self.Variablen sollten HIER und nicht in Move_logic sein.
 
     def controller_x_axes(self, goal_pos, curr_pos, last_pos, delta_t):
 

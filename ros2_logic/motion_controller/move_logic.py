@@ -94,7 +94,7 @@ class MotionOrder():
     def wanted_accel(self):
     
         accelofx = self.controller.controller_x_axes(self.Xr_soll, self.Xr_ist, self.last_pos_x, self.time_step)
-        self.last_pos_x = self.Xr_ist             
+        self.last_pos_x = self.Xr_ist    # kommt in den regler (genau wie 99 und 101)         
         accelofy = self.controller.controller_y_axes(self.Yr_soll, self.Yr_ist, self.last_pos_y, self.time_step)
         self.last_pos_y = self.Yr_ist
         accelofz = self.controller.controller_z_axes(self.Zr_soll, self.Zr_ist, self.last_pos_z, self.time_step)
