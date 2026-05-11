@@ -8,7 +8,7 @@ init_accel_y = 0.005
 init_accel_z = -0.005   #Bei Z-Positiv nach unten! KEIN ANSCHLAG!
 
     #Threshhold für Bewegungsabfrage:
-th_endlagenabfrage = 0.001
+th_endlagenabfrage = 0.0001
 
 #========================================================
 class Init():
@@ -49,7 +49,7 @@ class Init():
                 and (abs(self.last_pos_z - self.Zr_ist) < th_endlagenabfrage)):  
                 self.counter += 1
                 self.logger.info(f" [INIT] Counter_endlagenabfrage: {self.counter}")
-                if self.counter >= 5:
+                if self.counter >= 20:
                     self.endlageerreicht = True
                     self.endlagenabfrage = False
 
@@ -101,7 +101,7 @@ class Init():
     
     def counter_rise(self):
         self.count_rise += 1
-        if self.count_rise >= 50:
+        if self.count_rise >= 30:
             self.logger.info(" [INIT] counter_rise: ist bei 10 angekommen")
             return True
         return False

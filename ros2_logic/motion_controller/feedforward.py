@@ -3,8 +3,8 @@
 #****************** Faktor einstellung **************************************************************************************
    
 #gravity_offset = 0.0          
-kp = 0.05                #power = mit vollgas losfahren
-kd = 0.1                #dämfen = abbremsen bei näherkommen des Ziels            
+kp = 0.8                #power = mit vollgas losfahren
+kd = 1                #dämfen = abbremsen bei näherkommen des Ziels            
 
 #****************** Regler berechnung ***************************************************************************************
 
@@ -33,51 +33,83 @@ TODO: Optimierungsbedarf:
 '''
 
 
+# class ControllerNe():
+#     def __init__(self):
+#         #self.gravity_offset = gravity_offset
+#         #self.gravity_offset = gravity_offset
+#         self.kp = kp
+#         self.kd = kd
+#         self.last_x_e = 0.0
+#         self.last_y_e = 0.0
+#         self.last_z_e = 0.0 
+#         self.first_x = True
+#         self.first_y = True
+#         self.first_z = True
+
+# # eher eine Funktion als 3 - also hier eher 3 mal instanzieren als 3 einzelne funktionen aufrufen.
+# # Die self.Variablen sollten HIER und nicht in Move_logic sein.
+
+#     def controller_x_axes(self, goal_pos, curr_pos, last_pos, delta_t):
+
+#         restpos = goal_pos - curr_pos
+
+#         if self.first_x:
+#             mcqueen = 0.0
+#             self.first_x = False
+#         else:
+#             mcqueen = (restpos - self.last_x_e) / delta_t
+
+#         self.last_x_e = restpos
+
+#         excel = self.kp * restpos - self.kd * mcqueen
+
+#         return excel
+
+
+
+#     def controller_y_axes(self, goal_pos, curr_pos, last_pos, delta_t):
+        
+#         restpos = goal_pos - curr_pos
+
+#         mcqueen = (curr_pos - last_pos) / delta_t
+
+#         excel = self.kp * restpos - self.kd * mcqueen
+
+#         return excel
+
+
+
+#     def controller_z_axes(self, goal_pos, curr_pos, last_pos, delta_t):
+
+#         restpos = goal_pos - curr_pos
+
+#         mcqueen = (curr_pos - last_pos) / delta_t
+
+#         excel = self.kp * restpos - self.kd * mcqueen
+
+#         return excel
+
 class Controller():
-    def __init__(self):
-        #self.gravity_offset = gravity_offset
-        #self.gravity_offset = gravity_offset
+    def __init__(self, kp, kd):
+        self.last_error = 0.0
+        self.first = True
         self.kp = kp
         self.kd = kd
 
-# eher eine Funktion als 3 - also hier eher 3 mal instanzieren als 3 einzelne funktionen aufrufen.
-# Die self.Variablen sollten HIER und nicht in Move_logic sein.
-
-    def controller_x_axes(self, goal_pos, curr_pos, last_pos, delta_t):
-
+    def compute(self, goal_pos, curr_pos, delta_t):
         restpos = goal_pos - curr_pos
 
-        mcqueen = (curr_pos - last_pos) / delta_t
+        if self.first:
+            mcqueen = 0.0
+            self.first = False
+        else:
+            mcqueen = (restpos - self.last_error) / delta_t
+
+        self.last_error = restpos
 
         excel = self.kp * restpos - self.kd * mcqueen
 
         return excel
-
-
-
-    def controller_y_axes(self, goal_pos, curr_pos, last_pos, delta_t):
-        
-        restpos = goal_pos - curr_pos
-
-        mcqueen = (curr_pos - last_pos) / delta_t
-
-        excel = self.kp * restpos - self.kd * mcqueen
-
-        return excel
-
-
-
-    def controller_z_axes(self, goal_pos, curr_pos, last_pos, delta_t):
-
-        restpos = goal_pos - curr_pos
-
-        mcqueen = (curr_pos - last_pos) / delta_t
-
-        excel = self.kp * restpos - self.kd * mcqueen
-
-        return excel
-
-
 
 '''
 Alternative:

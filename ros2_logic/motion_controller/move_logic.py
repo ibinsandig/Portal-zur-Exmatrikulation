@@ -6,7 +6,7 @@ import time
 
 # Soll ist Vergleich Schwellwert: 
 
-th_move_logic= 0.005
+th_move_logic= 0.0001
 
 #=============================================================
 
@@ -47,7 +47,10 @@ class MotionOrder():
         self.last_time_stamp = None
         self.time_step = 0.1
 
-        self.controller = Controller()
+        self.controller_x = Controller(0.5,0.5)
+        self.controller_y = Controller(0.5,0.5)
+        self.controller_z = Controller(0.5,0.5)
+
 
     
     def set_is_pos(self, Xr_ist, Yr_ist, Zr_ist):    
@@ -93,12 +96,10 @@ class MotionOrder():
     
     def wanted_accel(self):
     
-        accelofx = self.controller.controller_x_axes(self.Xr_soll, self.Xr_ist, self.last_pos_x, self.time_step)
-        self.last_pos_x = self.Xr_ist    # kommt in den regler (genau wie 99 und 101)         
-        accelofy = self.controller.controller_y_axes(self.Yr_soll, self.Yr_ist, self.last_pos_y, self.time_step)
-        self.last_pos_y = self.Yr_ist
-        accelofz = self.controller.controller_z_axes(self.Zr_soll, self.Zr_ist, self.last_pos_z, self.time_step)
-        self.last_pos_z = self.Zr_ist
+        accelofx = self.controller_x.compute(self.Xr_soll, self.Xr_ist, self.time_step)         
+        accelofy = self.controller_y.compute(self.Yr_soll, self.Yr_ist, self.time_step)
+        accelofz = self.controller_z.compute(self.Zr_soll, self.Zr_ist, self.time_step)
+        
 
         self.logger.info(f" [Motion]: wanted_accel: x,y,z berechnet {accelofx, accelofy, accelofz }")
 

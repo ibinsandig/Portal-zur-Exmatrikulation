@@ -44,9 +44,9 @@ class Motion(Node):
         #========================================================
         
         #        Default Position des Roboters nach der INIT: 
-        self.default_x_pos = 0.1
-        self.default_y_pos = -0.09
-        self.default_z_pos = 0.05   
+        self.default_x_pos = 0.010
+        self.default_y_pos = -0.010
+        self.default_z_pos = 0.000
         
         #========================================================
         self.current_pos = None
@@ -74,6 +74,8 @@ class Motion(Node):
         #========================================================
         self.get_logger().info("Motion Node gestartet...")
 
+        self.last_is_pos = None
+
 #================================================================================================================
 
     def auftragseingang(self, msg):
@@ -98,7 +100,7 @@ class Motion(Node):
             self.goal_state = Bool()
             self.goal_state.data = True
             self.publisher_state.publish(self.goal_state)  
-            #self.has_goal = True ? TODO:
+            self.has_goal = False
             self.get_logger().info("auftragseingang: Roboter ist an Zielpos! x-0=0, y-0=0, z-0=0")        
             
         else:
@@ -114,7 +116,6 @@ class Motion(Node):
 
         '''
 
-
         if self.init_state == "init_done":
             Xr_ist_offset = msg.pos_x - self.pos_x_offset
             Yr_ist_offset = -(msg.pos_y - self.pos_y_offset) #TODO Testen ob beim verfahren vom NULLPUNKT die Zahl kleiner wird!
@@ -122,6 +123,7 @@ class Motion(Node):
             self.motion_order.set_is_pos(Xr_ist_offset, Yr_ist_offset, Zr_ist_offset)
             self.get_logger().info("============== RoboKoordinaten+Offset: ==============")
             self.get_logger().info(f"Xr+offset: {Xr_ist_offset}, Yr+offset: {Yr_ist_offset}, Zr+offset: {Zr_ist_offset}")
+            self.get_logger().info(f"Xr: {Xr_ist_offset}, Yr: {Yr_ist_offset}, Zr: {Zr_ist_offset}")
 
 #----------------Ab-hier-INIT-------------------------------------------------------
 
@@ -130,6 +132,7 @@ class Motion(Node):
             Yr_ist_raw = msg.pos_y
             Zr_ist_raw = msg.pos_z
             self.init_order.set_init_is_pos(Xr_ist_raw, Yr_ist_raw, Zr_ist_raw)
+            self.get_logger().info(f"Bot-Rohwerte: {Xr_ist_raw}, {Yr_ist_raw}, {Zr_ist_raw}")
 
         if self.init_state == "init_rise":
             accel_x, accel_y, accel_z = self.init_order.endpoint_accel_rise()
@@ -163,12 +166,12 @@ class Motion(Node):
             if endlagenerreicht == True:
                 self.pos_x_offset, self.pos_y_offset, self.pos_z_offset = self.init_order.offset_calc()
                 
-                default = Point32()
-                default.x = self.default_x_pos
-                default.y = self.default_y_pos
-                default.z = self.default_z_pos
-                self.auftragseingang(default)
-                self.get_logger().info(str(default))
+                # default = Point32()
+                # default.x = self.default_x_pos
+                # default.y = self.default_y_pos
+                # default.z = self.default_z_pos
+                # self.auftragseingang(default)
+                # self.get_logger().info(f"Endlagen-Auftragseingang: {self.default_x_pos}, {self.default_y_pos}, {self.default_z_pos}")
                 
                 
                 self.init_state = "init_done"
@@ -189,28 +192,28 @@ class Motion(Node):
                     accelofx, accelofy, accelofz = self.motion_order.wanted_accel()
 
                     if (accelofx) >= 0.1:
-                        self.accel_x_over = 0.05
+                        self.accel_x_over = 0.1
                         self.get_logger().info("accel_x > 0.1!")
                     elif (accelofx <= -0.1):
-                        self.accel_x_over = -0.05
+                        self.accel_x_over = -0.1
                         self.get_logger().info("accel_x < -0.1!")
                     else: 
                         self.accel_x_over = accelofx
 
                     if (accelofy) >= 0.1:
-                        self.accel_y_over = 0.05
+                        self.accel_y_over = 0.1
                         self.get_logger().info("accel_y > 0.1!")
                     elif (accelofy <= -0.1):
-                        self.accel_y_over = -0.05
+                        self.accel_y_over = -0.1
                         self.get_logger().info("accel_y < -0.1!")
                     else: 
                         self.accel_y_over = accelofy
 
                     if (accelofz) >= 0.1:
-                        self.accel_z_over = 0.05
+                        self.accel_z_over = 0.1
                         self.get_logger().info("accel_z > 0.1!")
                     elif (accelofz <= -0.1):
-                        self.accel_z_over = -0.05
+                        self.accel_z_over = -0.1
                         self.get_logger().info("accel_z < -0.1!")
                     else: 
                         self.accel_z_over = accelofz
@@ -222,14 +225,15 @@ class Motion(Node):
                     robot_cmd.accel_z = self.accel_z_over
                     robot_cmd.activate_gripper = self.gripper_soll     #TODO: Greifer-schließ logic muss überdacht werden - evt eigene Funktion
                     self.publisher_cmd.publish(robot_cmd)
-                    self.get_logger().info("Ist_Pos_übergabe: accelx,y,z übergeben")
-                    self.get_logger().info(str(robot_cmd))
+                    self.get_logger().info("Ist_Pos_übergabe: accel x,y,z übergeben")
+                    #self.get_logger().info(str(robot_cmd))
                     return True
 
 
                 else:
-                    self.goal_state.job_finished = True
-                    self.publisher_state.publish(self.goal_state)
+                    goal_state = Bool()
+                    goal_state.data = True
+                    self.publisher_state.publish(goal_state)
 
 #================================================================================================================
 
