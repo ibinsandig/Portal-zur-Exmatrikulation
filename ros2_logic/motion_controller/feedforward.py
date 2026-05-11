@@ -3,8 +3,8 @@
 #****************** Faktor einstellung **************************************************************************************
    
 #gravity_offset = 0.0          
-kp = 0.8                #power = mit vollgas losfahren
-kd = 1                #dämfen = abbremsen bei näherkommen des Ziels            
+#kp = 0.8                #power = mit vollgas losfahren
+#kd = 1                #dämfen = abbremsen bei näherkommen des Ziels            
 
 #****************** Regler berechnung ***************************************************************************************
 
@@ -97,17 +97,17 @@ class Controller():
         self.kd = kd
 
     def compute(self, goal_pos, curr_pos, delta_t):
-        restpos = goal_pos - curr_pos
+        error = goal_pos - curr_pos
 
         if self.first:
             mcqueen = 0.0
             self.first = False
         else:
-            mcqueen = (restpos - self.last_error) / delta_t
+            mcqueen = (error - self.last_error) / delta_t
 
-        self.last_error = restpos
+        self.last_error = error
 
-        excel = self.kp * restpos - self.kd * mcqueen
+        excel = self.kp * error + self.kd * mcqueen
 
         return excel
 

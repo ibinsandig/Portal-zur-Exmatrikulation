@@ -47,9 +47,9 @@ class MotionOrder():
         self.last_time_stamp = None
         self.time_step = 0.1
 
-        self.controller_x = Controller(0.5,0.5)
-        self.controller_y = Controller(0.5,0.5)
-        self.controller_z = Controller(0.5,0.5)
+        self.controller_x = Controller(0.2,0.5)
+        self.controller_y = Controller(0.2,0.5)
+        self.controller_z = Controller(0.2,0.5)
 
 
     
