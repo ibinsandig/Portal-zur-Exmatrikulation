@@ -2,7 +2,7 @@
 
 #****************** Faktor einstellung **************************************************************************************
    
-gravity_offset = 0.0          
+#gravity_offset = 0.0   Kann rausgelassen werden, weil das in diesem Setup nicht nötig ist.         
 kp = 0.1                #power = mit vollgas losfahren
 kd = 0.0                #dämfen = abbremsen bei näherkommen des Ziels            
 
@@ -35,11 +35,12 @@ TODO: Optimierungsbedarf:
 
 class Controller():
     def __init__(self):
-        self.gravity_offset = gravity_offset
+        #self.gravity_offset = gravity_offset
         self.kp = kp
         self.kd = kd
 
-
+# eher eine Funktion als 3 - also hier eher 3 mal instanzieren als 3 einzelne funktionen aufrufen.
+# Die self.Variablen sollten HIER und nicht in Move_logic sein.
 
     def controller_x_axes(self, goal_pos, curr_pos, last_pos, delta_t):
 
