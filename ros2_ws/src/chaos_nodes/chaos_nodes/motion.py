@@ -168,6 +168,8 @@ class Motion(Node):
                 default.y = self.default_y_pos
                 default.z = self.default_z_pos
                 self.auftragseingang(default)
+                self.get_logger().info(str(default))
+                
                 
                 self.init_state = "init_done"
                 self.get_logger().info("state -> init_done")
