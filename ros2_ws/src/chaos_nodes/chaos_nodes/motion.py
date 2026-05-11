@@ -44,14 +44,15 @@ class Motion(Node):
         #========================================================
         
         #        Default Position des Roboters nach der INIT: 
-        self.default_x_pos = 5.0
-        self.default_y_pos = -2.0
-        self.default_z_pos = 0.0   
+        self.default_x_pos = 0.1
+        self.default_y_pos = -0.09
+        self.default_z_pos = 0.05   
         
         #========================================================
         self.current_pos = None
         self.has_goal = False
         self.gripper_soll = False
+        self.goal_state = False
         
         self.init_state = "init_rise"
         self.pos_x_offset = 0.0
@@ -94,10 +95,11 @@ class Motion(Node):
             robot_cmd.activate_gripper = self.gripper_soll
             self.publisher_cmd.publish(robot_cmd)
 
-            self.goal_state.job_finished = True
+            self.goal_state = Bool()
+            self.goal_state.data = True
             self.publisher_state.publish(self.goal_state)  
             #self.has_goal = True ? TODO:
-            self.get_logger().info("auftragseingang: Roboter ist an bereits an Zielpos! x-0=0, y-0=0, z-0=0")        
+            self.get_logger().info("auftragseingang: Roboter ist an Zielpos! x-0=0, y-0=0, z-0=0")        
             
         else:
             self.has_goal = True

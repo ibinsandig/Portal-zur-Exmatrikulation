@@ -94,14 +94,14 @@ class Init():
 #================================================================================================================
     def counter_start(self):
         self.count_start += 1
-        if self.count_start >= 10:
+        if self.count_start >= 100:
             self.logger.info(" [INIT] counter_start: ist bei 10 angekommen")
             return True
         return False
     
     def counter_rise(self):
         self.count_rise += 1
-        if self.count_rise >= 10:
+        if self.count_rise >= 100:
             self.logger.info(" [INIT] counter_rise: ist bei 10 angekommen")
             return True
         return False
