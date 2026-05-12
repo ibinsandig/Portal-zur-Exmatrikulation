@@ -20,7 +20,7 @@ class Camera(Node):
         try:
             self.PrePro = ImagePreprocessor()
         except Exception as e:
-            self.get_logger().error(f'Fehler bei ImagePRepocessor: {str(e)}')
+            self.get_logger().error(f'Fehler bei ImagePrepocessor: {str(e)}')
             raise e            
 
         try:
@@ -58,6 +58,7 @@ class Camera(Node):
     def read_camera(self):
         _ , frame = self.img.read()
         self.img_rotated = cv.rotate(frame, 2)
+        return self.img_rotated
 
 def main(args=None):
     rclpy.init(args=args)
