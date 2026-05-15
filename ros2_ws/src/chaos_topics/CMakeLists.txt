@@ -27,8 +27,6 @@ find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/FuturePosition.msg"
-  "msg/GoalCoordinates.msg"
-  "msg/GoalState.msg"
   "msg/ObjCoords.msg"
   "msg/ObjData.msg"
   "msg/ObjFeatures.msg"

@@ -109,7 +109,7 @@ class Motion(Node):
 
 #================================================================================================================
             
-    def ist_pos_uebergabe(self, msg):       #TODO: HIER KOMMEN VERMUTLICH NUR INDIREKTE DATEN AN. Umrechnen oder glätten der Werte?
+    def ist_pos_uebergabe(self, msg):       
         '''
         Empfängt die IST_Position des Portalroboters. 
         Erfüllt die Funktion für die Initialsisierung und den normalen ablauf.
@@ -118,7 +118,7 @@ class Motion(Node):
 
         if self.init_state == "init_done":
             Xr_ist_offset = msg.pos_x - self.pos_x_offset
-            Yr_ist_offset = -(msg.pos_y - self.pos_y_offset) #TODO Testen ob beim verfahren vom NULLPUNKT die Zahl kleiner wird!
+            Yr_ist_offset = -(msg.pos_y - self.pos_y_offset) 
             Zr_ist_offset = msg.pos_z - self.pos_z_offset
             self.motion_order.set_is_pos(Xr_ist_offset, Yr_ist_offset, Zr_ist_offset)
             self.get_logger().info("============== RoboKoordinaten+Offset: ==============")
@@ -172,8 +172,8 @@ class Motion(Node):
                 # default.z = self.default_z_pos
                 # self.auftragseingang(default)
                 # self.get_logger().info(f"Endlagen-Auftragseingang: {self.default_x_pos}, {self.default_y_pos}, {self.default_z_pos}")
-                
-                
+                #TODO: Anfahren des Default Punktes hat nicht direkt geklappt. Für den Meilenstein, ist er erstmal aber irrelevant. Das Problem hier könnte das Aufrufen der Callback-Funktion aus dieser hier sein. Evt noch mal testen.
+
                 self.init_state = "init_done"
                 self.get_logger().info("state -> init_done")
                 msg = Bool()
