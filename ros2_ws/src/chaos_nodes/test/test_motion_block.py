@@ -4,8 +4,15 @@ import time
 from rclpy.node import Node
 from std_msgs.msg import Bool
 from geometry_msgs.msg import Point32
+ 
+#=======================================================================
+#               Einstellung des TestPunktes
 
+pos_x = 0.10
+pos_y = 0.10
+pos_z = 0.04
 
+#=======================================================================
 
 
 
@@ -27,9 +34,9 @@ def test_motion_block():
     goal_pub = node.create_publisher(Point32, '/goal_data', 10)
 
     msg = Point32()
-    msg.x = 0.10
-    msg.y = -0.10
-    msg.z = 0.040
+    msg.x = pos_x
+    msg.y = pos_y
+    msg.z = pos_z
     goal_pub.publish(msg)
 
 
