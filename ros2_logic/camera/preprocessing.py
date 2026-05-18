@@ -10,8 +10,8 @@ class ImagePreprocessor:
         parameters = aruco.DetectorParameters()
         self.detector = aruco.ArucoDetector(aruco_dict, parameters)
 
-        self.H = None
-        self.H_inv = None
+        self.H = None       # world to pixel
+        self.H_inv = None   # pixel to world
         self.H_warp = None
 
         self.pts2_proportional = None
@@ -23,7 +23,7 @@ class ImagePreprocessor:
         corners, ids, rejected = self.detector.detectMarkers(init_frame)
         dstPoints = np.concatenate(corners, axis=1)
         self.H, _ = cv.findHomography(srcPoints=config_vm.SRC_COORDS, dstPoints=dstPoints, method=0)
-        self.H_inv = np.linalg.inv(H)
+        self.H_inv = np.linalg.inv(self.H)
 
         pts1 = np.float32([
             corners[1][0][0],  # oben-links
@@ -34,7 +34,7 @@ class ImagePreprocessor:
 
         pts1_reshaped = pts1.astype(np.float32).reshape(-1, 1, 2)
 
-        world_frame = cv.perspectiveTransform(pts1_reshaped, self.H_inv)
+        world_coords = cv.perspectiveTransform(pts1_reshaped, self.H_inv)
 
         offset_raw = np.array([
             [-6, +6],  # mm - X offset -6, Y offset -6
@@ -44,8 +44,8 @@ class ImagePreprocessor:
         ], dtype=np.float32)
 
         offset = offset_raw.reshape(-1, 1, 2)
-        pts1_2 = world_frame + offset
-        pts1_2_pixel = cv.perspectiveTransform(pts1_2, H)
+        pts1_2 = world_coords + offset
+        pts1_2_pixel = cv.perspectiveTransform(pts1_2, self.H)
 
         min_x = np.min(pts1_2_pixel[:, 0, 0])
         max_x = np.max(pts1_2_pixel[:, 0, 0])
