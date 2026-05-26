@@ -1,53 +1,26 @@
 # Regler auslegung zum Ansteuern der Motoren des Portalroboters
 
-## Planung und erste gedankengänge
-
-**PDF-Regler**
-
-Der PDF (Pseudo-Derivative-Feedback) Regler eignet sich gut für beschleunigungsbasierte Ansteuerung. 
-Er verlagert die Differenzelemnt (D-Anteil) in die Rückführung und reagiert so extrem stabil auf abrupte Beschleunigungsänderungen, ohne das das System stark zum Schwingen gebracht wird. 
-
-Es handelt sich um ein PT2-Strecvkenmodell (weil wir zweimal integrieren: Beschleunigung -> Geschwindigkeit -> Position)
-
-*Warum PDF statt PID bei Beschleunigungsvorgaben?*
-
-Sanfteres Anlaufen: Da der P-Anteil nicht direkt auf den Sollwertsprung wirkt (kein "Proportional Kick"), folgt der Motor der Beschleunigungsrampe wesentlich sauberer.
-Störunterdrückung: Er verhält sich extrem robust gegenüber Lastwechseln, was bei Robotern (z. B. wechselnder Untergrund oder Gewicht) entscheidend ist.
-
-
 ## Zweite Version (auch Programmtechnisch umgesetzt)
 
-Regler als Funktion in eigener Datei ausgelagert:
+Regler als Funktion in eigener Klasse ausgelagert:
 
-**def ffw_controller()**
+**class Controller()**
 
-**Mitzugebende Variablen:**
+Mitzugebende Variablen beim Instanzieren:
+- kp (Wert für den Proportional Anteil)
+- kd (Wert für den derivativ-Anteil)
+
+**def compute()**
+
+Mitzugebende Variablen beim Instanzieren:
 - goal_pos (zielposition, von mainy)
 - curr_pos (aktuelle Position, von /RoboPos)
-- last_pos (vorherige Position, bei start einfach 0)
+- delta_t (Zeitabstand zwischen den letzten Zwei Positionen)
 
 **Zurückgegebener Wert:**
-- beschleunigung des jeweiligen Motors
+- beschleunigung
 
 
-FeedForWard Regler 
-```
-def ffw_controller(goal_pos, curr_pos, last_pos):
-    restpos = goal_pos - curr_pos
-    excel = kp * restpos - kd * mcqueen + ffw 
-    return excel 
-```
-Zur Faktor Einstellung: 
-```
-delta_t = None      
-ffw = None          
-kp = None           
-kd = None 
-
-```
-
----
----
 
 #  Motion Node
 
@@ -76,7 +49,10 @@ def send_it_accel(self,x,y,z,picky):
 
 # TODO 
 
-- Greifer Logic umsetzten [Prio: NIEDRIG]
-- PHYSISCH AUF Defaultpunkt fahren [PRIO: HIGH] --> Done
-- Regler auslegen  [PRIO: EXORBITANT]
+- Greifer Logic umsetzten [Prio: TEST]
+
+- PHYSISCH AUF Defaultpunkt fahren [Prio: Mid]
+- Regler optimieren [Prio: Mid]
+- Problem mit Y_Achse verfahren beheben [Prio: HIGH]
+- DocStrings im Code erweitern [Prio: Low]
 

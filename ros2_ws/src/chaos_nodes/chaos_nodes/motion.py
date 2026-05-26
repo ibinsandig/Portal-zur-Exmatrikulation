@@ -16,7 +16,7 @@ from motion_controller.init import Init
 class Motion(Node):
     def __init__(self):
         super().__init__('Motion')
-
+   
         #========================================================
 
         self.sub_goal_coordinates = self.create_subscription(
@@ -32,13 +32,13 @@ class Motion(Node):
         self.sub_goal_gripper = self.create_subscription(
             Bool,
             '/goal_gripper',
-            callbackIII,    #Name kommt, bei erstellung der Funktion
+            self.gripper,    
             10)
 
         #========================================================
 
         self.publisher_cmd = self.create_publisher(RobotCmd, '/robot_command', 10)
-        self.publisher_state = self.create_publisher(Bool, '/goal_state', 10)
+        self.publisher_goal_reached = self.create_publisher(Bool, '/goal_reached', 10)
         self.publisher_init = self.create_publisher(Bool, '/init_done', 10)
 
         #========================================================
@@ -52,7 +52,7 @@ class Motion(Node):
         self.current_pos = None
         self.has_goal = False
         self.gripper_soll = False
-        self.goal_state = False
+        self.goal_reached = False
         
         self.init_state = "init_rise"
         self.pos_x_offset = 0.0
@@ -80,13 +80,24 @@ class Motion(Node):
 
     def auftragseingang(self, msg):
         '''
-        Bringt den Auftragseingang. Setzt bei noch nicht erreichtem Ziel ein Flag. 
-        Gripper FLAG für AN/AUS wird in Instanzvariable gesetzt. 
+        Callback-Funktion für eingehende Bewegungsaufträge via ROS-Topic /goal_coordinates.
+
+        Empfängt eine Zielpositon (x, y, z) aus einer ROS-Nachricht und übergibt
+        diese an die Funktion set_should_pos des motion_order-Objekts. Anschließend wird geprüft, ob der Roboter
+        bereits an der Zielposition steht.
+
+        Falls Soll- und Ist-Position übereinstimmen:
+            - Sendet einen RobotCmd mit Beschleunigung 0 und aktuellem Greiferzustand
+            - Veröffentlicht goal_reached = True auf dem entsprechenden Topic
+            - Setzt has_goal auf False (kein aktiver Auftrag mehr)
+
+        Falls Soll- und Ist-Position NICHT übereinstimmen:
+            - Setzt has_goal auf True (Auftrag ist aktiv, Roboter muss noch fahren)
+
         '''
         Xr_soll = msg.x
         Yr_soll = msg.y
         Zr_soll = msg.z
-        #self.gripper_soll logic hier umdenken mit eigenem topic
         self.motion_order.set_should_pos(Xr_soll, Yr_soll, Zr_soll)
 
         if self.motion_order.should_is_comp():
@@ -97,9 +108,9 @@ class Motion(Node):
             robot_cmd.activate_gripper = self.gripper_soll
             self.publisher_cmd.publish(robot_cmd)
 
-            self.goal_state = Bool()
-            self.goal_state.data = True
-            self.publisher_state.publish(self.goal_state)  
+            self.goal_reached = Bool()
+            self.goal_reached.data = True
+            self.publisher_goal_reached.publish(self.goal_reached)  
             self.has_goal = False
             self.get_logger().info("auftragseingang: Roboter ist an Zielpos! x-0=0, y-0=0, z-0=0")        
             
@@ -111,9 +122,22 @@ class Motion(Node):
             
     def ist_pos_uebergabe(self, msg):       
         '''
-        Empfängt die IST_Position des Portalroboters. 
-        Erfüllt die Funktion für die Initialsisierung und den normalen ablauf.
+        Callback für eingehende Ist-Positionen des Portalroboters via ROS-Topic /RobotPos.
+        Taktgeber des gesamten Motion-Blocks auf Basis der eingehenden Portalroboter-Positionsdaten.
 
+        Verarbeitet die Rohposition je nach aktuellem Initialisierungszustand (init_state):
+
+        Einmalige Initialisierungsphasen:
+            - 'init_rise'     : Beschleunigt Achsen für die Fahrt zur Startposition 
+            - 'init_zero'     : Setzt Beschleunigung wieder auf 0
+            - 'init_endpoint' : Erkennt Endlage und berechnet Offsets → wechselt zu 'init_done'
+
+        Hauptloop:
+            - 'init_done'     : Normalbetrieb. 
+                                Rechnet Offset raus und übergibt Daten an Funktion set_is_pos des Motion_Order Objekts.
+                                Berechnung der Beschleunigung über Reglerfunktion wanted_accel() im Motion_Order Objekt
+                                Beschleunigungen werden auf ±0.1 begrenzt.
+                                Bei erreichter Zielposition wird goal_reached publiziert.
         '''
 
         if self.init_state == "init_done":
@@ -223,7 +247,7 @@ class Motion(Node):
                     robot_cmd.accel_x = self.accel_x_over
                     robot_cmd.accel_y = self.accel_y_over
                     robot_cmd.accel_z = self.accel_z_over
-                    robot_cmd.activate_gripper = self.gripper_soll     #TODO: Greifer-schließ logic muss überdacht werden - evt eigene Funktion
+                    robot_cmd.activate_gripper = self.gripper_soll     
                     self.publisher_cmd.publish(robot_cmd)
                     self.get_logger().info("Ist_Pos_übergabe: accel x,y,z übergeben")
                     #self.get_logger().info(str(robot_cmd))
@@ -231,14 +255,17 @@ class Motion(Node):
 
 
                 else:
-                    goal_state = Bool()
-                    goal_state.data = True
-                    self.publisher_state.publish(goal_state)
+                    goal_reached = Bool()
+                    goal_reached.data = True
+                    self.publisher_goal_reached.publish(goal_reached)
 
 #================================================================================================================
 
-def callbackIII():
-    pass
+    def gripper(self, msg):
+        '''
+        Empfangen des Greiferzustands über ROS-Topic /goal_gripper.
+        '''
+        self.gripper_soll = msg.data
 
 #================================================================================================================
 

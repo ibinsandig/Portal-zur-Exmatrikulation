@@ -1,4 +1,4 @@
-from motion_controller.feedforward import Controller
+from motion_controller.controller import Controller
 import logging
 import time
 
@@ -11,20 +11,6 @@ th_move_logic= 0.0001
 #=============================================================
 
 class MotionOrder():
-
-    '''
-    Grober Funktionsablauf:
-    - IST-Daten werden dauerhaft aktuallisiert (max.20Hz)
-    - Soll-Daten kommen rein (goal_data)
-    - Werden mit Ist-Daten verglichen
-        IF (IST == SOLL) {Rückmeldung -> Zielstatus: job_finished = true}
-        ELSE
-        - Rufe "ffw_controller" für jede einzelne Achse auf und berechne a
-        - versende die Daten über "send_it_accel" an den Roboter
-        - if (IST != SOLL) {THROW NE EXEPTION} [TODO: hier könnte man ein erneuten anfahrversuch machen, in einer Schleife]
-            ELSE {def send_state(self, state) = true publishen}        
-    '''
-
 
     def __init__(self): 
 
@@ -54,6 +40,10 @@ class MotionOrder():
 
     
     def set_is_pos(self, Xr_ist, Yr_ist, Zr_ist):    
+        '''
+        Setzt die aktuelle Ist_Position des Roboters. 
+        Nimmt einen TimeStamp beim erhalten der Daten an. Relevant für den Regler.
+        '''
         self.Xr_ist = Xr_ist
         self.Yr_ist = Yr_ist
         self.Zr_ist = Zr_ist
@@ -69,7 +59,11 @@ class MotionOrder():
         return True
 
     
-    def should_is_comp(self):                                
+    def should_is_comp(self):       
+        '''
+        Vergleicht den aktuellen Positionswert jeder einzelnen Achse mit dem Zielwert unter beachtung eines Schwellwerts.
+        '''
+
         if (abs(self.Xr_ist - self.Xr_soll) < th_move_logic
             and abs(self.Yr_ist - self.Yr_soll) < th_move_logic 
             and abs(self.Zr_ist - self.Zr_soll) < th_move_logic): 
@@ -80,6 +74,10 @@ class MotionOrder():
             return False
     
     def time_step_calc(self):
+        '''
+        Errechnet die vergangene Zeit zwischen dem aktuellen Positionswert und dem letzten Positonswert. 
+        Beim ersten Druchgang wird ein Schätzwert von 0.1 Sekunden genommen.
+        '''
         self.time_stamp = time.time()
 
         if self.last_time_stamp == None:
@@ -95,6 +93,12 @@ class MotionOrder():
 
     
     def wanted_accel(self):
+        '''
+        Berechnung der Beschleunigungswerte der einzelnen Achsen.
+
+        Eine für jede einzelne Achse bereits erstellte Instanz wird aufgerufen und die aktuellen Soll-, Ist- und Zeitwerte werden übergeben.
+        Die Werte kd und kp sind bei der instanzierung für jede Achse individuell bereits übergeben.
+        '''
     
         accelofx = self.controller_x.compute(self.Xr_soll, self.Xr_ist, self.time_step)         
         accelofy = self.controller_y.compute(self.Yr_soll, self.Yr_ist, self.time_step)

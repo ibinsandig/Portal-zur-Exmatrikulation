@@ -37,8 +37,15 @@ class Init():
         self.endlagenabfrage = False
         
 #================================================================================================================
-    def set_init_is_pos(self, Xr_ist, Yr_ist, Zr_ist):    #wird dauerhaft von MotionNode aufgerufen.
-        
+    def set_init_is_pos(self, Xr_ist, Yr_ist, Zr_ist):    
+        '''
+        Setzt die aktuellen Ist-positionen.
+
+        Frägt ab, ob alle Achsen sich bei aktiv geschaltener Endlagenabfrage über den Schwellwert th_endlagenabfrage 
+        hinaus seit der letzten Position bewegt haben. 
+        Trifft das 20-mal zu (bei ~10Hz), gilt die Endlage als erreicht.
+
+        '''
         self.Xr_ist = Xr_ist
         self.Yr_ist = Yr_ist
         self.Zr_ist = Zr_ist
@@ -59,6 +66,9 @@ class Init():
         
 #================================================================================================================
     def endpoint_accel_rise(self):
+        '''
+        Setzt fixe Beschleunigungswerte für "init_rise"
+        '''
         accel_x = init_accel_x
         accel_y = init_accel_y
         accel_z = init_accel_z
@@ -66,6 +76,9 @@ class Init():
         return accel_x, accel_y, accel_z
 
     def endpoint_accel_zero(self):
+        '''
+        Setzt Beschleunigungswerte für "init_zero" auf 0
+        '''
         accel_x = 0.0
         accel_y = 0.0
         accel_z = 0.0
@@ -85,7 +98,10 @@ class Init():
     
 #================================================================================================================
 
-    def offset_calc(self):
+    def offset_calc(self): 
+        '''
+        Setzt die aktuellen ROH_Werte des Roboters als Offsetwerte fest.
+        '''
         pos_x_offset = self.Xr_ist
         pos_y_offset = self.Yr_ist
         pos_z_offset = self.Zr_ist
