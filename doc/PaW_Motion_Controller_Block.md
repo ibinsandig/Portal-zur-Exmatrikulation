@@ -1,6 +1,17 @@
-# Regler auslegung zum Ansteuern der Motoren des Portalroboters
+# TODO 
 
-## Zweite Version (auch Programmtechnisch umgesetzt)
+- Greifer Logic umsetzten [Prio: TEST]
+
+- PHYSISCH AUF Defaultpunkt fahren [Prio: Mid]
+- Regler optimieren [Prio: Mid]
+- Problem mit Y_Achse verfahren beheben [Prio: HIGH]
+
+- DocStrings im Code erweitern [DONE]
+
+---
+---
+
+# Regler auslegung zum Ansteuern der Motoren des Portalroboters
 
 Regler als Funktion in eigener Klasse ausgelagert:
 
@@ -24,35 +35,36 @@ Mitzugebende Variablen beim Instanzieren:
 
 #  Motion Node
 
-## Publisher Logic
+## Motion-Block Komponente: Aufbau und Grundlegender Ablauf
 
-### Warum die MSG deklaration (Zeile 29 & 30) in der Init?
+> Nach Start des Systems wird automatisch die Initialisierung durchgeführt und eine init-flag = true gesetzt.
 
->        self.robot_cmd = RobotCmd()
->        self.goal_state = GoalState()
-*So bleiben die Informationen bis zum erneuten Funktionsaufruf in der Instanzvariable erhalten! 
+> Der Arbeitstakt wird durch eingehende RoboterPositionsdaten vorgegeben. 
 
-### Alternative Version:
+> Werden Zielkoordinaten über /goal_coordinates empfangen, regelt der Motion-Block so lange, bis das Ziel erreicht ist oder darüber gehovert wird. 
 
-Die Declaration wird in die Funktion geschrieben.
-Hier werden die Informationen immer nach Ende der Funktion gelöscht!
+## Schnittstellen
 
-```
-def send_it_accel(self,x,y,z,picky):
-    msg = RobotCmd()
-    msg.accel_x = x
-    msg.accel_y = y
-    msg.accel_z = z 
-    msg.activate_gripper = picky
-    self.publisher_cmd.publish(msg)
-```
+**Subscription Topics**
 
-# TODO 
+- "/goal_coordiantes" (Point32) -> Empfängt Zielkoordinaten
+- "/goal_gripper" (bool)        -> Empfängt Greifer zustand (offen/geschlossen)
+- "/RobotPos" (x,y,z)      -> Empfängt die aktuellen Roboterpositionsdaten (~10Hz)
 
-- Greifer Logic umsetzten [Prio: TEST]
+**Publisher Topics**
 
-- PHYSISCH AUF Defaultpunkt fahren [Prio: Mid]
-- Regler optimieren [Prio: Mid]
-- Problem mit Y_Achse verfahren beheben [Prio: HIGH]
-- DocStrings im Code erweitern [Prio: Low]
+- "/goal_reached" (bool)        -> Übergibt Info, wenn Zielkoordinaten erreicht wurden
+- "/init_done" (bool)           -> Übergibt Info, wenn Initphase abgeschlossen ist
+- "/RobotCmd" (x,y,z,bool)      -> Übergibt Beschleunigungswerte & soll_greiferzustand
 
+
+## Module 
+
+- "Motio.py"      -> ROS2 Node, Zentrale Datei für Motion-Block
+- "init.py"       -> Python Logic für die Initphase
+- "move_logic.py" -> Pyhton Logic für die Hauptbewegung
+- "controller.py" -> Pyhton Logic für den Regler (abstrakt gehalten)  
+
+---
+![alt text](image-1.png)
+---

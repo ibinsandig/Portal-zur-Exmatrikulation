@@ -1,6 +1,11 @@
 import rclpy
 from rclpy.node import Node
-from chaos_interfaces.msg import GoalData, ObjDataDeluxe,  GoalState
+from chaos_interfaces.msg import ObjDataDeluxe
+from std_msgs.msg import Bool
+from geometry_msgs.msg import Point32
+
+
+#================================================================================================================
 
 class Mainy(Node):
     def __init__(self):
@@ -13,25 +18,38 @@ class Mainy(Node):
             self.listener_callback,
             10)
         
-        self.sub_goal_state = self.create_subscription(
-            GoalState,
-            '/goal_state',
-            self.listener_callback,
+        self.sub_goal_reached = self.create_subscription(
+            Bool,
+            '/goal_reached',
+            self.goal_reached,
             10)
         
-        self.sub_obj_data_deluxe
-        self.sub_goal_state
+        self.sub_init_done = self.create_subscription(
+            Bool,
+            '/init_done',
+            10)
+        
+        #========================================================================================================
 
-        self.pub_goal_data = self.create_publisher(GoalData, '/goal_data', 10)
+        self.pub_goal_coodrinates = self.create_publisher(Point32, '/goal_coordinates', 10)
+        self.pub_goal_gripper = self.create_publisher(Bool, '/goal_gripper', 10)
+
+        #========================================================================================================
+        
+        self.goal_reached = None
+
+
+        #========================================================================================================
 
         self.get_logger().info("Mainy Node gestartet...")
 
-    def listener_callback(self, msg):
-        self.pub_data_before = msg
+#================================================================================================================
 
-        self.pub_data_test = GoalData()
+    def goal_reached(self, msg):
+        self.goal_reached = msg.data
+      
 
-        self.pub_goal_data.publish(self.pub_data_test)
+#================================================================================================================
 
 def main():
     rclpy.init(args=None)

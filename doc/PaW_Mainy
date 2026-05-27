@@ -1,9 +1,37 @@
-# Mainy - Statemachin
+# Mainy - Statemachine
 
-Wie wird das Starten des Systems umgesetzt? 
+## Mainy-Block Komponente: 
 
-- Option 1 --> einfach in der __init__ der Node. einmal die init funktionen aufrufen
+> System wartet nach Start auf das TRUE von Topic "/init_done" 
 
-- Option 2 --> timer einbauen, der EINMAL am anfang (o.o, funktion) aufgerufen und damit INIT abspielt
+> Auftragseingang: Topic "/obj_data" liefert ObjektTyp, ObjektNummer, Koordinaten, v_objekt(geschwindigkeit). 
 
-- Option 3 --> den GANZEN Systemablauf nicht nur mit "launchdatei", sondern mit "lifecycle" steuern (launchdatei starte alle nodes und auch lifecycle. lifecyle steuert dann die Nodes an)  [VERMUTLICHER OVERKILL]
+> Vorberechnung: ObjektKoordinaten + v_objekt errechnet vermutliche Zielkoordinaten für den Greifer
+
+1. Objekttyp triggert einen Case (Einhorn/Katze, Unkown).
+2. Zielkoordinaten (+ Aufmaß) werden per Topic "/goal_coordinates" gepublished.
+3. Greifer wird AN geschalten
+4. Motion-Block meldet Ziel erreicht
+5. Zielkoordinaten (ohne Aufmaß) werden per Topic "/goal_coordinates" gepublished. 
+6. **(evt extra Feature in MOTION-BLOCK für nur kurz Z+, dann Z-?)**
+7. Objekt wird aufgenommen & Motion-B. meldet Ziel erreicht
+8. Zielkoordinaten in DefaultPos werden per Topic "/goal_coordinates"  gepublished 
+9. Motion-Block meldet Ziel erreicht
+10. Zielkoordinaten für Caseabhänige BOX werden per Topic "/goal_coordinates"  gepublished.
+11. Motion-Block meldet Ziel erreicht
+12. Greifer wird AUS geschaltet
+13. Zielkoordinaten für DefaultPos werden per Topic "/goal_coordinates"  gepublished.
+14. Motion-Block meldet Ziel erreicht
+
+## Schnittstellen
+
+**Subscription Topics**
+
+- "/init_done"          -> Empfängt Info, wenn Initphase abgeschlossen ist
+- "/goal_reached"       -> Empfängt Info, wenn Zielkoordinaten erreicht wurden.
+- "obj_data_deluxe"            -> Empfängt Tupel an Daten über das Zielobjekt
+
+**Publisher Topics**
+
+- "/goal_coordinates"   -> Übergibt die Zielkoordinaten an den Motion-Block
+- "/goal_gripper"       -> Übergibt die Info, wann der Gripper schließen soll
