@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="RYESPkPOrQwAhbx9FNro" name="Page-1">
-        <mxGraphModel dx="4528" dy="2880" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="#ffffff" math="0" shadow="1" adaptiveColors="auto">
+        <mxGraphModel dx="1620" dy="1884" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="#ffffff" math="0" shadow="1" adaptiveColors="auto">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -61,7 +61,7 @@
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="38" value="main_robot" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#04cef6, #43ba43);fontColor=#ffffff;strokeColor=#005700;" parent="1" vertex="1">
+                <mxCell id="38" value="mainy_logic" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#04cef6, #43ba43);fontColor=#ffffff;strokeColor=#005700;" parent="1" vertex="1">
                     <mxGeometry x="570" y="290" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="39" value="" style="shape=flexArrow;endArrow=classic;startArrow=classic;html=1;" parent="1" source="13" target="38" edge="1">
@@ -111,7 +111,7 @@
                         <mxPoint x="16" y="-4" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="53" value="coord_transforamtion" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#04cef6, #43ba43);fontColor=#ffffff;strokeColor=#005700;" parent="1" vertex="1">
+                <mxCell id="53" value="prediction" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#04cef6, #43ba43);fontColor=#ffffff;strokeColor=#005700;" parent="1" vertex="1">
                     <mxGeometry x="769.9999999999999" y="290" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="55" value="" style="shape=flexArrow;endArrow=classic;startArrow=classic;html=1;" parent="1" source="13" target="53" edge="1">
@@ -250,11 +250,6 @@
                 <mxCell id="131" value="pub" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="130" vertex="1" connectable="0">
                     <mxGeometry x="-0.3007" y="-1" relative="1" as="geometry">
                         <mxPoint as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="163" style="edgeStyle=none;html=1;exitX=0;exitY=0.25;exitDx=0;exitDy=0;" parent="1" source="132" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <mxPoint y="24.529411764705856" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="132" value="machine learning Node" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF3333;fontColor=#ffffff;strokeColor=#A50040;" parent="1" vertex="1">
@@ -405,22 +400,28 @@
                 </mxCell>
                 <mxCell id="162" value="sub" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="161" vertex="1" connectable="0">
                     <mxGeometry x="-0.0722" y="-2" relative="1" as="geometry">
-                        <mxPoint x="-112" as="offset"/>
+                        <mxPoint x="-76" y="58" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="166" value="Controller" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#04cef6, #43ba43);fontColor=#ffffff;strokeColor=#005700;" vertex="1" parent="1">
+                <mxCell id="166" value="Controller" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#04cef6, #43ba43);fontColor=#ffffff;strokeColor=#005700;" parent="1" vertex="1">
                     <mxGeometry x="160" y="639.02" width="130" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="167" value="" style="shape=flexArrow;endArrow=classic;startArrow=classic;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="45" target="166">
+                <mxCell id="167" value="" style="shape=flexArrow;endArrow=classic;startArrow=classic;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="45" target="166" edge="1">
                     <mxGeometry width="100" height="100" relative="1" as="geometry">
                         <mxPoint x="420" y="700.02" as="sourcePoint"/>
                         <mxPoint x="320" y="700" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="168" value="sub" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="1">
+                <mxCell id="168" value="sub" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="1" vertex="1" connectable="0">
                     <mxGeometry x="89.54615384615363" y="240.271794871795" as="geometry">
                         <mxPoint x="22" y="88" as="offset"/>
                     </mxGeometry>
+                </mxCell>
+                <mxCell id="170" value="Hier irgendwo sollte eigentlich die Pick_Prediction berechnet werden!" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="-190" y="400" width="390" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="171" value="" style="shape=partialRectangle;whiteSpace=wrap;html=1;bottom=1;right=1;left=1;top=0;fillColor=none;routingCenterX=-0.5;" vertex="1" parent="1">
+                    <mxGeometry x="-270" y="390" width="580" height="30" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

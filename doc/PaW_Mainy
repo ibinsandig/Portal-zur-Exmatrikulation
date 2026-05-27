@@ -23,6 +23,12 @@
 13. Zielkoordinaten für DefaultPos werden per Topic "/goal_coordinates"  gepublished.
 14. Motion-Block meldet Ziel erreicht
 
+
+## Logic Abänderungen
+- Anstatt mit CALLBACK (datadelux) zu takten, legen wir alle Daten auf einen Stack und arbeiten diesen Ab. Wenn ein Bauteil über einen SCHWELLENWERT drüber geht, muss dieser Verworfen werden. 
+Wie erkenne ich, welche wir auf dem Stack verpasst haben? Mit Zeitpunk von Objekt vom Band sein wird, dann objekt vom Stack verwerfen. 
+
+
 ## Schnittstellen
 
 **Subscription Topics**

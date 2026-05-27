@@ -31,6 +31,8 @@ class Mainy(Node):
             self.init_done,
             10)
         
+        #   TIMER CALLBAXK als haupttaktgeber in MAINY
+        
         #========================================================================================================
 
         self.pub_goal_coordinates = self.create_publisher(Point32, '/goal_coordinates', 10)
