@@ -4,7 +4,7 @@
 
 > System wartet nach Start auf das TRUE von Topic "/init_done" 
 
-> Auftragseingang: Topic "/obj_data" liefert ObjektTyp, ObjektNummer, Koordinaten, v_objekt(geschwindigkeit). 
+> Auftragseingang: Topic "/obj_data" liefert ObjektTyp, ObjektNummer, Koordinaten, v_objekt(geschwindigkeit), t_objekt(zeitpunkt des Erkennens). 
 
 > Vorberechnung: ObjektKoordinaten + v_objekt errechnet vermutliche Zielkoordinaten für den Greifer
 
