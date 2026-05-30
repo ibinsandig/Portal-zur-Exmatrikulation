@@ -3,7 +3,7 @@ from rclpy.node import Node
 import cv2 as cv
 from chaos_topics.msg import ObjCoords
 from chaos_topics.msg import ObjFeatures
-from camera.preprocessing import ImagePreprocessor
+from camera.preprocessing3 import ImagePreprocessor
 # from camera.coordtransformation import xxxxx
 
 class Camera(Node):
@@ -42,15 +42,7 @@ class Camera(Node):
             return
 
         try:
-            cropped_frame = self.PrePro.crop_image(frame)
-            
-            mask = self.PrePro.segment_object(cropped_frame)
-            
-            centers = self.PrePro.focus_center(mask)
-
-            orientations = self.PrePro.object_orientation(mask)
-            
-            objects_data = self.PrePro.object_data(mask)
+            self.process_img(frame)
                 
         except Exception as e:
             self.get_logger().error(f'Fehler bei der Bildverarbeitung: {str(e)}')
@@ -59,6 +51,16 @@ class Camera(Node):
         _ , frame = self.img.read()
         self.img_rotated = cv.rotate(frame, 2)
         return self.img_rotated
+
+    def process_img(self, frame):
+        warped_image = self.PrePro.warp_image(frame)
+        contours = self.PrePro.segment_object(warped_image)
+
+        pixel_coords = self.PrePro.obj_position(contours)
+        
+
+
+
 
 def main(args=None):
     rclpy.init(args=args)
