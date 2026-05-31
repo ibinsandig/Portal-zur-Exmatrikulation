@@ -4,7 +4,6 @@ import cv2 as cv
 from chaos_topics.msg import ObjCoords
 from chaos_topics.msg import ObjFeatures
 from camera.preprocessing3 import ImagePreprocessor
-# from camera.coordtransformation import xxxxx
 
 class Camera(Node):
 
@@ -34,12 +33,8 @@ class Camera(Node):
         self.get_logger().info('Camera-Node gestartet')
 
     def timer_callback(self):
-        """Timer Callback - liest Bild und verarbeitet es schrittweise"""
-        success, frame = self.img.read()
 
-        if not success:
-            self.get_logger().error('Bild konnte nicht gelesen werden')
-            return
+        frame = self.read_camera()
 
         try:
             self.process_img(frame)
@@ -48,19 +43,26 @@ class Camera(Node):
             self.get_logger().error(f'Fehler bei der Bildverarbeitung: {str(e)}')
 
     def read_camera(self):
-        _ , frame = self.img.read()
-        self.img_rotated = cv.rotate(frame, 2)
-        return self.img_rotated
+        success , frame = self.img.read()
+
+        if not success:
+            self.get_logger().error('Bild konnte nicht gelesen werden')
+            return
+        
+        img_rotated = cv.rotate(frame, 2)
+        return img_rotated
 
     def process_img(self, frame):
         warped_image = self.PrePro.warp_image(frame)
         contours = self.PrePro.segment_object(warped_image)
 
-        pixel_coords = self.PrePro.obj_position(contours)
-        
+        pixel_obj_coords = self.PrePro.obj_position(contours)
 
+        world_obj_coords = self.PrePro.pixel_to_world(pixel_obj_coords)
 
+        obj_features = self.PrePro.extract_features_from_contour(contours[0])
 
+        return world_obj_coords, obj_features
 
 def main(args=None):
     rclpy.init(args=args)

@@ -5,10 +5,6 @@ camera/coord_transformation.py
 camera/preprocessing.py
 camera/preprocessing2.py
 camera/preprocessing3.py
-chaos.egg-info/PKG-INFO
-chaos.egg-info/SOURCES.txt
-chaos.egg-info/dependency_links.txt
-chaos.egg-info/top_level.txt
 coord_pred/__init__.py
 coord_pred/coord_pred.py
 machine_learning/__init__.py
@@ -22,3 +18,7 @@ motion_controller/init.py
 motion_controller/move_logic.py
 planner/__init__.py
 planner/postprocessing.py
+ros2_logic.egg-info/PKG-INFO
+ros2_logic.egg-info/SOURCES.txt
+ros2_logic.egg-info/dependency_links.txt
+ros2_logic.egg-info/top_level.txt

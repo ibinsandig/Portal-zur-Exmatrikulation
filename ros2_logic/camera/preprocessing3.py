@@ -1,8 +1,9 @@
 import cv2 as cv
 from cv2 import aruco
 import numpy as np
+from config_vm import SRC_COORDS
 
-import config_vm
+
 
 class ImagePreprocessor:
     def __init__(self):
@@ -21,7 +22,7 @@ class ImagePreprocessor:
         self.img_warped = None
 
     def setup(self, init_frame):
-        corners, ids, rejected = self.detector.detectMarkers(init_frame)
+        corners, ids, rejected = self.detector.detectMarkers(init_frame) #TODO Fehler vermeidung muss zwei Marker sein
         dstPoints = np.concatenate(corners, axis=1)
         self.H, _ = cv.findHomography(srcPoints=config_vm.SRC_COORDS, dstPoints=dstPoints, method=0)
         self.H_inv = np.linalg.inv(self.H)
