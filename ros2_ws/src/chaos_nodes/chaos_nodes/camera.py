@@ -25,22 +25,30 @@ class Camera(Node):
         try:
             self.img = cv.VideoCapture(path_camera)
         except Exception as e:
-            self.get_logger().error(f'Fehler beim Initialiesieren der Kamera: {str(e)}')
+            self.get_logger().error(f'Fehler beim Initialisieren der Kamera: {str(e)}')
             raise e
 
         self.img.set(cv.CAP_PROP_BUFFERSIZE, 1)
         self.data = self.create_timer(timer_time, self.timer_callback)
-        self.get_logger().info('Camera-Node gestartet')
+        self.get_logger().info('Kamera-Node gestartet')
 
     def timer_callback(self):
 
         frame = self.read_camera()
 
         try:
-            self.process_img(frame)
+            obj_coords, obj_features = self.process_img(frame)
                 
         except Exception as e:
             self.get_logger().error(f'Fehler bei der Bildverarbeitung: {str(e)}')
+
+        try:
+            self.pub_obj_coords.publish(obj_coords)
+            self.pub_obj_festures.publish(obj_features)
+
+        except Exception as e:
+            self.get_logger().error(f'Fehler beim Senden der Daten: {str(e)}')
+
 
     def read_camera(self):
         success , frame = self.img.read()

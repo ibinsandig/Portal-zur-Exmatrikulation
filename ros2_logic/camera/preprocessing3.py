@@ -1,6 +1,12 @@
 import cv2 as cv
 from cv2 import aruco
 import numpy as np
+import sys
+import os
+
+# Add the parent directory (ros2_logic) to the system path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))    #TODO Was zum Fick läuft hier falsch?
+
 from config_vm import SRC_COORDS
 
 
