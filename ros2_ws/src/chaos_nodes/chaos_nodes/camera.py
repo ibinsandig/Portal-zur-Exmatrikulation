@@ -14,7 +14,7 @@ class Camera(Node):
         self.pub_obj_festures = self.create_publisher(ObjFeatures, '/obj_features', 10)
         timer_time = 1/30   # sek
 
-        path_camera = 0     # PortalCam = /dev/video4
+        path_camera = 4     # PortalCam = /dev/video4
 
         try:
             self.PrePro = ImagePreprocessor()
@@ -29,6 +29,19 @@ class Camera(Node):
             raise e
 
         self.img.set(cv.CAP_PROP_BUFFERSIZE, 1)
+
+        while(True):
+            print('Setup Kamera...')
+
+            try:
+                self.PrePro.setup(self.read_camera())
+            except Exception as e:
+                self.get_logger().error(f'Fehler beim Setup der Kamera: {str(e)}')
+                raise e
+            
+            if self.PrePro.H_inv_warp is not None:
+                break
+
         self.data = self.create_timer(timer_time, self.timer_callback)
         self.get_logger().info('Kamera-Node gestartet')
 
@@ -37,8 +50,7 @@ class Camera(Node):
         frame = self.read_camera()
 
         try:
-            obj_coords, obj_features = self.process_img(frame)
-                
+            obj_coords, obj_features = self.process_img(frame)  
         except Exception as e:
             self.get_logger().error(f'Fehler bei der Bildverarbeitung: {str(e)}')
 

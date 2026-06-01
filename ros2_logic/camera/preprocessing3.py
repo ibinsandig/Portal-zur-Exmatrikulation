@@ -7,7 +7,8 @@ import os
 # Add the parent directory (ros2_logic) to the system path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))    #TODO Was zum Fick läuft hier falsch?
 
-from config_vm import SRC_COORDS
+#import ros2_logic.config_vm
+import config_vm
 
 
 
@@ -28,7 +29,12 @@ class ImagePreprocessor:
         self.img_warped = None
 
     def setup(self, init_frame):
-        corners, ids, rejected = self.detector.detectMarkers(init_frame) #TODO Fehler vermeidung muss zwei Marker sein
+        corners = None
+        while corners is None:
+            corners, ids, rejected = self.detector.detectMarkers(init_frame) #TODO Fehler vermeidung muss zwei Marker sein
+        
+        print('test')
+
         dstPoints = np.concatenate(corners, axis=1)
         self.H, _ = cv.findHomography(srcPoints=config_vm.SRC_COORDS, dstPoints=dstPoints, method=0)
         self.H_inv = np.linalg.inv(self.H)
@@ -55,6 +61,9 @@ class ImagePreprocessor:
         pts1_2 = world_coords + offset
         pts1_2_pixel = cv.perspectiveTransform(pts1_2, self.H)
 
+        print('Offset ausgerechnet')
+
+
         min_x = np.min(pts1_2_pixel[:, 0, 0])
         max_x = np.max(pts1_2_pixel[:, 0, 0])
         min_y = np.min(pts1_2_pixel[:, 0, 1])
@@ -71,6 +80,9 @@ class ImagePreprocessor:
         ])
         self.H_warp = cv.getPerspectiveTransform(pts1_2_pixel, pts2_proportional)
         self.H_inv_warp = np.linalg.inv(self.H_warp)
+
+        print('Setup erfolgreich')
+               
 
     def warp_image(self, frame):
         self.img_warped = cv.warpPerspective(frame, self.H_warp, (self.width, self.height))
