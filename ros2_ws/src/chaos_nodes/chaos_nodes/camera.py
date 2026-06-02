@@ -3,7 +3,10 @@ from rclpy.node import Node
 import cv2 as cv
 from chaos_topics.msg import ObjCoords
 from chaos_topics.msg import ObjFeatures
+from geometry_msgs.msg import Pose2D
 from camera.preprocessing3 import ImagePreprocessor
+import time
+import numpy as np
 
 class Camera(Node):
 
@@ -28,7 +31,7 @@ class Camera(Node):
             self.get_logger().error(f'Fehler beim Initialisieren der Kamera: {str(e)}')
             raise e
 
-        self.img.set(cv.CAP_PROP_BUFFERSIZE, 1)
+        self.img.set(cv.CAP_PROP_BUFFERSIZE, 0)
 
         while(True):
             print('Setup Kamera...')
@@ -50,13 +53,15 @@ class Camera(Node):
         frame = self.read_camera()
 
         try:
-            obj_coords, obj_features = self.process_img(frame)  
+            obj_coords_msg, obj_features_msg = self.process_img(frame)
+             
         except Exception as e:
             self.get_logger().error(f'Fehler bei der Bildverarbeitung: {str(e)}')
+            return
 
         try:
-            self.pub_obj_coords.publish(obj_coords)
-            self.pub_obj_festures.publish(obj_features)
+            self.pub_obj_coords.publish(obj_coords_msg)
+            self.pub_obj_festures.publish(obj_features_msg)
 
         except Exception as e:
             self.get_logger().error(f'Fehler beim Senden der Daten: {str(e)}')
@@ -77,11 +82,11 @@ class Camera(Node):
         contours = self.PrePro.segment_object(warped_image)
 
         pixel_obj_coords = self.PrePro.obj_position(contours)
-
         world_obj_coords = self.PrePro.pixel_to_world(pixel_obj_coords)
-
         obj_features = self.PrePro.extract_features_from_contour(contours[0])
 
+        #TODO Baustell für publish Format
+        
         return world_obj_coords, obj_features
 
 def main(args=None):

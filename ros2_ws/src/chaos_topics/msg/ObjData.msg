@@ -1,3 +1,4 @@
+# array
 int8 id
 int32 timestamp_grippoint_data
 int8 obj_type

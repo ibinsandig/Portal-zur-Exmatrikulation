@@ -30,10 +30,12 @@ class ImagePreprocessor:
 
     def setup(self, init_frame):
         corners = None
-        while corners is None:
-            corners, ids, rejected = self.detector.detectMarkers(init_frame) #TODO Fehler vermeidung muss zwei Marker sein
-        
-        print('test')
+
+        corners, ids, rejected = self.detector.detectMarkers(init_frame) #TODO Fehler Vermeidung für zwei Marker
+
+        if len(corners) < 2:
+            print('Nicht genügend Marker gefunden')
+            return 
 
         dstPoints = np.concatenate(corners, axis=1)
         self.H, _ = cv.findHomography(srcPoints=config_vm.SRC_COORDS, dstPoints=dstPoints, method=0)
