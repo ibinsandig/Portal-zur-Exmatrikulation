@@ -26,5 +26,6 @@ Die Erhaltenen Topics aus Vision&ML werden anhand der ID zugeordnet, in die Queu
 
 - Führt die kommenden DAten aus  Future Position und obj type anhand der ID zusammen.
 Und Schreibt sie in eine Liste.
+-genauso wird das offset zum picken bestimmt
 - Derälteste Eintrag bzw. die kleisnte ID wird mit der aktuellen Position(neu berechnet) und dem type und der ID gepublished.
 - Nicht gewollte Obj werden herausgefiltert und gelöscht.
