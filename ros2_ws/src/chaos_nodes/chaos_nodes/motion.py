@@ -44,9 +44,9 @@ class Motion(Node):
         #========================================================
         
         #        Default Position des Roboters nach der INIT: 
-        self.default_x_pos = 0.010
-        self.default_y_pos = -0.010
-        self.default_z_pos = 0.000
+        self.default_x_pos = 0.20
+        self.default_y_pos = -0.08
+        self.default_z_pos = 0.07               #Z-Achse nur zwischen 0.07 und 0.095
         
         #========================================================
         self.current_pos = None
@@ -95,8 +95,8 @@ class Motion(Node):
             - Setzt has_goal auf True (Auftrag ist aktiv, Roboter muss noch fahren)
 
         '''
-        Xr_soll = msg.x
-        Yr_soll = msg.y
+        Xr_soll = msg.x * 0.8
+        Yr_soll = msg.y * 0.8 
         Zr_soll = msg.z
         self.motion_order.set_should_pos(Xr_soll, Yr_soll, Zr_soll)
 
@@ -142,7 +142,7 @@ class Motion(Node):
 
         if self.init_state == "init_done":
             Xr_ist_offset = msg.pos_x - self.pos_x_offset
-            Yr_ist_offset = -(msg.pos_y - self.pos_y_offset) 
+            Yr_ist_offset = msg.pos_y - self.pos_y_offset
             Zr_ist_offset = msg.pos_z - self.pos_z_offset
             self.motion_order.set_is_pos(Xr_ist_offset, Yr_ist_offset, Zr_ist_offset)
             self.get_logger().info("============== RoboKoordinaten+Offset: ==============")
@@ -190,6 +190,13 @@ class Motion(Node):
             if endlagenerreicht == True:
                 self.pos_x_offset, self.pos_y_offset, self.pos_z_offset = self.init_order.offset_calc()
                 
+                default = Point32()
+                default.x = self.default_x_pos
+                default.y = self.default_y_pos
+                default.z = self.default_z_pos
+                self.auftragseingang(default)
+                self.get_logger().info(f"Endlagen-Auftragseingang: {self.default_x_pos}, {self.default_y_pos}, {self.default_z_pos}")
+
                 # default = Point32()
                 # default.x = self.default_x_pos
                 # default.y = self.default_y_pos

@@ -12,10 +12,11 @@
 
 ### Published 
 
-- /obj_data []
+- /obj_data [
 int8 id
-int8 speed
-int8 obj_type
+int8 obj_type 
+geometry_msg_2D (x,y,theta)
+]
 
 
 ## Ablauf

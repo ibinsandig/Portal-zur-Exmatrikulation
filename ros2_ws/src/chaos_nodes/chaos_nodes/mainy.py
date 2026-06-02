@@ -40,6 +40,9 @@ class Mainy(Node):
 
         #========================================================================================================
         
+        self.timer_StateMachine = self.create_timer(0.1, self.timer_StateMachine)
+
+        #========================================================================================================
         self.goal_reached = False
         self.init_done = False
 
