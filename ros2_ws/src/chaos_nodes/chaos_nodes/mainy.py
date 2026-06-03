@@ -2,6 +2,7 @@ import rclpy
 from rclpy.node import Node
 from chaos_interfaces.msg import ObjDataDeluxe
 from std_msgs.msg import Bool
+from std_msgs.msg import Int16
 from geometry_msgs.msg import Point32
 from ros2_logic.mainy import mainy_logic
 
@@ -37,6 +38,7 @@ class Mainy(Node):
 
         self.pub_goal_coordinates = self.create_publisher(Point32, '/goal_coordinates', 10)
         self.pub_goal_gripper = self.create_publisher(Bool, '/goal_gripper', 10)
+        self.pub_obj_finished = self.create_publisher(Int16, '/obj_finished', 10)
 
         #========================================================================================================
         
@@ -81,8 +83,6 @@ class Mainy(Node):
         self.goal_coord_x = msg.coord_x
         self.goal_coord_y = msg.coord_y
         self.goal_coord_z = msg.coord_z
-        
-        self.mainylogic.auftragseingang(self.id_obj, )
 #================================================================================================================
 
 

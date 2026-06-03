@@ -2,10 +2,9 @@
 
 - Greifer Logic umsetzten [Prio: TEST]
 
-- PHYSISCH AUF Defaultpunkt fahren [Prio: Mid]
-- Regler optimieren [Prio: Mid]
-- Problem mit Y_Achse verfahren beheben [Prio: HIGH]
-
+- PHYSISCH AUF Defaultpunkt fahren [DONE]
+- Regler optimieren [DONE]
+- Problem mit Y_Achse verfahren beheben [DONE]
 - DocStrings im Code erweitern [DONE]
 
 ---
