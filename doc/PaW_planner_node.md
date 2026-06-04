@@ -30,3 +30,11 @@ Und Schreibt sie in eine Liste.
 -genauso wird das offset zum picken bestimmt
 - Derälteste Eintrag bzw. die kleisnte ID wird mit der aktuellen Position(neu berechnet) und dem type und der ID gepublished.
 - Nicht gewollte Obj werden herausgefiltert und gelöscht.
+
+!!!! >>> Auch für die Zeitliche Berechnung zuständig!. Kurz um: Erfasste Objekte werden in die Queue gelegt. 
+                                                                Und dann das Erste per Timer genommen, berechnet,
+                                                                verworfen oder eben an die Mainy weitergegeben.
+                                                                (Mainy macht immer nur einen Auftrag fertig!, und nutzt
+                                                                dafür die bekommenen koordinaten ohne berechnungen!!!!)
+                                                                Hier nicht vergessen, eine Justier-Variable für die Zeit-
+                                                                berechnung einzubauen!
