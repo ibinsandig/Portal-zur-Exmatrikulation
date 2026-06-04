@@ -17,7 +17,7 @@ class Mainy(Node):
         self.sub_obj_data_deluxe = self.create_subscription(
             ObjDataDeluxe,
             '/obj_data_deluxe',
-            self.obj_data_delux,
+            self.set_obj_data_delux,
             10)
         
         self.sub_goal_reached = self.create_subscription(
@@ -55,6 +55,7 @@ class Mainy(Node):
 #================================================================================================================
     def timer_StateMachine(self):
 
+        #TODO abfrage zum verhindern, dass ohne statewechsel mehr als einmal zielcoordinaten gepublished werden
         x,y,z,gripper = self.mainylogic.state_machine() 
         work_done, obj_id = self.mainylogic.work_done()
 
@@ -90,7 +91,7 @@ class Mainy(Node):
 
 #================================================================================================================
 
-    def obj_data_delux(self, msg):
+    def set_obj_data_delux(self, msg):
         obj_id = msg.obj_id
         obj_typ = msg.obj_typ
         goal_coord_x = msg.coord_x

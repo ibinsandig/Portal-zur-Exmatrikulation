@@ -1,5 +1,3 @@
-import ros
-
 
 #=============================================================================
 
@@ -28,7 +26,7 @@ class MainyLogic():
         self.goal_reached = False
         self.work_done = False
 
-        self.state = "arbeitslos"
+        self.state = "jobless"
 
     #================================================================================================================
 
@@ -62,27 +60,37 @@ class MainyLogic():
         
         if not self.init_done:
             print("Fehlende Init, default werte gepublished")
-            return self.coord_x_default,self.coord_y_default,self.obj_coord_z_up,False,False
+            return self.coord_x_default,self.coord_y_default,self.obj_coord_z_up,False
         
-        if self.state == 'arbeitslos':
-            print("State_machine ist Arbeitslos, default werte gepublished")
-            return self.coord_x_default,self.coord_y_default,self.obj_coord_z_up,False,False
+        if self.state == 'jobless':
+            print("State_machine ist Jobless, default Werte gepublished")
+            return self.coord_x_default,self.coord_y_default,self.obj_coord_z_up,False
 
         #=================================================
 
         if self.state == "obj_pick":    
 
-            self.state == "obj_dafault_pos_grip"    #TODO Darf erst umschalten wenn MOTION per /goalreached das go gibt!!!!
+            if self.goal_reached == True:
+                self.state = "obj_dafault_pos_grip"
+                self.goal_reached = False
+            
             return self.obj_coord_x, self.obj_coord_y, self.obj_coord_x_down, True
+
 
         elif self.state == "obj_default_pos_grip":
 
-            self.state == "obj_sort"
+            if self.goal_reached == True: 
+                self.state == "obj_sort"
+                self.goal_reached = False
+
             return self.coord_x_default, self.coord_y_default, self.obj_coord_z_up, True
+
 
         elif self.state == "obj_sort":
 
-            self.state == "obj_drop"
+            if self.goal_reached == True:
+                self.state == "obj_drop"
+                self.goal_reached = False
 
             if self.obj_typ == 'unicorn':           #TODO Name/ID Muss noch in der Planner_Node festgelegt werden
                 return self.coord_x_sort_unicorn, self.coord_y_sort_unicorn, self.obj_coord_z_up, True
@@ -90,9 +98,12 @@ class MainyLogic():
             if self.obj_typ == 'cat':               #TODO NAME/ID Muss noch in der Planner_Node festgelegt werden
                 return self.coord_x_sort_cat, self.coord_y_sort_cat, self.obj_coord_z_up, True
 
+
         elif self.state == "obj_drop":
 
-            self.state == 'obj_default_pos_lose'
+            if self.goal_reached == True:
+                self.state == 'obj_default_pos_lose'
+                self.goal_reached = False
 
             if self.obj_typ == 'unicorn':          
                 return self.coord_x_sort_unicorn, self.coord_y_sort_unicorn, self.obj_coord_z_up, False
@@ -100,9 +111,13 @@ class MainyLogic():
             if self.obj_typ == 'cat':              
                 return self.coord_x_sort_cat, self.coord_y_sort_cat, self.obj_coord_z_up, False
             
+
         elif self.state == "obj_default_pos_lose":
 
-            self.state == "arbeitslos"
+            if self.goal_reached == True:
+                self.state == 'jobless'         #TODO hier evt RUNTIMEERROR mit Auftragseingang und state"obj_pick"
+                self.goal_reached = False
+
             self.work_done = True 
             return self.coord_x_default, self.coord_y_default, self.obj_coord_z_up, False
         

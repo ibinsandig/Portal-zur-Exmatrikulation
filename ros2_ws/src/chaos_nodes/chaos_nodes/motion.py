@@ -100,7 +100,7 @@ class Motion(Node):
         Zr_soll = msg.z
         self.motion_order.set_should_pos(Xr_soll, Yr_soll, Zr_soll)
 
-        if self.motion_order.should_is_comp():
+        if self.motion_order.should_is_comp(): #TODO kann hes hier bei x,y,z accel = 0 zu problemen kommen? 
             robot_cmd = RobotCmd()
             robot_cmd.accel_x = 0.0
             robot_cmd.accel_y = 0.0

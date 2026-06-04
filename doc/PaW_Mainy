@@ -42,3 +42,8 @@ Wie erkenne ich, welche wir auf dem Stack verpasst haben? Mit Zeitpunk von Objek
 - "/goal_coordinates"   -> Übergibt die Zielkoordinaten an den Motion-Block
 - "/goal_gripper"       -> Übergibt die Info, wann der Gripper schließen soll
 - "/obj_finished"       -> Übergibt die Info, ob und WELCHES Objekt abgearbeitet wurde
+
+
+## Mögliche Fehler (muss testen):
+
+[sollte eigentlich doch gehen...]  mainylogic -> Zeile 106 "state obj_default_pos_los" und "auftragseingang state==obj_pick". [hier könnte das problem auftauchen, dass genau in dem moment in dem ein neuer Auftrag reinkommt, parallel auch die ]
