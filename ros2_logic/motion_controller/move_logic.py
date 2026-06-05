@@ -55,7 +55,7 @@ class MotionOrder():
         self.Xr_soll = Xr_soll
         self.Yr_soll = Yr_soll
         self.Zr_soll = Zr_soll
-        self.logger.info("[Motion]: MotionOrder: setter_should_pos")
+        #self.logger.info("[Motion]: MotionOrder: setter_should_pos")
         return True
 
     
@@ -67,10 +67,10 @@ class MotionOrder():
         if (abs(self.Xr_ist - self.Xr_soll) < th_move_logic
             and abs(self.Yr_ist - self.Yr_soll) < th_move_logic 
             and abs(self.Zr_ist - self.Zr_soll) < th_move_logic): 
-            self.logger.info(f" [Motion]: Ist - Soll vergleich in Toleranz {th_move_logic}")
+            #self.logger.info(f" [Motion]: Ist - Soll vergleich in Toleranz {th_move_logic}")
             return True
         else: 
-            self.logger.info(f"SOll=!IST, x:{abs(self.Xr_ist - self.Xr_soll)}, y:{abs(self.Yr_ist - self.Yr_soll)} ,z:{abs(self.Zr_ist - self.Zr_soll)}")
+            #print(f"SOll=!IST, x:{abs(self.Xr_ist - self.Xr_soll)}, y:{abs(self.Yr_ist - self.Yr_soll)} ,z:{abs(self.Zr_ist - self.Zr_soll)}")
             return False
     
     def time_step_calc(self):
@@ -105,6 +105,7 @@ class MotionOrder():
         accelofz = self.controller_z.compute(self.Zr_soll, self.Zr_ist, self.time_step)
         
 
-        self.logger.info(f" [Motion]: wanted_accel: x,y,z berechnet {accelofx, accelofy, accelofz }")
+        #self.logger.info(f" [Motion]: wanted_accel: x,y,z berechnet {accelofx, accelofy, accelofz }")
+        print("accel berechnet")
 
         return accelofx, accelofy, accelofz

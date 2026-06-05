@@ -9,22 +9,25 @@ class MainyLogic():
         self.obj_coord_x = None
         self.obj_coord_y = None
         self.obj_coord_z_up = 0.07          #Nochmal Testen und ggf. justieren TODO
-        self.obj_coord_z_down = 0.090       #nochmal testen TODO
+        self.obj_coord_z_down = 0.095       #nochmal testen TODO
         self.obj_coord_theta = None
 
-        self.coord_x_default = 0.20
+        self.coord_x_default = 0.15
         self.coord_y_default = -0.08
 
         self.coord_x_sort_unicorn = 0.20    #TODO Muss noch bestimmt werden (praktisches Annähern)
-        self.coord_y_sort_unicorn = -0.11    #TODO
+        self.coord_y_sort_unicorn = -0.12    #2
 
         self.coord_x_sort_cat = 0.015        #TODO
-        self.coord_y_sort_cat = -0.11        #TODO
+        self.coord_y_sort_cat = -0.12        #1
 
         self.init_done = False
         self.auftrag = False
         self.goal_reached = False
         self.work_done = False
+        self.goal_reached_previous = False
+        self.goal_reached_rising = False
+
 
         self.state = "jobless"
 
@@ -33,6 +36,13 @@ class MainyLogic():
     def init_abfrage(self, init_done):
         self.init_done = init_done
     
+    #================================================================================================================
+
+    def flankenerkennungslogikfunktion(self, current_goal_reached):
+        self.goal_reached_rising = current_goal_reached and not self.goal_reached_previous
+        
+        self.goal_reached_previous = current_goal_reached
+
     #================================================================================================================
 
     def auftragseingang_main(self, obj_id, obj_typ, obj_coord_x, obj_coord_y, obj_coord_theta):
@@ -47,7 +57,7 @@ class MainyLogic():
 
 #================================================================================================================
     def goal_reached_flag(self, goal_reached):
-        self.goal_reached = goal_reached
+        self.flankenerkennungslogikfunktion(goal_reached)
 
 #================================================================================================================
 
@@ -71,9 +81,8 @@ class MainyLogic():
         if self.state == "obj_pick":    
 
 
-            if self.goal_reached == True:
+            if self.goal_reached_rising == True:
                 self.state = "obj_default_pos_grip"
-                self.goal_reached = False
             
             print(f"State: {self.state}, x:{self.obj_coord_x}, y:{self.obj_coord_y}, z:{self.obj_coord_z_down}, True, True")
             return self.obj_coord_x, self.obj_coord_y, self.obj_coord_z_down, True, True
@@ -81,9 +90,8 @@ class MainyLogic():
 
         elif self.state == "obj_default_pos_grip":
 
-            if self.goal_reached == True: 
+            if self.goal_reached_rising == True: 
                 self.state = "obj_sort"
-                self.goal_reached = False
 
             print(f"State: {self.state}, x:{self.coord_x_default}, y:{self.coord_y_default}, z:{self.obj_coord_z_up}, True, True")
             return self.coord_x_default, self.coord_y_default, self.obj_coord_z_up, True, True
@@ -91,9 +99,8 @@ class MainyLogic():
 
         elif self.state == "obj_sort":
 
-            if self.goal_reached == True:
+            if self.goal_reached_rising == True:
                 self.state = "obj_drop"
-                self.goal_reached = False
 
             if self.obj_typ == 2:           #TODO Name/ID Muss noch in der Planner_Node festgelegt werden
                 print(f"State: {self.state}, x:{self.coord_x_sort_unicorn}, y:{self.coord_y_sort_unicorn}, z:{self.obj_coord_z_up}, True, True")
@@ -105,10 +112,8 @@ class MainyLogic():
 
 
         elif self.state == "obj_drop":
-
-            if self.goal_reached == True:
-                self.state = 'obj_default_pos_lose'
-                self.goal_reached = False
+            
+            self.state = 'obj_default_pos_lose'
 
             if self.obj_typ == 2: 
                 print(f"State: {self.state}, x:{self.coord_x_sort_unicorn}, y:{self.coord_y_sort_unicorn}, z:{self.obj_coord_z_up}, False, True")         
@@ -121,9 +126,8 @@ class MainyLogic():
 
         elif self.state == "obj_default_pos_lose":
 
-            if self.goal_reached == True:
-                self.state = 'jobless'         #TODO hier evt RUNTIMEERROR mit Auftragseingang und state"obj_pick"
-                self.goal_reached = False
+            if self.goal_reached_rising == True:        #TODO BENJI EWALD EVT WENIGER NERVEN MIT == true WEG MACHEN WIEL UNNÖTIG
+                self.state = 'jobless'         
 
             self.work_done = True 
             print(f"State: {self.state}, x:{self.coord_x_default}, y:{self.coord_y_default}, z:{self.obj_coord_z_up}, False, True")  
