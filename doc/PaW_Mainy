@@ -47,3 +47,14 @@ Wie erkenne ich, welche wir auf dem Stack verpasst haben? Mit Zeitpunk von Objek
 ## Mögliche Fehler (muss testen):
 
 [sollte eigentlich doch gehen...]  mainylogic -> Zeile 106 "state obj_default_pos_los" und "auftragseingang state==obj_pick". [hier könnte das problem auftauchen, dass genau in dem moment in dem ein neuer Auftrag reinkommt, parallel auch die ]
+
+
+
+### TODO
+
+- die x-Achse verfährt manchmal einfach nicht nach der Init
+    erst wenn sie etwas auf posistion vorgefahren ist, gehts
+
+- State "obj_sort" ausgebessert (sollte jetzt beim test gehen)
+
+- 

@@ -141,13 +141,16 @@ class Motion(Node):
         '''
 
         if self.init_state == "init_done":
+            Xr_ist = msg.pos_x
+            Yr_ist = msg.pos_y 
+            Zr_ist = msg.pos_z 
             Xr_ist_offset = msg.pos_x - self.pos_x_offset
             Yr_ist_offset = msg.pos_y - self.pos_y_offset
             Zr_ist_offset = msg.pos_z - self.pos_z_offset
             self.motion_order.set_is_pos(Xr_ist_offset, Yr_ist_offset, Zr_ist_offset)
             self.get_logger().info("============== RoboKoordinaten+Offset: ==============")
             self.get_logger().info(f"Xr+offset: {Xr_ist_offset}, Yr+offset: {Yr_ist_offset}, Zr+offset: {Zr_ist_offset}")
-            self.get_logger().info(f"Xr: {Xr_ist_offset}, Yr: {Yr_ist_offset}, Zr: {Zr_ist_offset}")
+            self.get_logger().info(f"Xr: {Xr_ist}, Yr: {Yr_ist}, Zr: {Zr_ist}")
 
 #----------------Ab-hier-INIT-------------------------------------------------------
 

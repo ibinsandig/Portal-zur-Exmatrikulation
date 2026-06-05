@@ -1,10 +1,10 @@
 import rclpy
 from rclpy.node import Node
-from chaos_interfaces.msg import ObjDataDeluxe
+from chaos_topics.msg import ObjData
 from std_msgs.msg import Bool
 from std_msgs.msg import Int16
 from geometry_msgs.msg import Point32
-from ros2_logic.mainy import mainy_logic
+from mainy.mainy_logic import MainyLogic
 
 
 #================================================================================================================
@@ -14,25 +14,23 @@ class Mainy(Node):
 
         super().__init__('Mainy')
 
-        self.sub_obj_data_deluxe = self.create_subscription(
-            ObjDataDeluxe,
-            '/obj_data_deluxe',
-            self.set_obj_data_delux,
+        self.sub_obj_data = self.create_subscription(
+            ObjData,
+            '/obj_data',
+            self.set_obj_data,
             10)
         
         self.sub_goal_reached = self.create_subscription(
             Bool,
             '/goal_reached',
-            self.goal_reached,
+            self.goal_reached_request,
             10)
         
         self.sub_init_done = self.create_subscription(
             Bool,
             '/init_done',
-            self.init_done,
+            self.init_done_request,
             10)
-        
-        #   TIMER CALLBAXK als haupttaktgeber in MAINY
         
         #========================================================================================================
 
@@ -55,44 +53,48 @@ class Mainy(Node):
 #================================================================================================================
     def timer_StateMachine(self):
 
-        #TODO abfrage zum verhindern, dass ohne statewechsel mehr als einmal zielcoordinaten gepublished werden
-        x,y,z,gripper = self.mainylogic.state_machine() 
-        work_done, obj_id = self.mainylogic.work_done()
+        x,y,z,gripper,pub_block = self.mainylogic.state_machine() 
+        print(f"{x},{y},{z},{gripper},{pub_block}")
+
+        work_done, obj_id = self.mainylogic.work_done_flag()
+        print(f"Auftragsabschluss:{work_done},id:{obj_id}")
 
         if work_done:
             done_obj_id = Int16()
             done_obj_id.data = obj_id
-            self.pub_obj_finished(done_obj_id)
+            self.pub_obj_finished.publish(done_obj_id)
 
-        goal_coordinates = Point32()
-        goal_coordinates.x = x
-        goal_coordinates.y = y
-        goal_coordinates.z = z
-        self.pub_goal_coordinates(goal_coordinates)
-
-        goal_gripper = Bool()
-        goal_gripper.data = gripper
-        self.pub_goal_gripper(goal_gripper)
+        if pub_block:
+            goal_coordinates = Point32()
+            goal_coordinates.x = x
+            goal_coordinates.y = y
+            goal_coordinates.z = z
+            self.pub_goal_coordinates.publish(goal_coordinates)
+            
+            print("pub_block if erfüllt")
+            goal_gripper = Bool()
+            goal_gripper.data = gripper
+            self.pub_goal_gripper.publish(goal_gripper)
 
 
 
 
 #================================================================================================================
 
-    def goal_reached(self, msg):
+    def goal_reached_request(self, msg):
         goal_reached = msg.data
-        self.mainylogic.goal_reached(goal_reached)
+        self.mainylogic.goal_reached_flag(goal_reached)
 
 #================================================================================================================
 
-    def init_done(self, msg):
+    def init_done_request(self, msg):
         init_done = msg.data
         self.mainylogic.init_abfrage(init_done)
 
 #================================================================================================================
 
-    def set_obj_data_delux(self, msg):
-        obj_id = msg.obj_id
+    def set_obj_data(self, msg):
+        obj_id = msg.id
         obj_typ = msg.obj_typ
         goal_coord_x = msg.coord_x
         goal_coord_y = msg.coord_y

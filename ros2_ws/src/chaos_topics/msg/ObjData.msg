@@ -1,6 +1,7 @@
-# array
-int8 id
-int32 timestamp_grippoint_data
-int8 obj_type
-geometry_msgs/Point gripping_point
-float32 obj_speed
+int8 id         #Unschön, aber BITTE lass das bei ID (nicht obj_id)
+int8 obj_typ    #Rejected=0, Cat=1, Unicron=27
+
+float32 coord_x
+float32 coord_y
+float32 theta
+#Könnte nochmal umgestellt werden auf geometry_msgs/Pos2D
