@@ -7,7 +7,7 @@ counter = 0
 cv2.namedWindow("Kamera", cv2.WINDOW_NORMAL)
 
 # Fenstergröße anpassen, z.B. 1280x720
-cv2.resizeWindow("Kamera", 1280, 720)
+cv2.resizeWindow("Kamera", 1920, 1080)
 
 # Optional: Kamerauflösung setzen
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
@@ -20,7 +20,7 @@ while True:
         break
 
     # Bild auf Fenstergröße skalieren
-    frame = cv2.resize(frame, (1280, 720))
+    frame = cv2.resize(frame, (1920, 1080))
 
     cv2.imshow("Kamera", frame)
     key = cv2.waitKey(1) & 0xFF
