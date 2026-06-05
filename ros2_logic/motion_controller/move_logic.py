@@ -6,7 +6,7 @@ import time
 
 # Soll ist Vergleich Schwellwert: 
 
-th_move_logic= 0.0001
+th_move_logic= 0.0005    #TODO WEgen der Z-AChse (die war bei abs(0.00014))
 
 #=============================================================
 
@@ -34,7 +34,7 @@ class MotionOrder():
         self.time_step = 0.1
 
         self.controller_x = Controller(3.0,5.5) 
-        self.controller_y = Controller(3.0,5.5)
+        self.controller_y = Controller(3.0,6.0)
         self.controller_z = Controller(3.0,6.5)
 
 
@@ -70,7 +70,7 @@ class MotionOrder():
             self.logger.info(f" [Motion]: Ist - Soll vergleich in Toleranz {th_move_logic}")
             return True
         else: 
-            self.logger.info(" [Motion]: Ist-soll-Vergleich - keine Übereinstimmung!")
+            self.logger.info(f"SOll=!IST, x:{abs(self.Xr_ist - self.Xr_soll)}, y:{abs(self.Yr_ist - self.Yr_soll)} ,z:{abs(self.Zr_ist - self.Zr_soll)}")
             return False
     
     def time_step_calc(self):
