@@ -97,14 +97,7 @@ class Motion(Node):
         Xr_soll = msg.x * 0.8
         Yr_soll = msg.y * 0.8 
         Zr_soll = msg.z
-        self.motion_order.set_should_pos(Xr_soll, Yr_soll, Zr_soll)
-
-       # if self.motion_order.should_is_comp():
-
-       #     self.goal_reached = Bool()
-       #     self.goal_reached.data = True
-       #     self.publisher_goal_reached.publish(self.goal_reached)
-       #     self.get_logger().info("auftragseingang: Roboter ist an Zielpos! x-0=0, y-0=0, z-0=0")        
+        self.motion_order.set_should_pos(Xr_soll, Yr_soll, Zr_soll)   
 
 #================================================================================================================
             
@@ -137,8 +130,8 @@ class Motion(Node):
             Zr_ist_offset = msg.pos_z - self.pos_z_offset
             self.motion_order.set_is_pos(Xr_ist_offset, Yr_ist_offset, Zr_ist_offset)
             self.get_logger().info("============== RoboKoordinaten+Offset: ==============")
-            #self.get_logger().info(f"Xr+offset: {Xr_ist_offset}, Yr+offset: {Yr_ist_offset}, Zr+offset: {Zr_ist_offset}")
-            #self.get_logger().info(f"Xr: {Xr_ist}, Yr: {Yr_ist}, Zr: {Zr_ist}")
+            self.get_logger().info(f"Xr+offset: {Xr_ist_offset}, Yr+offset: {Yr_ist_offset}, Zr+offset: {Zr_ist_offset}")
+            self.get_logger().info(f"Xr: {Xr_ist}, Yr: {Yr_ist}, Zr: {Zr_ist}")
 
 #----------------Ab-hier-INIT-------------------------------------------------------
 
@@ -147,7 +140,6 @@ class Motion(Node):
             Yr_ist_raw = msg.pos_y
             Zr_ist_raw = msg.pos_z
             self.init_order.set_init_is_pos(Xr_ist_raw, Yr_ist_raw, Zr_ist_raw)
-            #self.get_logger().info(f"Bot-Rohwerte: {Xr_ist_raw}, {Yr_ist_raw}, {Zr_ist_raw}")
 
         if self.init_state == "init_rise":
             accel_x, accel_y, accel_z = self.init_order.endpoint_accel_rise()
@@ -210,30 +202,24 @@ class Motion(Node):
         elif self.init_state == "init_done": 
             accelofx, accelofy, accelofz = self.motion_order.wanted_accel()
 
-            if (accelofx) >= 0.1:
+            if (accelofx) >= 0.1: # TODO hier maybe ne generische clamp function schreiben
                 self.accel_x_over = 0.1
-                #self.get_logger().info("accel_x > 0.1!")
             elif (accelofx <= -0.1):
                 self.accel_x_over = -0.1
-                #self.get_logger().info("accel_x < -0.1!")
             else: 
                 self.accel_x_over = accelofx
 
             if (accelofy) >= 0.1:
                 self.accel_y_over = 0.1
-                #self.get_logger().info("accel_y > 0.1!")
             elif (accelofy <= -0.1):
                 self.accel_y_over = -0.1
-                #self.get_logger().info("accel_y < -0.1!")
             else: 
                 self.accel_y_over = accelofy
 
             if (accelofz) >= 0.1:
                 self.accel_z_over = 0.1
-                #self.get_logger().info("accel_z > 0.1!")
             elif (accelofz <= -0.1):
                 self.accel_z_over = -0.1
-                #self.get_logger().info("accel_z < -0.1!")
             else: 
                 self.accel_z_over = accelofz
 
