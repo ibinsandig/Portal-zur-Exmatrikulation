@@ -185,3 +185,14 @@ class ImagePreprocessor:
             features['fd_7'] = 0
             
         return features
+    
+    def extract_orientation(self, cnt):
+        rect = cv.minAreaRect(cnt)
+            # rect = (center, (width, height), angle)
+        angle = rect[2]
+            
+            # Normalisieren
+        if rect[1][0] < rect[1][1]:  # width < height
+            angle += 90
+                
+        return float(angle)

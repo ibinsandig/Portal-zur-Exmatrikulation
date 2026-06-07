@@ -1,4 +1,3 @@
 geometry_msgs/Pose2D pose2d
-int32 timestamp
-
-# id
+float64 timestamp
+int8 id

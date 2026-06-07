@@ -12,12 +12,9 @@
   <test_depend>ament_pep257</test_depend>
   <test_depend>python3-pytest</test_depend>
 
-
 #Packageabhänigkeiten herstellen: 
 #  <depend>ros2_logic</depend>
   <depend>geometry_msgs</depend>
-
-
 
   <export>
     <build_type>ament_python</build_type>

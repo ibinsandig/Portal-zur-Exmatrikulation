@@ -2,6 +2,7 @@ import rclpy
 from rclpy.node import Node
 from chaos_topics.msg import FuturePosition
 from chaos_topics.msg import ObjCoords
+from geometry_msgs.msg import Pose2D
 from coord_pred.coord_pred import CoordinatesPrediction
 
 class CoordPred(Node):
@@ -13,18 +14,26 @@ class CoordPred(Node):
             '/obj_coords',
             self.listener_callback,
             10)
-        self.sub_obj_features
+        self.sub_obj_coords
 
         self.pub_future_postion = self.create_publisher(FuturePosition, '/future_position', 10)
-        timer_time = 1/30   # sek
 
         self.PrePro = CoordinatesPrediction()
 
-        self.data = self.create_timer(timer_time, self.timer_callback)
         self.get_logger().info('CoordPred-Node gestartet')
 
-    def timer_callback(self):
-        pass
+    def listener_callback(self, msg):
+        future_position = FuturePosition()
+
+        future_position.speed = self.PrePro.calculate_speed_with_ID(msg.id, msg.pose2d.x, future_position.timestamp)
+
+        if future_position.speed != -100:
+            future_position = FuturePosition()
+            future_position.id = msg.id
+            future_position.pose2d = msg.pose2d
+            future_position.speed = future_position.speed
+
+        self.pub_future_postion.publish(future_position)
 
 def main(args=None):
     rclpy.init(args=args)

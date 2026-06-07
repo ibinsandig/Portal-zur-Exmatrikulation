@@ -15,10 +15,10 @@ class Machine_learning(Node):
             self.listener_callback,
             10)
         self.sub_obj_features
-        
-        self.classifier = Classifier()
 
         self.pub_obj_type = self.create_publisher(ObjType, '/obj_type', 10)
+
+        self.classifier = Classifier()
 
         self.get_logger().info("Machine Learning Node gestartet...")
 
@@ -47,7 +47,7 @@ class Machine_learning(Node):
             solidity=msg.solidity,
             area=msg.area
         )
-
+        self.get_logger().info(f"Label: {label}, Confidence: {confidence}")
         # Daten in msg schreiben und publishen
         pub_data_test = ObjType()
 

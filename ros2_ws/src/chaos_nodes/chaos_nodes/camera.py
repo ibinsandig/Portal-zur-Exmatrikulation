@@ -24,8 +24,13 @@ class Camera(Node):
         self.pub_obj_festures = self.create_publisher(ObjFeatures, '/obj_features', 10)
         timer_time = 1/30   # sek
 
-        self.testmode = True # Zum Testen ohne Kamera
-        self.frame_count = 0  # Frame counter for timestamp
+        self.start_time = time.time()
+
+        # Zum Testen ohne Kamera
+        self.testmode = True 
+
+
+        self.frame_count = 1  
 
         path_camera = 4     # PortalCam = /dev/video4
 
@@ -37,14 +42,13 @@ class Camera(Node):
 
         if self.testmode:
             try:
-                # 1. Bild mit cv2.imread() laden
                 init_frame = cv.imread(img_path_aruco)
                 
                 if init_frame is None:
-                    self.get_logger().error(f"FEHLER: Konnte das Bild unter {img_path_aruco} nicht laden. Überprüfen Sie den Pfad.")
+                    self.get_logger().error(f"TEST: Konnte das Bild unter {img_path_aruco} nicht laden. Überprüfen Sie den Pfad.")
                     raise Exception("Bild konnte nicht geladen werden.")
                 
-                # 2. Das geladene Bildobjekt an setup übergeben
+
                 self.PrePro.setup(init_frame)
             except Exception as e:
                 self.get_logger().error(f'TEST: Fehler beim Setup der Kamera: {str(e)}')
@@ -101,9 +105,11 @@ class Camera(Node):
             try:
                 self.pub_obj_coords.publish(obj_coords_msg)
                 self.pub_obj_festures.publish(obj_features_msg)
-
+                self.get_logger().info('TEST: Daten erfolgreich veröffentlicht')
             except Exception as e:
                 self.get_logger().error(f'TEST: Fehler beim Senden der Daten: {str(e)}')
+
+            
 
         else:
 
@@ -139,7 +145,7 @@ class Camera(Node):
         return img_rotated
 
     def process_img(self, frame):
-        self.frame_count += 1
+        #self.frame_count += 1
         
         warped_image = self.PrePro.warp_image(frame)
         contours = self.PrePro.segment_object(warped_image)
@@ -165,11 +171,13 @@ class Camera(Node):
         pose2d = Pose2D()
         pose2d.x = float(world_obj_coords[0])
         pose2d.y = float(world_obj_coords[1])
-        pose2d.theta = 0.0  # No rotation info available from image
+        pose2d.theta = self.PrePro.extract_orientation(contours[0])
         
         obj_coords_msg = ObjCoords()
         obj_coords_msg.pose2d = pose2d
-        obj_coords_msg.timestamp = self.frame_count  # Use frame counter instead #TODO weg damit noch
+        obj_coords_msg.timestamp = self.time_since_start()
+        obj_coords_msg.id = self.frame_count
+       
 
         # Convert features dict to ObjFeatures message
         obj_features_msg = ObjFeatures()
@@ -196,7 +204,13 @@ class Camera(Node):
         obj_features_msg.solidity = float(obj_features_dict.get('solidity', 0))
         
         return obj_coords_msg, obj_features_msg
+    
+    def time_since_start(self):
+            
+        timestamp = time.time() - self.start_time
 
+        return timestamp
+ 
 def main(args=None):
     rclpy.init(args=args)
     camera = Camera()

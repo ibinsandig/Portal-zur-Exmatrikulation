@@ -26,6 +26,7 @@ setup(
         'console_scripts': [
         'motion = chaos_nodes.motion:main',
         'camera = chaos_nodes.camera:main',
+        'coord_pred = chaos_nodes.coord_pred:main',
         'machine_learning = chaos_nodes.machine_learning:main',
         'mainy = chaos_nodes.mainy:main'
         ],
