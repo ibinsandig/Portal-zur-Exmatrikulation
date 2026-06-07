@@ -16,6 +16,9 @@ class Machine_learning(Node):
             10)
         self.sub_obj_features
         
+        objClassifier = Classifier()
+
+
         self.pub_obj_type = self.create_publisher(ObjType, '/obj_type', 10)
 
         self.get_logger().info("Machine Learning Node gestartet...")
@@ -23,9 +26,18 @@ class Machine_learning(Node):
     def listener_callback(self, msg):
         pub_data_before = msg
 
-        pub_data_test = ObjDataDeluxe()
+        # klassifizieren
+        
+        #TODO 
+
+        # Daten in msg schreiben und publishen
+        pub_data_test = ObjType()
+
+        #TODO
 
         self.pub_obj_type.publish(pub_data_test)
+
+
 
 def main():
     rclpy.init(args=None)

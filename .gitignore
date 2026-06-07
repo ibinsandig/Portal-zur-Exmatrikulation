@@ -2,6 +2,11 @@
 
 .kilo
 
+# Linus ml Ordner
+
+prepWork/
+
+
 # ROS2 specific ignores
 
 build/

@@ -4,9 +4,19 @@ import cv2 as cv
 from chaos_topics.msg import ObjCoords
 from chaos_topics.msg import ObjFeatures
 from geometry_msgs.msg import Pose2D
-from camera.preprocessing3 import ImagePreprocessor
+from camera.preprocessing import ImagePreprocessor
 import time
 import numpy as np
+
+# Testmodus
+#import testmode.cat as cat
+#import testmode.aruco as aruco
+
+#import cat
+#import aruco
+
+img_path_aruco = "~/Robotik/4_Semester/robotik_projekt_3/Portal-zur-Exmatrikulation/ros2_ws/src/chaos_nodes/chaos_nodes/aruco.png"
+img_path_cat = "~/Robotik/4_Semester/robotik_projekt_3/Portal-zur-Exmatrikulation/ros2_ws/src/chaos_nodes/chaos_nodes/cat.png"
 
 class Camera(Node):
 
@@ -17,6 +27,8 @@ class Camera(Node):
         self.pub_obj_festures = self.create_publisher(ObjFeatures, '/obj_features', 10)
         timer_time = 1/30   # sek
 
+        self.testmode = True # Zum Testen ohne Kamera
+
         path_camera = 4     # PortalCam = /dev/video4
 
         try:
@@ -25,46 +37,85 @@ class Camera(Node):
             self.get_logger().error(f'Fehler bei ImagePrepocessor: {str(e)}')
             raise e            
 
-        try:
-            self.img = cv.VideoCapture(path_camera)
-        except Exception as e:
-            self.get_logger().error(f'Fehler beim Initialisieren der Kamera: {str(e)}')
-            raise e
-
-        self.img.set(cv.CAP_PROP_BUFFERSIZE, 0)
-
-        while(True):
-            print('Setup Kamera...')
-
+        if self.testmode:
             try:
-                self.PrePro.setup(self.read_camera())
+                # 1. Bild mit cv2.imread() laden
+                init_frame = cv.imread(img_path_aruco)
+                
+                if init_frame is None:
+                    self.get_logger().error(f"FEHLER: Konnte das Bild unter {img_path_aruco} nicht laden. Überprüfen Sie den Pfad.")
+                    raise Exception("Bild konnte nicht geladen werden.")
+                
+                # 2. Das geladene Bildobjekt an setup übergeben
+                self.PrePro.setup(init_frame)
             except Exception as e:
-                self.get_logger().error(f'Fehler beim Setup der Kamera: {str(e)}')
+                self.get_logger().error(f'TEST: Fehler beim Setup der Kamera: {str(e)}')
                 raise e
             
-            if self.PrePro.H_inv_warp is not None:
-                break
+            if self.PrePro.H_inv_warp is None:
+                self.get_logger().info('TEST: Setup gescheitert')
+
+        else:
+
+            try:
+                self.img = cv.VideoCapture(path_camera)
+            except Exception as e:
+                self.get_logger().error(f'Fehler beim Initialisieren der Kamera: {str(e)}')
+                raise e
+
+            self.img.set(cv.CAP_PROP_BUFFERSIZE, 0)
+
+            while(True):
+                print('Setup Kamera...')
+
+                try:
+                    self.PrePro.setup(self.read_camera())
+                except Exception as e:
+                    self.get_logger().error(f'Fehler beim Setup der Kamera: {str(e)}')
+                    raise e
+                
+                if self.PrePro.H_inv_warp is not None:
+                    break
 
         self.data = self.create_timer(timer_time, self.timer_callback)
         self.get_logger().info('Kamera-Node gestartet')
 
-    def timer_callback(self):
+    def timer_callback(self): #TODO Einfügen der features nicht korrekt
 
-        frame = self.read_camera()
+        if self.testmode:
+            frame = img_path_cat
 
-        try:
-            obj_coords_msg, obj_features_msg = self.process_img(frame)
-             
-        except Exception as e:
-            self.get_logger().error(f'Fehler bei der Bildverarbeitung: {str(e)}')
-            return
+            try:
+                obj_coords_msg, obj_features_msg = self.process_img(frame)
+                
+            except Exception as e:
+                self.get_logger().error(f'Fehler bei der Bildverarbeitung: {str(e)}')
+                return
 
-        try:
-            self.pub_obj_coords.publish(obj_coords_msg)
-            self.pub_obj_festures.publish(obj_features_msg)
+            try:
+                self.pub_obj_coords.publish(obj_coords_msg)
+                self.pub_obj_festures.publish(obj_features_msg)
 
-        except Exception as e:
-            self.get_logger().error(f'Fehler beim Senden der Daten: {str(e)}')
+            except Exception as e:
+                self.get_logger().error(f'Fehler beim Senden der Daten: {str(e)}')
+
+        else:
+
+            frame = self.read_camera()
+
+            try:
+                obj_coords_msg, obj_features_msg = self.process_img(frame)
+                
+            except Exception as e:
+                self.get_logger().error(f'Fehler bei der Bildverarbeitung: {str(e)}')
+                return
+
+            try:
+                self.pub_obj_coords.publish(obj_coords_msg)
+                self.pub_obj_festures.publish(obj_features_msg)
+
+            except Exception as e:
+                self.get_logger().error(f'Fehler beim Senden der Daten: {str(e)}')
 
 
     def read_camera(self):
