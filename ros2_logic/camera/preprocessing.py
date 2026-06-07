@@ -124,31 +124,64 @@ class ImagePreprocessor:
         return world[0, 0]  # Return as (x, y) tuple-like array
 
     def extract_features_from_contour(self, cnt):
+        """Extract all features needed for machine learning classification."""
         features = {}
     
         # 1. Basis-Werte
-        features['area'] = cv.contourArea(cnt)
-        features['perimeter'] = cv.arcLength(cnt, True)
+        area = cv.contourArea(cnt)
+        perimeter = cv.arcLength(cnt, True)
+        features['area'] = area
+        features['perimeter'] = perimeter
         
-        if features['area'] == 0 or features['perimeter'] == 0:
+        if area == 0 or perimeter == 0:
             return None
             
         # 2. Polygon Approximation & corners
-        epsilon = 0.04 * features['perimeter']
+        epsilon = 0.04 * perimeter
         approx = cv.approxPolyDP(cnt, epsilon, True)
         features['corners'] = len(approx)
         
-        # 3. Bounding Box & aspect ratio
+        # 3. Bounding Box & solidity
         x, y, w, h = cv.boundingRect(cnt)
-        features['aspect_ratio'] = float(w) / h
+        rect_area = w * h
+        features['bbox_w'] = w
+        features['solidity'] = float(area) / rect_area if rect_area > 0 else 0
         
         # 4. Circularity
-        features['circularity'] = (4 * np.pi * features['area']) / (features['perimeter'] ** 2)
+        features['circularity'] = (4 * np.pi * area) / (perimeter ** 2)
         
         # 5. Hu-Moments (shape descriptors, rotation-invariant)
         M = cv.moments(cnt)
         hu = cv.HuMoments(M).flatten()
         for i in range(7):
-            features[f'hu_{i}'] = hu[i]
+            features[f'hu_{i}'] = float(hu[i])
+        
+        # 6. Fourier Descriptors (shape signature using power spectrum approximation)
+        # Using contour point distribution as a simplified Fourier descriptor
+        cnt_reshaped = cnt.reshape(-1, 2).astype(np.float32)
+        if len(cnt_reshaped) >= 2:
+            # Calculate distances and angles for shape encoding
+            diffs = np.diff(cnt_reshaped, axis=0)
+            distances = np.sqrt(np.sum(diffs**2, axis=1))
+            mean_dist = np.mean(distances) if len(distances) > 0 else 0
+            std_dist = np.std(distances) if len(distances) > 0 else 0
+            max_dist = np.max(distances) if len(distances) > 0 else 0
+            
+            # Simplified Fourier descriptors based on shape properties
+            features['fd_1'] = float(mean_dist) if mean_dist > 0 else 0
+            features['fd_2'] = float(area) / (perimeter ** 2) if perimeter > 0 else 0
+            features['fd_3'] = float(std_dist) if std_dist > 0 else 0
+            features['fd_4'] = float(max_dist) / (perimeter) if perimeter > 0 else 0
+            features['fd_5'] = float(perimeter) / (np.sqrt(area)) if area > 0 else 0
+            features['fd_6'] = float(perimeter ** 2) / area if area > 0 else 0
+            features['fd_7'] = float(len(cnt_reshaped)) / area if area > 0 else 0
+        else:
+            features['fd_1'] = 0
+            features['fd_2'] = 0
+            features['fd_3'] = 0
+            features['fd_4'] = 0
+            features['fd_5'] = 0
+            features['fd_6'] = 0
+            features['fd_7'] = 0
             
         return features
