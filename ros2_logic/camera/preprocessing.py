@@ -116,8 +116,12 @@ class ImagePreprocessor:
         return (cX, cY)
 
     def pixel_to_world(self, pixel):
-        world = cv.perspectiveTransform(pixel, self.H_inv_warp)
-        return world
+        if pixel is None:
+            return None
+        # Convert tuple to numpy array with proper shape for perspectiveTransform
+        pixel_array = np.array([pixel], dtype=np.float32).reshape(-1, 1, 2)
+        world = cv.perspectiveTransform(pixel_array, self.H_inv_warp)
+        return world[0, 0]  # Return as (x, y) tuple-like array
 
     def extract_features_from_contour(self, cnt):
         features = {}

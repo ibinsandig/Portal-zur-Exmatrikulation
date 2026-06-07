@@ -9,14 +9,11 @@ import time
 import numpy as np
 
 # Testmodus
-#import testmode.cat as cat
-#import testmode.aruco as aruco
-
-#import cat
-#import aruco
-
-img_path_aruco = "~/Robotik/4_Semester/robotik_projekt_3/Portal-zur-Exmatrikulation/ros2_ws/src/chaos_nodes/chaos_nodes/aruco.png"
-img_path_cat = "~/Robotik/4_Semester/robotik_projekt_3/Portal-zur-Exmatrikulation/ros2_ws/src/chaos_nodes/chaos_nodes/cat.png"
+import testmode
+import os
+_TESTMODE_DIR = os.path.dirname(testmode.__file__)
+img_path_cat   = os.path.join(_TESTMODE_DIR, 'cat.png')
+img_path_aruco = os.path.join(_TESTMODE_DIR, 'aruco.png')
 
 class Camera(Node):
 
@@ -28,6 +25,7 @@ class Camera(Node):
         timer_time = 1/30   # sek
 
         self.testmode = True # Zum Testen ohne Kamera
+        self.frame_count = 0  # Frame counter for timestamp
 
         path_camera = 4     # PortalCam = /dev/video4
 
@@ -83,13 +81,21 @@ class Camera(Node):
     def timer_callback(self): #TODO Einfügen der features nicht korrekt
 
         if self.testmode:
-            frame = img_path_cat
+            frame = cv.imread(img_path_cat)
+            
+            if frame is None:
+                self.get_logger().error(f"TEST: Konnte das Bild unter {img_path_cat} nicht laden.")
+                return
 
             try:
                 obj_coords_msg, obj_features_msg = self.process_img(frame)
                 
+                if obj_coords_msg is None or obj_features_msg is None:
+                    self.get_logger().debug('TEST: Keine gültigen Daten zum Veröffentlichen')
+                    return
+                
             except Exception as e:
-                self.get_logger().error(f'Fehler bei der Bildverarbeitung: {str(e)}')
+                self.get_logger().error(f'TEST: Fehler bei der Bildverarbeitung: {str(e)}')
                 return
 
             try:
@@ -97,7 +103,7 @@ class Camera(Node):
                 self.pub_obj_festures.publish(obj_features_msg)
 
             except Exception as e:
-                self.get_logger().error(f'Fehler beim Senden der Daten: {str(e)}')
+                self.get_logger().error(f'TEST: Fehler beim Senden der Daten: {str(e)}')
 
         else:
 
@@ -105,6 +111,10 @@ class Camera(Node):
 
             try:
                 obj_coords_msg, obj_features_msg = self.process_img(frame)
+                
+                if obj_coords_msg is None or obj_features_msg is None:
+                    self.get_logger().debug('Keine gültigen Daten zum Veröffentlichen')
+                    return
                 
             except Exception as e:
                 self.get_logger().error(f'Fehler bei der Bildverarbeitung: {str(e)}')
@@ -129,16 +139,46 @@ class Camera(Node):
         return img_rotated
 
     def process_img(self, frame):
+        self.frame_count += 1
+        
         warped_image = self.PrePro.warp_image(frame)
         contours = self.PrePro.segment_object(warped_image)
 
-        pixel_obj_coords = self.PrePro.obj_position(contours)
-        world_obj_coords = self.PrePro.pixel_to_world(pixel_obj_coords)
-        obj_features = self.PrePro.extract_features_from_contour(contours[0])
+        if not contours:
+            self.get_logger().warn('Keine Konturen gefunden')
+            return None, None
 
-        #TODO Baustell für publish Format
+        pixel_obj_coords = self.PrePro.obj_position(contours)
         
-        return world_obj_coords, obj_features
+        if pixel_obj_coords is None:
+            self.get_logger().warn('Objekt Position konnte nicht ermittelt werden')
+            return None, None
+            
+        world_obj_coords = self.PrePro.pixel_to_world(pixel_obj_coords)
+        obj_features_dict = self.PrePro.extract_features_from_contour(contours[0])
+
+        if obj_features_dict is None:
+            self.get_logger().warn('Features konnten nicht extrahiert werden')
+            return None, None
+
+        # Convert world coordinates to ObjCoords message
+        pose2d = Pose2D()
+        pose2d.x = float(world_obj_coords[0])
+        pose2d.y = float(world_obj_coords[1])
+        pose2d.theta = 0.0  # No rotation info available from image
+        
+        obj_coords_msg = ObjCoords()
+        obj_coords_msg.pose2d = pose2d
+        obj_coords_msg.timestamp = self.frame_count  # Use frame counter instead #TODO weg damit noch
+
+        # Convert features dict to ObjFeatures message
+        obj_features_msg = ObjFeatures()
+        obj_features_msg.id = 0  # Default id
+        obj_features_msg.cornercount = int(obj_features_dict.get('corners', 0))
+        obj_features_msg.circularity = int(obj_features_dict.get('circularity', 0) * 100)  # Scale to int8
+        obj_features_msg.moment = int(obj_features_dict.get('area', 0))
+        
+        return obj_coords_msg, obj_features_msg
 
 def main(args=None):
     rclpy.init(args=args)

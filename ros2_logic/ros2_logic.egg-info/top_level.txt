@@ -4,3 +4,4 @@ machine_learning
 mainy
 motion_controller
 planner
+testmode
