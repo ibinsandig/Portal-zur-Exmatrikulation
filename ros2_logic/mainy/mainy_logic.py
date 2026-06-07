@@ -8,9 +8,11 @@ class MainyLogic():
         self.obj_typ = 0                    # 0 ist "NICHT ERKANNT"
         self.obj_coord_x = None
         self.obj_coord_y = None
-        self.obj_coord_z_up = 0.07          #Nochmal Testen und ggf. justieren TODO
-        self.obj_coord_z_down = 0.095       #nochmal testen TODO
+        self.obj_coord_z_up = 0.07          
+        self.obj_coord_z_down = 0.095       
         self.obj_coord_theta = None
+
+        self.obj_coord_z_mid = 0.085        #Noch ungenutz, hier muss pre-pick besprochen werden
 
         self.coord_x_default = 0.15
         self.coord_y_default = -0.08
@@ -38,13 +40,6 @@ class MainyLogic():
     
     #================================================================================================================
 
-    def flankenerkennungslogikfunktion(self, current_goal_reached):
-        self.goal_reached_rising = current_goal_reached and not self.goal_reached_previous
-        
-        self.goal_reached_previous = current_goal_reached
-
-    #================================================================================================================
-
     def auftragseingang_main(self, obj_id, obj_typ, obj_coord_x, obj_coord_y, obj_coord_theta):
         self.obj_id = obj_id
         self.obj_typ = obj_typ
@@ -56,9 +51,17 @@ class MainyLogic():
         self.work_done = False
 
 #================================================================================================================
-    def goal_reached_flag(self, goal_reached):
-        self.flankenerkennungslogikfunktion(goal_reached)
 
+    def flankenerkennung(self, current_goal_reached):
+        '''
+        Goal_reached gilt nur als True, wenn wir von einer Steigenden Flanke sprechen. 
+        '''
+        self.goal_reached_rising = current_goal_reached and not self.goal_reached_previous
+        
+        self.goal_reached_previous = current_goal_reached   
+   
+    def goal_reached_flag(self, goal_reached):
+        self.flankenerkennung(goal_reached)
 #================================================================================================================
 
     def work_done_flag(self):
@@ -102,11 +105,11 @@ class MainyLogic():
             if self.goal_reached_rising == True:
                 self.state = "obj_drop"
 
-            if self.obj_typ == 2:           #TODO Name/ID Muss noch in der Planner_Node festgelegt werden
+            if self.obj_typ == 2:           
                 print(f"State: {self.state}, x:{self.coord_x_sort_unicorn}, y:{self.coord_y_sort_unicorn}, z:{self.obj_coord_z_up}, True, True")
                 return self.coord_x_sort_unicorn, self.coord_y_sort_unicorn, self.obj_coord_z_up, True, True
             
-            if self.obj_typ == 1:               #TODO NAME/ID Muss noch in der Planner_Node festgelegt werden
+            if self.obj_typ == 1:               
                 print(f"State: {self.state}, x:{self.coord_x_sort_cat}, y:{self.coord_y_sort_cat}, z:{self.obj_coord_z_up}, True, True")
                 return self.coord_x_sort_cat, self.coord_y_sort_cat, self.obj_coord_z_up, True, True
 
