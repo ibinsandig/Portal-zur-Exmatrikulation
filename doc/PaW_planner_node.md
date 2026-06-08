@@ -38,3 +38,9 @@ Und Schreibt sie in eine Liste.
                                                                 dafür die bekommenen koordinaten ohne berechnungen!!!!)
                                                                 Hier nicht vergessen, eine Justier-Variable für die Zeit-
                                                                 berechnung einzubauen!
+
+
+TODO's: 
+
+Thema Weltcoordinatensystem [TCP Punkt muss als TCP_OFFSET auf die Welt-Robot-Koordinatensystem]
+Thmea Punktabarbeiten [dauerhaftes PUNKT übergeben?, oder Zeitvorrechnen und Punktübergeben]

@@ -40,12 +40,16 @@ class MainyLogic():
     
     #================================================================================================================
 
-    def auftragseingang_main(self, obj_id, obj_typ, obj_coord_x, obj_coord_y, obj_coord_theta):
+    def auftragseingang_main(self, obj_id, obj_typ, obj_coord_x, obj_coord_y, obj_coord_theta): #TODO Neuer Name "def neues Objekt" 
         self.obj_id = obj_id
-        self.obj_typ = obj_typ
-        self.obj_coord_x = obj_coord_x
-        self.obj_coord_y = obj_coord_y
-        self.obj_coord_theta = obj_coord_theta
+        self.obj_typ = obj_typ 
+    
+        if obj_id is not self.obj_id_prev: 
+            self.obj_id_prev = obj_id
+
+            self.obj_coord_x = obj_coord_x
+            self.obj_coord_y = obj_coord_y
+            self.obj_coord_theta = obj_coord_theta
         
         self.state = 'obj_pick'
         self.work_done = False
@@ -83,7 +87,6 @@ class MainyLogic():
 
         if self.state == "obj_pick":    
 
-
             if self.goal_reached_rising == True:
                 self.state = "obj_default_pos_grip"
             
@@ -105,7 +108,7 @@ class MainyLogic():
             if self.goal_reached_rising == True:
                 self.state = "obj_drop"
 
-            if self.obj_typ == 2:           
+            if self.obj_typ == 2: #TODO Umbenennung von Zahl auf String           
                 print(f"State: {self.state}, x:{self.coord_x_sort_unicorn}, y:{self.coord_y_sort_unicorn}, z:{self.obj_coord_z_up}, True, True")
                 return self.coord_x_sort_unicorn, self.coord_y_sort_unicorn, self.obj_coord_z_up, True, True
             
