@@ -33,6 +33,8 @@ class CoordPred(Node):
             future_position.pose2d = msg.pose2d
             future_position.speed = future_position.speed
 
+        self.get_logger().info("Speed: {future_position.speed}; ID: {future_position.id}; X: {future_position.pose2d.x}; Y: {future_position.pose2d.y};")
+
         self.pub_future_postion.publish(future_position)
 
 def main(args=None):

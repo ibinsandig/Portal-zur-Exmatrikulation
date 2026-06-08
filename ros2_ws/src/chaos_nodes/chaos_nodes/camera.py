@@ -167,7 +167,7 @@ class Camera(Node):
             self.get_logger().warn('Features konnten nicht extrahiert werden')
             return None, None
 
-        # Convert world coordinates to ObjCoords message
+        
         pose2d = Pose2D()
         pose2d.x = float(world_obj_coords[0])
         pose2d.y = float(world_obj_coords[1])
@@ -179,7 +179,7 @@ class Camera(Node):
         obj_coords_msg.id = self.frame_count
        
 
-        # Convert features dict to ObjFeatures message
+        
         obj_features_msg = ObjFeatures()
         obj_features_msg.id = 0  # Default id
         obj_features_msg.cornercount = int(obj_features_dict.get('corners', 0))

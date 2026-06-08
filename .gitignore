@@ -3,9 +3,8 @@
 .kilo
 
 # Linus ml Ordner
-
-prepWork/
-archiv/
+pic_save/
+misc/prepWork
 
 # ROS2 specific ignores
 
