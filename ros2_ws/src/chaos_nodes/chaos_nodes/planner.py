@@ -1,7 +1,8 @@
 import rclpy
 from rclpy.node import Node
 from chaos_topics.msg import ObjType, FuturePosition, ObjData
-from std_msgs.msg import Int8
+from std_msgs.msg import Int16
+from geometry_msgs.msg import Point
 from planner.postprocessing import PostProcessor
 from functools import partial
 
@@ -12,13 +13,13 @@ class Planner(Node):
         super().__init__('planner')
 
         self.sub_obj_type = self.create_subscription(
-            ObjType, '/objType', self.callback_obj_type, 10)
+            ObjType, '/obj_type', self.callback_obj_type, 10)
 
         self.sub_future_position = self.create_subscription(
             FuturePosition, '/future_position', self.callback_future_position, 10)
 
         self.sub_obj_finished = self.create_subscription(
-            Int8, '/obj_finished', self.callback_obj_finished, 10)
+            Int16, '/obj_finished', self.callback_obj_finished, 10)
 
         self.pub_obj_data = self.create_publisher(ObjData, '/obj_data', 10)
 
@@ -52,12 +53,17 @@ class Planner(Node):
         pub_data = ObjData()
         pub_data.id      = obj['id']
         pub_data.obj_typ = obj['obj_type']
-        pub_data.grip    = 0  # TODO: Grip-Wert aus grip_point berechnen
+        
+        p = Point()
+        p.x = float(obj['grip_point']['x'])
+        p.y = float(obj['grip_point']['y'])
+        p.z = 0.0
+        pub_data.point = p
 
         self.pub_obj_data.publish(pub_data)
         self.get_logger().info(
             f"Published: ID={pub_data.id}, Typ={pub_data.obj_typ}, "
-            f"x={pub_data.coord_x:.2f}, y={pub_data.coord_y:.2f}"
+            f"x={pub_data.point.x:.2f}, y={pub_data.point.y:.2f}"
         )
 
 def main(args=None):
