@@ -22,12 +22,10 @@ class Classifier:
         prediction = self.model.predict(X_sel)[0]
         confidence = self.model.predict_proba(X_sel).max()
 
-        if isinstance(prediction, str) and prediction in self.label_map:
-            prediction = self.label_map[prediction]
-        elif isinstance(prediction, str):
+
+        if isinstance(prediction, str):
             try:
                 prediction = int(prediction)
             except:
                 prediction = 0
 
-        return prediction, confidence

@@ -33,7 +33,7 @@ class CoordPred(Node):
         )
 
         if speed != -100:
-            future_position.speed = speed          # ← assign the returned value, not itself
+            future_position.speed = int(speed)       # ← assign the returned value, not itself
 
         self.get_logger().info(
             f"Speed: {future_position.speed}; ID: {future_position.id}; "   # ← added f-prefix
