@@ -1,1 +1,1 @@
-random_forest_model_1.pkl : 'circularity', 'hu_4', 'fd_2', 'fd_6', 'hu_1', 'hu_0', 'hu_5', 'hu_6', 'solidity', 'area'
+random_forest_model_1.pkl : 'hu_2', 'hu_3
