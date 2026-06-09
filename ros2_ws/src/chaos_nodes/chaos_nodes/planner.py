@@ -44,19 +44,23 @@ class Planner(Node):
         if obj is None:
             return
 
+        if obj['obj_type'] == 0:
+            self.PostPro.finish_obj(obj['id'])
+            self.get_logger().info(f"Objekt {obj['id']} ist rejected, wird übersprungen")
+            return
+
         pub_data = ObjData()
-        pub_data.id       = obj['id']
-        pub_data.obj_typ  = obj['obj_type']
-        pub_data.coord_x  = float(obj['pose2d'].x)
-        pub_data.coord_y  = float(obj['pose2d'].y)
-        pub_data.theta    = float(obj['pose2d'].theta)
+        pub_data.id      = obj['id']
+        pub_data.obj_typ = obj['obj_type']
+        pub_data.coord_x = float(obj['grip_point']['x'])
+        pub_data.coord_y = float(obj['grip_point']['y'])
+        pub_data.theta   = float(obj['grip_point']['theta'])
 
         self.pub_obj_data.publish(pub_data)
         self.get_logger().info(
             f"Published: ID={pub_data.id}, Typ={pub_data.obj_typ}, "
             f"x={pub_data.coord_x:.2f}, y={pub_data.coord_y:.2f}"
         )
-
 
 def main(args=None):
     rclpy.init(args=args)

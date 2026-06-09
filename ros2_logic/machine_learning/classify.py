@@ -16,46 +16,24 @@ class Classifier:
             'accepted': 1,
         }
 
-    def classify(self, corners, fd_4, perimeter, circularity, hu_4, fd_2, bbox_w, fd_1, fd_3, fd_5, fd_7, fd_6, hu_1, hu_0, hu_2, hu_3, hu_5, hu_6, solidity, area):
-
+    def classify(self, hu_2, hu_3):
         features = {
-            "corners": corners,
-            "fd_4": fd_4,
-            "perimeter": perimeter,
-            "circularity": circularity,
-            "hu_4": hu_4,
-            "fd_2": fd_2,
-            "bbox_w": bbox_w,
-            "fd_1": fd_1,
-            "fd_3": fd_3,
-            "fd_5": fd_5,
-            "fd_7": fd_7,
-            "fd_6": fd_6,
-            "hu_1": hu_1,
-            "hu_0": hu_0,
             "hu_2": hu_2,
             "hu_3": hu_3,
-            "hu_5": hu_5,
-            "hu_6": hu_6,
-            "solidity": solidity,
-            "area": area,
         }
 
         X = pd.DataFrame([features])[self.all_features]
         X_sel = self.selector.transform(X)
 
-        prediction  = self.model.predict(X_sel)[0]
-        confidence  = self.model.predict_proba(X_sel).max()
-        
-        # Convert string label to integer if mapping exists
+        prediction = self.model.predict(X_sel)[0]
+        confidence = self.model.predict_proba(X_sel).max()
+
         if isinstance(prediction, str) and prediction in self.label_map:
             prediction = self.label_map[prediction]
         elif isinstance(prediction, str):
-            # If label not in map, try to convert directly to int
             try:
                 prediction = int(prediction)
             except:
-                # Default to 0 if conversion fails
                 prediction = 0
 
         return prediction, confidence
