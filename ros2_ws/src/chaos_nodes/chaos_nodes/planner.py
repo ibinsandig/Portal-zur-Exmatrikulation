@@ -52,9 +52,7 @@ class Planner(Node):
         pub_data = ObjData()
         pub_data.id      = obj['id']
         pub_data.obj_typ = obj['obj_type']
-        pub_data.coord_x = float(obj['grip_point']['x'])
-        pub_data.coord_y = float(obj['grip_point']['y'])
-        pub_data.theta   = float(obj['grip_point']['theta'])
+        pub_data.grip    = 0  # TODO: Grip-Wert aus grip_point berechnen
 
         self.pub_obj_data.publish(pub_data)
         self.get_logger().info(

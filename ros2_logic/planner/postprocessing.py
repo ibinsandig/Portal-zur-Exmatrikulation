@@ -79,5 +79,5 @@ class PostProcessor:
         return {
             'x': grip_x,
             'y': grip_y,
-            'theta': pose2d.theta,
+            'theta': 0,
         }

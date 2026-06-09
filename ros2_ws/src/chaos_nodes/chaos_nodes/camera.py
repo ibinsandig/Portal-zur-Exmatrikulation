@@ -145,8 +145,6 @@ class Camera(Node):
         return img_rotated
 
     def process_img(self, frame):
-        #self.frame_count += 1
-        
         warped_image = self.PrePro.warp_image(frame)
         contours = self.PrePro.segment_object(warped_image)
 
@@ -167,7 +165,6 @@ class Camera(Node):
             self.get_logger().warn('Features konnten nicht extrahiert werden')
             return None, None
 
-        
         pose2d = Pose2D()
         pose2d.x = float(world_obj_coords[0])
         pose2d.y = float(world_obj_coords[1])
@@ -177,31 +174,11 @@ class Camera(Node):
         obj_coords_msg.pose2d = pose2d
         obj_coords_msg.timestamp = self.time_since_start()
         obj_coords_msg.id = self.frame_count
-       
 
-        
         obj_features_msg = ObjFeatures()
-        obj_features_msg.id = 0  # Default id
-        obj_features_msg.cornercount = int(obj_features_dict.get('corners', 0))
-        obj_features_msg.circularity = float(obj_features_dict.get('circularity', 0))
-        obj_features_msg.area = int(obj_features_dict.get('area', 0))
-        obj_features_msg.perimeter = float(obj_features_dict.get('perimeter', 0))
-        obj_features_msg.bbox_w = int(obj_features_dict.get('bbox_w', 0))
-        obj_features_msg.hu_0 = float(obj_features_dict.get('hu_0', 0))
-        obj_features_msg.hu_1 = float(obj_features_dict.get('hu_1', 0))
+        obj_features_msg.id = 0
         obj_features_msg.hu_2 = float(obj_features_dict.get('hu_2', 0))
         obj_features_msg.hu_3 = float(obj_features_dict.get('hu_3', 0))
-        obj_features_msg.hu_4 = float(obj_features_dict.get('hu_4', 0))
-        obj_features_msg.hu_5 = float(obj_features_dict.get('hu_5', 0))
-        obj_features_msg.hu_6 = float(obj_features_dict.get('hu_6', 0))
-        obj_features_msg.fd_1 = float(obj_features_dict.get('fd_1', 0))
-        obj_features_msg.fd_2 = float(obj_features_dict.get('fd_2', 0))
-        obj_features_msg.fd_3 = float(obj_features_dict.get('fd_3', 0))
-        obj_features_msg.fd_4 = float(obj_features_dict.get('fd_4', 0))
-        obj_features_msg.fd_5 = float(obj_features_dict.get('fd_5', 0))
-        obj_features_msg.fd_6 = float(obj_features_dict.get('fd_6', 0))
-        obj_features_msg.fd_7 = float(obj_features_dict.get('fd_7', 0))
-        obj_features_msg.solidity = float(obj_features_dict.get('solidity', 0))
         
         return obj_coords_msg, obj_features_msg
     
