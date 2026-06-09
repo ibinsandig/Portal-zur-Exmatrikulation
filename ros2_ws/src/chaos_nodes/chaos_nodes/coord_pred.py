@@ -24,16 +24,21 @@ class CoordPred(Node):
 
     def listener_callback(self, msg):
         future_position = FuturePosition()
+        future_position.id = msg.id
+        future_position.pose2d = msg.pose2d
+        future_position.timestamp = msg.timestamp  # use the incoming timestamp!
 
-        future_position.speed = self.PrePro.calculate_speed_with_ID(msg.id, msg.pose2d.x, future_position.timestamp)
+        speed = self.PrePro.calculate_speed_with_ID(
+            msg.id, msg.pose2d.x, msg.timestamp   # ← msg.timestamp, not future_position.timestamp
+        )
 
-        if future_position.speed != -100:
-            future_position = FuturePosition()
-            future_position.id = msg.id
-            future_position.pose2d = msg.pose2d
-            future_position.speed = future_position.speed
+        if speed != -100:
+            future_position.speed = speed          # ← assign the returned value, not itself
 
-        self.get_logger().info("Speed: {future_position.speed}; ID: {future_position.id}; X: {future_position.pose2d.x}; Y: {future_position.pose2d.y};")
+        self.get_logger().info(
+            f"Speed: {future_position.speed}; ID: {future_position.id}; "   # ← added f-prefix
+            f"X: {future_position.pose2d.x}; Y: {future_position.pose2d.y};"
+        )
 
         self.pub_future_postion.publish(future_position)
 

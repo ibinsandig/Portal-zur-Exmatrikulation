@@ -6,16 +6,18 @@ class CoordinatesPrediction:
 
 
     def calculate_speed_with_ID(self, id, x, t):
-
         if self.last_id is None or self.last_id != id:
             self.last_id = id
             self.last_x = x
             self.last_t = t
             return -100
 
-        if self.last_x is not None or self.last_t is not None:
-
+        if self.last_x is not None and self.last_t is not None:  # ← or → and
+            if t == self.last_t:                                  # ← guard against zero division
+                return -100
             speed = (x - self.last_x) / (t - self.last_t)
             self.last_x = x
             self.last_t = t
             return speed
+
+        return -100  # ← fallback if somehow neither condition hit
