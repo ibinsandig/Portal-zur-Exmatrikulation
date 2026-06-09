@@ -12,10 +12,12 @@ import numpy as np
 import testmode
 import os
 _TESTMODE_DIR = os.path.dirname(testmode.__file__)
-img_path_cat   = os.path.join(_TESTMODE_DIR, 'cat.png')
+img_path_cat   = os.path.join(_TESTMODE_DIR, 'unicorn.png')
 img_path_aruco = os.path.join(_TESTMODE_DIR, 'aruco.png')
 
 class Camera(Node):
+
+#TODO Logik für das erkennen mehrerer Objekt auf dem Fliesband, möglicherweise über die Distanz die zurückgelegt wurde/ ab einem Punkt wird das näxhste Objekt beachtet
 
     def __init__(self):
         super().__init__('camera')

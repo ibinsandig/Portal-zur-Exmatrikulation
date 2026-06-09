@@ -29,3 +29,4 @@ class Classifier:
             except:
                 prediction = 0
 
+        return prediction, confidence 
