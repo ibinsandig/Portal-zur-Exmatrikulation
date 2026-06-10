@@ -12,7 +12,7 @@ import numpy as np
 import testmode
 import os
 _TESTMODE_DIR = os.path.dirname(testmode.__file__)
-img_path_cat   = os.path.join(_TESTMODE_DIR, 'unicorn.png')
+img_path_cat   = os.path.join(_TESTMODE_DIR, 'unicorn_0.png')
 img_path_aruco = os.path.join(_TESTMODE_DIR, 'aruco.png')
 
 class Camera(Node):
@@ -29,7 +29,7 @@ class Camera(Node):
         self.start_time = time.time()
 
         # Zum Testen ohne Kamera
-        self.testmode = True 
+        self.testmode = False
 
 
         self.frame_count = 1  
@@ -151,7 +151,7 @@ class Camera(Node):
         contours = self.PrePro.segment_object(warped_image)
 
         if not contours:
-            self.get_logger().warn('Keine Konturen gefunden')
+            self.get_logger().info('Keine Konturen gefunden')
             return None, None
 
         pixel_obj_coords = self.PrePro.obj_position(contours)
@@ -159,7 +159,9 @@ class Camera(Node):
         if pixel_obj_coords is None:
             self.get_logger().warn('Objekt Position konnte nicht ermittelt werden')
             return None, None
-            
+        print('pixel_obj_coords: ')
+        print(pixel_obj_coords)
+
         world_obj_coords = self.PrePro.pixel_to_world(pixel_obj_coords)
         obj_features_dict = self.PrePro.extract_features_from_contour(contours[0])
 

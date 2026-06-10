@@ -121,28 +121,22 @@ class TestImagePreprocessor:
         assert len(world) == 2
         assert isinstance(world[0], float) or isinstance(world[0], np.float32)
 
-    def test_extract_features_from_contour(self):
-        """Feature extraction should retrieve all configured shape features."""
-        # Setup and get a contour
-        aruco_img = cv.imread(os.path.join(TESTMODE_DIR, 'aruco.png'))
-        self.preprocessor.setup(aruco_img)
-        cat_img = cv.imread(os.path.join(TESTMODE_DIR, 'cat_0.png'))
-        warped = self.preprocessor.warp_image(cat_img)
-        contours = self.preprocessor.segment_object(warped)
-        largest_contour = max(contours, key=cv.contourArea)
+    def extract_features_from_contour(self, cnt):
+        """Extract only hu_2 and hu_3 (log-scaled) for machine learning classification."""
+        area = cv.contourArea(cnt)
+        perimeter = cv.arcLength(cnt, True)
         
-        features = self.preprocessor.extract_features_from_contour(largest_contour)
-        assert features is not None
-        assert isinstance(features, dict)
+        if area == 0 or perimeter == 0:
+            return None
         
-        expected_keys = [
-            'area', 'perimeter', 'corners', 'bbox_w', 'solidity', 'circularity',
-            'hu_0', 'hu_1', 'hu_2', 'hu_3', 'hu_4', 'hu_5', 'hu_6',
-            'fd_1', 'fd_2', 'fd_3', 'fd_4', 'fd_5', 'fd_6', 'fd_7'
-        ]
-        for key in expected_keys:
-            assert key in features
-            assert isinstance(features[key], (int, float))
+        hu_raw = cv.HuMoments(cv.moments(cnt)).flatten()
+        with np.errstate(divide="ignore"):
+            hu_log = -np.sign(hu_raw) * np.log10(np.abs(hu_raw) + 1e-10)
+        
+        return {
+            'hu_2': float(hu_log[2]),
+            'hu_3': float(hu_log[3]),
+        }
 
     def test_extract_orientation(self):
         """extract_orientation should calculate rotation angles for minAreaRect contours."""

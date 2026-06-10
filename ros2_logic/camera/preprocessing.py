@@ -105,7 +105,10 @@ class ImagePreprocessor:
 
         if not contours:
             return None
+            print("Klasse: Keine Konturen gefunden")
         
+        print(contours)
+
         largest_contour = max(contours, key=cv.contourArea)
         M = cv.moments(largest_contour)
         if M["m00"] == 0:
@@ -117,74 +120,30 @@ class ImagePreprocessor:
 
     def pixel_to_world(self, pixel):
         if pixel is None:
+            print("zero pixel")
             return None
         # Convert tuple to numpy array with proper shape for perspectiveTransform
         pixel_array = np.array([pixel], dtype=np.float32).reshape(-1, 1, 2)
         world = cv.perspectiveTransform(pixel_array, self.H_inv_warp)
+        print(world[0, 0])
         return world[0, 0]  # Return as (x, y) tuple-like array
 
     def extract_features_from_contour(self, cnt):
-        """Extract all features needed for machine learning classification."""
-        features = {}
-    
-        # 1. Basis-Werte
+        """Extract only hu_2 and hu_3 (log-scaled) for machine learning classification."""
         area = cv.contourArea(cnt)
         perimeter = cv.arcLength(cnt, True)
-        features['area'] = area
-        features['perimeter'] = perimeter
         
         if area == 0 or perimeter == 0:
             return None
-            
-        # 2. Polygon Approximation & corners
-        epsilon = 0.04 * perimeter
-        approx = cv.approxPolyDP(cnt, epsilon, True)
-        features['corners'] = len(approx)
         
-        # 3. Bounding Box & solidity
-        x, y, w, h = cv.boundingRect(cnt)
-        rect_area = w * h
-        features['bbox_w'] = w
-        features['solidity'] = float(area) / rect_area if rect_area > 0 else 0
+        hu_raw = cv.HuMoments(cv.moments(cnt)).flatten()
+        with np.errstate(divide="ignore"):
+            hu_log = -np.sign(hu_raw) * np.log10(np.abs(hu_raw) + 1e-10)
         
-        # 4. Circularity
-        features['circularity'] = (4 * np.pi * area) / (perimeter ** 2)
-        
-        # 5. Hu-Moments (shape descriptors, rotation-invariant)
-        M = cv.moments(cnt)
-        hu = cv.HuMoments(M).flatten()
-        for i in range(7):
-            features[f'hu_{i}'] = float(hu[i])
-        
-        # 6. Fourier Descriptors (shape signature using power spectrum approximation)
-        # Using contour point distribution as a simplified Fourier descriptor
-        cnt_reshaped = cnt.reshape(-1, 2).astype(np.float32)
-        if len(cnt_reshaped) >= 2:
-            # Calculate distances and angles for shape encoding
-            diffs = np.diff(cnt_reshaped, axis=0)
-            distances = np.sqrt(np.sum(diffs**2, axis=1))
-            mean_dist = np.mean(distances) if len(distances) > 0 else 0
-            std_dist = np.std(distances) if len(distances) > 0 else 0
-            max_dist = np.max(distances) if len(distances) > 0 else 0
-            
-            # Simplified Fourier descriptors based on shape properties
-            features['fd_1'] = float(mean_dist) if mean_dist > 0 else 0
-            features['fd_2'] = float(area) / (perimeter ** 2) if perimeter > 0 else 0
-            features['fd_3'] = float(std_dist) if std_dist > 0 else 0
-            features['fd_4'] = float(max_dist) / (perimeter) if perimeter > 0 else 0
-            features['fd_5'] = float(perimeter) / (np.sqrt(area)) if area > 0 else 0
-            features['fd_6'] = float(perimeter ** 2) / area if area > 0 else 0
-            features['fd_7'] = float(len(cnt_reshaped)) / area if area > 0 else 0
-        else:
-            features['fd_1'] = 0
-            features['fd_2'] = 0
-            features['fd_3'] = 0
-            features['fd_4'] = 0
-            features['fd_5'] = 0
-            features['fd_6'] = 0
-            features['fd_7'] = 0
-            
-        return features
+        return {
+            'hu_2': float(hu_log[2]),
+            'hu_3': float(hu_log[3]),
+        }
     
     def extract_orientation(self, cnt):
         rect = cv.minAreaRect(cnt)
