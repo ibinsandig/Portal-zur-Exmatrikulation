@@ -4,7 +4,8 @@
 class MainyLogic():
     def __init__(self):
         
-        self.obj_id =  0                   #TODO2 Hier definieren 0 ist systembelegt (nicht für objekte)                    
+        self.obj_id =  0                   #TODO2 Hier definieren 0 ist systembelegt (nicht für objekte)  
+        self.obj_id_prev = 99999999                  
         self.obj_typ = 0                    # 0 ist "NICHT ERKANNT"
         self.obj_coord_x = None
         self.obj_coord_y = None
@@ -12,7 +13,10 @@ class MainyLogic():
         self.obj_coord_z_down = 0.095       
         self.obj_coord_theta = None
 
-        self.obj_coord_z_mid = 0.085        #Noch ungenutz, hier muss pre-pick besprochen werden
+        self.obj_coord_x_prev_1 = None
+        self.obj_coord_x_extrapolated = 0.0
+
+        self.obj_coord_z_mid = 0.085        
 
         self.coord_x_default = 0.15
         self.coord_y_default = -0.08
@@ -40,19 +44,25 @@ class MainyLogic():
     
     #================================================================================================================
 
-    def auftragseingang_main(self, obj_id, obj_typ, obj_coord_x, obj_coord_y, obj_coord_theta): #TODO Neuer Name "def neues Objekt" 
+    def auftragseingang_main(self, obj_id): 
+        '''
+        Prüft ob ein neues Objket mit neuer ID von PlannerNode kommt und startet ggf. die Statemachine. Setzt die WorkDone Flag auf False. 
+        '''
         self.obj_id = obj_id
-        self.obj_typ = obj_typ 
     
-        if obj_id is not self.obj_id_prev: 
+        if self.obj_id is not self.obj_id_prev: 
             self.obj_id_prev = obj_id
+            self.state = 'obj_pick_pre_pos'
+            self.work_done = False
+    
+    #================================================================================================================
 
-            self.obj_coord_x = obj_coord_x
-            self.obj_coord_y = obj_coord_y
-            self.obj_coord_theta = obj_coord_theta
-        
-        self.state = 'obj_pick'
-        self.work_done = False
+    def obj_current_pos(self, obj_typ, obj_coord_x, obj_coord_y, obj_coord_theta):
+
+        self.obj_typ = obj_typ 
+        self.obj_coord_x = obj_coord_x
+        self.obj_coord_y = obj_coord_y
+        self.obj_coord_theta = obj_coord_theta
 
 #================================================================================================================
 
@@ -70,6 +80,24 @@ class MainyLogic():
 
     def work_done_flag(self):
         return self.work_done, self.obj_id
+    
+#================================================================================================================
+
+    def extrapolation(self):    #TODO Muss noch komplett geschrieben werden!
+        '''
+        Extrapolation der letzten beiden Punkte, um die echte Pick postion zu berechnen. Wird mit jedem neuen koordinatenpunkt aktuell gehalten.
+        '''
+        if self.obj_coord_x_prev is None:
+            self.obj_coord_x_prev = self.obj_coord_x   # ersten Punkt merken, fertig
+            return
+        
+        schritt = self.obj_coord_x - self.obj_coord_x_prev
+
+        self.obj_coord_x_extrapolated = self.obj_coord_x + schritt
+
+        self.obj_coord_x_prev = self.obj_coord_x
+
+        return
 
 #================================================================================================================
 
@@ -83,15 +111,41 @@ class MainyLogic():
             print("State_machine ist Jobless, Publisher für aktuellen Zyklus geblockt")
             return self.coord_x_default,self.coord_y_default,self.obj_coord_z_up,False,False
 
-        #=================================================
 
-        if self.state == "obj_pick":    
+
+
+        #=======================Pick_Prozess-Start==========================
+
+        if self.state == "obj_pick_pre_pos":    
+            #Anfahren der zweiten Vorposition in Y und Z. X noch in Default lassen. In dieser Zeit bekommen wir zwei DatenPuntke für die Extrapolation.
 
             if self.goal_reached_rising == True:
-                self.state = "obj_default_pos_grip"
+                self.state = "obj_pick_request" 
             
-            print(f"State: {self.state}, x:{self.obj_coord_x}, y:{self.obj_coord_y}, z:{self.obj_coord_z_down}, True, True")
-            return self.obj_coord_x, self.obj_coord_y, self.obj_coord_z_down, True, True
+            print(f"State: {self.state}, x:{self.coord_x_default}, y:{self.obj_coord_y}, z:{self.obj_coord_z_mid}, True, True")
+            return self.coord_x_default, self.obj_coord_y, self.obj_coord_z_mid, True, True
+        
+        #=================================================
+
+        if self.state == "obj_pick_up":
+            # Abfrage ob, das Baueil bereits unter uns durch gefahren ist.
+
+            if self.coord_x_default >= self.obj_coord_x:
+                #TODO Sollte ein Extrapolationsschritt in X_richtung nicht genügen, weil das Band zu schnell ist, dann evt zwei schritte versuchen!
+                self.state = "obj_default_pos_grip"
+
+                print(f"State: {self.state}, x:{self.obj_coord_x}, y:{self.obj_coord_y}, z:{self.obj_coord_z_down}, True, True")
+                return self.obj_coord_x_extrapolated, self.obj_coord_y, self.obj_coord_z_down, True, True
+    
+            else:
+                print(f"State: {self.state}, x:{self.obj_coord_x}, y:{self.obj_coord_y}, z:{self.obj_coord_z_down}, True, True")
+                return self.coord_x_default, self.obj_coord_y, self.obj_coord_z_up, True, False
+            
+        #                ==========Zusatz=========
+        # Sollte es dazu kommen, dass X schneller fährt als Z und das Teil nur "Seitlich anschiebt", 
+        # kann ein weiter state gebaut werden und auf 2 Schritte in die Zukunft extrapoliert gerechnet werden. 
+        # Dann erst in Pos fahren und nur "runter stempeln"    
+        #====================Pick_Prozess-Ende=============================
 
 
         elif self.state == "obj_default_pos_grip":
@@ -100,7 +154,7 @@ class MainyLogic():
                 self.state = "obj_sort"
 
             print(f"State: {self.state}, x:{self.coord_x_default}, y:{self.coord_y_default}, z:{self.obj_coord_z_up}, True, True")
-            return self.coord_x_default, self.coord_y_default, self.obj_coord_z_up, True, True
+            return self.obj_coord_x_extrapolated, self.obj_coord_y, self.obj_coord_z_up, True, True
 
 
         elif self.state == "obj_sort":
@@ -146,3 +200,4 @@ class MainyLogic():
             return self.coord_x_default,self.coord_y_default,self.obj_coord_z_up,False,False
 
 #================================================================================================================
+
