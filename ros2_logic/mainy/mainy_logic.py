@@ -14,8 +14,8 @@ class MainyLogic():
         self.obj_coord_theta = None
         self.obj_speed = None               
 
-        self.obj_coord_x_prev_1 = None
         self.obj_coord_x_extrapolated = 0.0
+        self.obj_time_last_cam_msg = None
 
         self.obj_coord_z_mid = 0.085        
 
@@ -85,21 +85,25 @@ class MainyLogic():
     
 #================================================================================================================
 
-    def extrapolation(self):    #TODO Hier die Extrapolation von 2 Punkten auf geschwindigkeit wechseln. Dafür CUSTOM anpassen. 
+    def extrapolation(self, zeit_jetzt):    
         '''
-        Extrapolation der letzten beiden Punkte, um die echte Pick postion zu berechnen. Wird mit jedem neuen koordinatenpunkt aktuell gehalten.
+        Extrapolation wird nun über die Eingehenden OJK Daten getriggert. (Diese kommen allerdigns eh von einem timer_callback aus der PlannerNode)
         '''
-        if self.obj_coord_x_prev is None:
-            self.obj_coord_x_prev = self.obj_coord_x  
+        if self.obj_coord_x is None or self.obj_speed is None:
+            print("Extrapolation: Keine X-Coordinate, Keine Geschwindigkeit!")
             return
-        
-        schritt = self.obj_coord_x - self.obj_coord_x_prev
+    
+        if self.obj_time_last_cam_msg is None:
+            self.obj_time_last_cam_msg = zeit_jetzt
+            return
+    
+        vergangene_zeit = zeit_jetzt - self.obj_time_last_cam_msg
 
-        self.obj_coord_x_extrapolated = self.obj_coord_x + schritt
 
-        self.obj_coord_x_prev = self.obj_coord_x
+        self.obj_coord_x_extrapolated = self.obj_coord_x + self.obj_speed * vergangene_zeit
 
-        return
+        self.obj_time_last_cam_msg = zeit_jetzt
+
 
 #================================================================================================================
 
@@ -133,7 +137,7 @@ class MainyLogic():
             # Abfrage ob, das Baueil bereits unter uns durch gefahren ist.
 
             if self.coord_x_default >= self.obj_coord_x:
-                #TODO Sollte ein Extrapolationsschritt in X_richtung nicht genügen, weil das Band zu schnell ist, dann evt zwei schritte versuchen!
+                
                 self.state = "obj_default_pos_grip"
 
                 print(f"State: {self.state}, x:{self.obj_coord_x}, y:{self.obj_coord_y}, z:{self.obj_coord_z_down}, True, True")
@@ -141,14 +145,9 @@ class MainyLogic():
     
             else:
                 print(f"State: {self.state}, x:{self.obj_coord_x}, y:{self.obj_coord_y}, z:{self.obj_coord_z_down}, True, True")
-                return self.coord_x_default, self.obj_coord_y, self.obj_coord_z_up, True, False
+                return self.coord_x_default, self.obj_coord_y, self.obj_coord_z_mid, True, False#KEINE PUBLISHING
             
-        #                ==========Zusatz=========
-        # Sollte es dazu kommen, dass X schneller fährt als Z und das Teil nur "Seitlich anschiebt", 
-        # kann ein weiter state gebaut werden und auf 2 Schritte in die Zukunft extrapoliert gerechnet werden. 
-        # Dann erst in Pos fahren und nur "runter stempeln"    
-        #====================Pick_Prozess-Ende=============================
-
+        #=================================================
 
         elif self.state == "obj_default_pos_grip":
 
@@ -157,6 +156,9 @@ class MainyLogic():
 
             print(f"State: {self.state}, x:{self.coord_x_default}, y:{self.coord_y_default}, z:{self.obj_coord_z_up}, True, True")
             return self.obj_coord_x_extrapolated, self.obj_coord_y, self.obj_coord_z_up, True, True
+
+
+        #====================Pick_Prozess-Ende=============================
 
 
         elif self.state == "obj_sort":

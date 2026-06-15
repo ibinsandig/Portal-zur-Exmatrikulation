@@ -44,3 +44,6 @@ TODO's:
 
 Thema Weltcoordinatensystem [TCP Punkt muss als TCP_OFFSET auf die Welt-Robot-Koordinatensystem]
 Thmea Punktabarbeiten [dauerhaftes PUNKT übergeben?, oder Zeitvorrechnen und Punktübergeben]
+
+Thema ArucoPUnkte anfahren [wir müssen die PUnkte im Weltkoordinatensystem treffen (manuell anfahren)]
+Thema extrapolation auf Zeit anpassen. 

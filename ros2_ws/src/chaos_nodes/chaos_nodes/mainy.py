@@ -107,7 +107,9 @@ class Mainy(Node):
             goal_coord_y,
             goal_theta,
             obj_speed)
-        self.mainylogic.extrapolation()       #TODO Sinnhaftigkeit Prüfen! Sonst in timer_StateMaschine
+
+        zeit_jetzt = self.get_clock().now().nanoseconds / 1e9
+        self.mainylogic.extrapolation(zeit_jetzt)       
 
 
 
