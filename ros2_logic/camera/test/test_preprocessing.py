@@ -24,10 +24,10 @@ class TestImagePreprocessor:
     def test_init_state(self):
         """Verify the initial state of the preprocessor."""
         assert self.preprocessor.detector is not None
-        assert self.preprocessor.H is None
-        assert self.preprocessor.H_inv is None
-        assert self.preprocessor.H_warp is None
-        assert self.preprocessor.H_inv_warp is None
+        assert self.preprocessor.H_pre is None
+        assert self.preprocessor.H_pre_inv is None
+        assert self.preprocessor.M_all is None
+        assert self.preprocessor.M_all_inv is None
         assert self.preprocessor.width is None
         assert self.preprocessor.height is None
         assert self.preprocessor.img_warped is None
@@ -38,8 +38,8 @@ class TestImagePreprocessor:
         blank_image = np.zeros((100, 100, 3), dtype=np.uint8)
         self.preprocessor.setup(blank_image)
         
-        assert self.preprocessor.H is None
-        assert self.preprocessor.H_warp is None
+        assert self.preprocessor.H_pre is None
+        assert self.preprocessor.M_all is None
 
     def test_setup_success(self):
         """Setup should successfully compute homography matrices with the reference ArUco image."""
@@ -48,10 +48,10 @@ class TestImagePreprocessor:
         
         self.preprocessor.setup(aruco_img)
         
-        assert self.preprocessor.H is not None
-        assert self.preprocessor.H_inv is not None
-        assert self.preprocessor.H_warp is not None
-        assert self.preprocessor.H_inv_warp is not None
+        assert self.preprocessor.H_pre is not None
+        assert self.preprocessor.H_pre_inv is not None
+        assert self.preprocessor.M_all is not None
+        assert self.preprocessor.M_all_inv is not None
         assert isinstance(self.preprocessor.width, int)
         assert isinstance(self.preprocessor.height, int)
         assert self.preprocessor.width > 0

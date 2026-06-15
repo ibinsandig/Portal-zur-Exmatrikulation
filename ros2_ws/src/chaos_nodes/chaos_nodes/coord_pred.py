@@ -26,17 +26,17 @@ class CoordPred(Node):
         future_position = FuturePosition()
         future_position.id = msg.id
         future_position.pose2d = msg.pose2d
-        future_position.timestamp = msg.timestamp  # use the incoming timestamp!
+        future_position.timestamp = msg.timestamp  
 
         speed = self.PrePro.calculate_speed_with_ID(
-            msg.id, msg.pose2d.x, msg.timestamp   # ← msg.timestamp, not future_position.timestamp
+            msg.id, msg.pose2d.x, msg.timestamp
         )
 
         if speed != -100:
-            future_position.speed = int(speed)       # ← assign the returned value, not itself
+            future_position.speed = float(speed)
 
         self.get_logger().info(
-            f"Speed: {future_position.speed}; ID: {future_position.id}; "   # ← added f-prefix
+            f"Speed: {future_position.speed}; ID: {future_position.id}; "
             f"X: {future_position.pose2d.x}; Y: {future_position.pose2d.y};"
         )
 

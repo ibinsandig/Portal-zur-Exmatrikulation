@@ -1,6 +1,7 @@
 import math
 from collections import deque
-# Offset pro Objekttyp als (x, y) in deiner Einheit (mm)
+import config_vm 
+#
 GRIP_OFFSETS = {
     0:  (0.0,  0.0),   # rejected
     1:  (15.0, 5.0),   # Cat

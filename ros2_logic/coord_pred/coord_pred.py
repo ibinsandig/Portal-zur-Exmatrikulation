@@ -15,7 +15,7 @@ class CoordinatesPrediction:
             return -100
 
         last_x, last_t = self.history[id]
-        if t == last_t:                                  # ← guard against zero division
+        if t == last_t:
             return -100
         speed = (x - last_x) / (t - last_t)
         self.history[id] = (x, t)

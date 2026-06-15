@@ -12,19 +12,19 @@ import numpy as np
 import testmode
 import os
 _TESTMODE_DIR = os.path.dirname(testmode.__file__)
-img_path_cat   = os.path.join(_TESTMODE_DIR, 'unicorn_0.png')
+img_path_obj   = os.path.join(_TESTMODE_DIR, 'unicorn_0.png')
 img_path_aruco = os.path.join(_TESTMODE_DIR, 'aruco.png')
 
 class Camera(Node):
 
-#TODO Logik für das erkennen mehrerer Objekt auf dem Fliesband, möglicherweise über die Distanz die zurückgelegt wurde/ ab einem Punkt wird das näxhste Objekt beachtet
+#TODO Logik für das erkennen mehrerer Objekt auf dem Fliesband
 
     def __init__(self):
         super().__init__('camera')
 
         self.pub_obj_coords = self.create_publisher(ObjCoords, '/obj_coords', 10)
         self.pub_obj_festures = self.create_publisher(ObjFeatures, '/obj_features', 10)
-        timer_time = 1/30   # sek
+        timer_time = 1/30   
 
         self.start_time = time.time()
 
@@ -32,7 +32,7 @@ class Camera(Node):
         self.testmode = False
 
 
-        self.frame_count = 1  
+        self.id_count = 1  #TODO implementiren der richtigen ID zuordnung
 
         path_camera = 4     # PortalCam = /dev/video4
 
@@ -48,7 +48,7 @@ class Camera(Node):
                 
                 if init_frame is None:
                     self.get_logger().error(f"TEST: Konnte das Bild unter {img_path_aruco} nicht laden. Überprüfen Sie den Pfad.")
-                    raise Exception("Bild konnte nicht geladen werden.")
+                    raise Exception("TEST: Bild konnte nicht geladen werden.")
                 
 
                 self.PrePro.setup(init_frame)
@@ -75,7 +75,7 @@ class Camera(Node):
                 try:
                     self.PrePro.setup(self.read_camera())
                 except Exception as e:
-                    self.get_logger().error(f'Fehler beim Setup der Kamera: {str(e)}')
+                    self.get_logger().error(f'Fehler beim Lesen der Kamera: {str(e)}')
                     raise e
                 
                 if self.PrePro.H_inv_warp is not None:
@@ -87,10 +87,10 @@ class Camera(Node):
     def timer_callback(self): #TODO Einfügen der features nicht korrekt
 
         if self.testmode:
-            frame = cv.imread(img_path_cat)
+            frame = cv.imread(img_path_obj)
             
             if frame is None:
-                self.get_logger().error(f"TEST: Konnte das Bild unter {img_path_cat} nicht laden.")
+                self.get_logger().error(f"TEST: Konnte das Bild unter {img_path_obj} nicht laden.")
                 return
 
             try:
@@ -110,8 +110,6 @@ class Camera(Node):
                 self.get_logger().info('TEST: Daten erfolgreich veröffentlicht')
             except Exception as e:
                 self.get_logger().error(f'TEST: Fehler beim Senden der Daten: {str(e)}')
-
-            
 
         else:
 
@@ -143,7 +141,9 @@ class Camera(Node):
             self.get_logger().error('Bild konnte nicht gelesen werden')
             return
         
-        img_rotated = cv.rotate(frame, 2)
+        gray_image = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+
+        img_rotated = cv.rotate(gray_image, 2)
         return img_rotated
 
     def process_img(self, frame):
@@ -177,7 +177,7 @@ class Camera(Node):
         obj_coords_msg = ObjCoords()
         obj_coords_msg.pose2d = pose2d
         obj_coords_msg.timestamp = self.time_since_start()
-        obj_coords_msg.id = self.frame_count
+        obj_coords_msg.id = self.id_count
 
         obj_features_msg = ObjFeatures()
         obj_features_msg.id = 0

@@ -47,7 +47,7 @@ class Planner(Node):
 
         if obj['obj_type'] == 0:
             self.PostPro.finish_obj(obj['id'])
-            self.get_logger().info(f"Objekt {obj['id']} ist rejected, wird übersprungen")
+            self.get_logger().info(f"Objekt {obj['id']} ist rejected, wird gelöscht")
             return
 
         pub_data = ObjData()

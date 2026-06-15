@@ -22,7 +22,6 @@ class Classifier:
         prediction = self.model.predict(X_sel)[0]
         confidence = self.model.predict_proba(X_sel).max()
 
-
         if isinstance(prediction, str):
             try:
                 prediction = int(prediction)
