@@ -1,6 +1,6 @@
 import math
 from collections import deque
-import config_vm 
+
 #
 GRIP_OFFSETS = {
     0:  (0.0,  0.0),   # rejected
@@ -30,8 +30,6 @@ class PostProcessor:
         # Nicht hinzufügen wenn bereits als rejected verworfen
         if id not in self.pending and id not in self.queued_ids:
             self.pending[id] = {}
-        elif id not in self.pending:
-            return
 
         self.pending[id]['pose2d'] = pose2d
         self.pending[id]['speed'] = speed

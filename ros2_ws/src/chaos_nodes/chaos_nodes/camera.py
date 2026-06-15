@@ -24,9 +24,9 @@ class Camera(Node):
 
         self.pub_obj_coords = self.create_publisher(ObjCoords, '/obj_coords', 10)
         self.pub_obj_festures = self.create_publisher(ObjFeatures, '/obj_features', 10)
-        timer_time = 1/30   
+        timer_time = 1/5   
 
-        self.start_time = time.time()
+        self.start_time = time.time() #TODO kamera 
 
         # Zum Testen ohne Kamera
         self.testmode = False
@@ -56,7 +56,7 @@ class Camera(Node):
                 self.get_logger().error(f'TEST: Fehler beim Setup der Kamera: {str(e)}')
                 raise e
             
-            if self.PrePro.H_inv_warp is None:
+            if self.PrePro.M_all_inv is None:
                 self.get_logger().info('TEST: Setup gescheitert')
 
         else:
@@ -78,7 +78,7 @@ class Camera(Node):
                     self.get_logger().error(f'Fehler beim Lesen der Kamera: {str(e)}')
                     raise e
                 
-                if self.PrePro.H_inv_warp is not None:
+                if self.PrePro.M_all_inv is not None:
                     break
 
         self.data = self.create_timer(timer_time, self.timer_callback)
