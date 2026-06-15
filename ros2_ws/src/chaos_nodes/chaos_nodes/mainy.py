@@ -99,12 +99,14 @@ class Mainy(Node):
         goal_coord_x = msg.coord_x
         goal_coord_y = msg.coord_y
         goal_theta = msg.theta
+        obj_speed = msg.obj_speed
         self.mainylogic.auftragseingang_main(obj_id)
         self.mainylogic.obj_current_pos( 
             obj_typ, 
             goal_coord_x, 
             goal_coord_y,
-            goal_theta)
+            goal_theta,
+            obj_speed)
         self.mainylogic.extrapolation()       #TODO Sinnhaftigkeit Prüfen! Sonst in timer_StateMaschine
 
 

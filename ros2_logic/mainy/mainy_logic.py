@@ -12,6 +12,7 @@ class MainyLogic():
         self.obj_coord_z_up = 0.07          
         self.obj_coord_z_down = 0.095       
         self.obj_coord_theta = None
+        self.obj_speed = None               
 
         self.obj_coord_x_prev_1 = None
         self.obj_coord_x_extrapolated = 0.0
@@ -57,12 +58,13 @@ class MainyLogic():
     
     #================================================================================================================
 
-    def obj_current_pos(self, obj_typ, obj_coord_x, obj_coord_y, obj_coord_theta):
+    def obj_current_pos(self, obj_typ, obj_coord_x, obj_coord_y, obj_coord_theta, obj_speed):
 
         self.obj_typ = obj_typ 
         self.obj_coord_x = obj_coord_x
         self.obj_coord_y = obj_coord_y
         self.obj_coord_theta = obj_coord_theta
+        self.obj_speed = obj_speed
 
 #================================================================================================================
 
@@ -83,12 +85,12 @@ class MainyLogic():
     
 #================================================================================================================
 
-    def extrapolation(self):    #TODO Muss noch komplett geschrieben werden!
+    def extrapolation(self):    #TODO Hier die Extrapolation von 2 Punkten auf geschwindigkeit wechseln. Dafür CUSTOM anpassen. 
         '''
         Extrapolation der letzten beiden Punkte, um die echte Pick postion zu berechnen. Wird mit jedem neuen koordinatenpunkt aktuell gehalten.
         '''
         if self.obj_coord_x_prev is None:
-            self.obj_coord_x_prev = self.obj_coord_x   # ersten Punkt merken, fertig
+            self.obj_coord_x_prev = self.obj_coord_x  
             return
         
         schritt = self.obj_coord_x - self.obj_coord_x_prev
