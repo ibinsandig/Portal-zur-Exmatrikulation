@@ -1,17 +1,49 @@
+from collections import deque
+import statistics
+
 class CoordinatesPrediction:
     def __init__(self):
-        self.history = {}  # Maps id -> (last_x, last_t)
+        self.buffer_size = 5
+        self.current_id = None
+        self.queue = deque()        # speichert (x, t) Tupel
+        self.speed_buffer = deque() # speichert berechnete Einzelgeschwindigkeiten
 
+    def add_measurement(self, id, x, t):
+        """
+        Fügt eine neue Messung hinzu und gibt dict mit id und speed zurück.
+        Gibt None zurück wenn noch keine Geschwindigkeit berechnet werden kann.
+        """
 
-    def calculate_speed_with_ID(self, id, x, t):
-        if id not in self.history:
-            self.history[id] = (x, t)
-            return -100
+        # Neue ID -> Queue wird geleert
+        if id != self.current_id:
+            self.queue.clear()
+            self.speed_buffer.clear()
+            self.current_id = id
 
-        last_x, last_t = self.history[id]
-        if t == last_t:
-            return -100  # zero devision verhindern
-        speed = (x - last_x) / (t - last_t)
-        self.history[id] = (x, t)
+        self.queue.append((x, t))
 
-        return speed
+        # Abbruch bei zu wenig ids
+        if len(self.queue) < 2:
+            return None
+
+        # Geschwindigkeit zwischen den letzten zwei Punkten berechnen
+        x_prev, t_prev = self.queue[-2]
+        x_curr, t_curr = self.queue[-1]
+
+        if t_curr == t_prev:
+            return None  # Division durch 0 verhindern
+
+        speed = (x_curr - x_prev) / (t_curr - t_prev)
+
+        # begrenzter buffer 
+        self.speed_buffer.append(speed)
+        if len(self.speed_buffer) > self.buffer_size:
+            self.speed_buffer.popleft()
+
+        # Median über alles aus speed_buffer
+        smoothed_speed = statistics.median(self.speed_buffer)
+
+        return {
+            'id': id,
+            'speed': smoothed_speed,
+        }
