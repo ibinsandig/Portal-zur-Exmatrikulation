@@ -49,7 +49,7 @@ class Planner(Node):
 
     def callback_obj_finished(self, msg):
         finished_id = msg.data
-        
+
         self.PostPro.finish_obj(finished_id)
         self.get_logger().info(f'Objekt {finished_id} abgeschlossen und entfernt')
 
@@ -72,7 +72,8 @@ class Planner(Node):
         p.y = float(obj['grip_point']['y'])
         p.z = 0.0
         pub_data.point = p
-
+        pub_data.obj_speed = float(obj['speed']) 
+        
         self.pub_obj_data.publish(pub_data)
         self.get_logger().info(
             f"Published: ID={pub_data.id}, Typ={pub_data.obj_typ}, "
