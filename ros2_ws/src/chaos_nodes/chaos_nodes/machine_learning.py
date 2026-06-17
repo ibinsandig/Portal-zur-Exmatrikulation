@@ -5,7 +5,7 @@ from chaos_topics.msg import ObjFeatures
 from machine_learning.classify import Classifier
 
 class Machine_learning(Node):
-    
+
     def __init__(self):
         super().__init__('machine_learning')
 
@@ -24,20 +24,22 @@ class Machine_learning(Node):
 
     def listener_callback(self, msg):
 
-        label, confidence = self.classifier.classify(
+        smoothed_label, confidence = self.classifier.classify(
+            id=msg.id,
             hu_2=msg.hu_2,
             hu_3=msg.hu_3,
         )
 
-        self.get_logger().info(f"Label: {label}, Confidence: {confidence}")
-        # Daten in msg schreiben und publishen
-        pub_data_test = ObjType()
+        self.get_logger().info(
+            f"ID: {msg.id} | Label: {smoothed_label} | Confidence: {confidence:.4f}"
+        )
 
-        pub_data_test.id = msg.id
-        pub_data_test.obj_type = int(label)
+        pub_data = ObjType()
+        pub_data.id       = msg.id
+        pub_data.obj_type = smoothed_label
 
+        self.pub_obj_type.publish(pub_data)
 
-        self.pub_obj_type.publish(pub_data_test)
 
 def main():
     rclpy.init(args=None)
@@ -45,6 +47,7 @@ def main():
     rclpy.spin(ml)
     ml.destroy_node()
     rclpy.shutdown()
+
 
 if __name__ == '__main__':
     main()
