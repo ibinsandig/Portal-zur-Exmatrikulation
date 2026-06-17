@@ -40,13 +40,16 @@ class Planner(Node):
         self.get_logger().info('Planner-Node gestartet')
 
     def callback_obj_type(self, msg):
+        self.get_logger().info("Objekttyp empfangen")
         self.PostPro.add_obj_type(msg.id, msg.obj_type)
 
     def callback_future_position(self, msg):
+        self.get_logger().info("Futureposition empfangen")
         self.PostPro.add_future_position(msg.id, msg.pose2d, msg.speed)
 
     def callback_obj_finished(self, msg):
         finished_id = msg.data
+        
         self.PostPro.finish_obj(finished_id)
         self.get_logger().info(f'Objekt {finished_id} abgeschlossen und entfernt')
 
