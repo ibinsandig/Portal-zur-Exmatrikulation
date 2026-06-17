@@ -10,16 +10,6 @@ import numpy as np
 
 class Camera(Node):
 
-#TODO Logik für das erkennen mehrerer Objekt auf dem Fliesband
-
-#TODO implementiren der richtigen ID zuordnung
-            # wenn objekt position um einen bestimmten wert wieder hinter dem vorherigen liegt soll dem objekt eine neue id zu geordnet werden
-            # bereich für Erkennung von objekten soll nur in einem limitierten bereich passieren so dass immer das volle objekt zu erkennen ist bei der berechnung des schwerpunktes
-            # nur eine bstimmte größe von konturen soll betrachtet werden   
-
-#TODO entfernen des testmode
-
-
     def __init__(self):
         super().__init__('camera')
 
@@ -27,9 +17,7 @@ class Camera(Node):
         self.pub_obj_festures = self.create_publisher(ObjFeatures, '/obj_features', 10)
         timer_time = 1/5   
 
-        self.start_time = time.time() #TODO kamera time ändern
-
-        self.id_count = 1  #TODO implementiren der richtigen ID zuordnung
+        self.id_count = 1  
 
         path_camera = 4     # PortalCam = /dev/video4
 
@@ -65,10 +53,8 @@ class Camera(Node):
 
     def timer_callback(self):
 
-            frame = self.read_camera()
-
             try:
-                obj_coords_msg, obj_features_msg = self.process_img(frame)
+                obj_coords_msg, obj_features_msg = self.process_img(self.read_camera())
                 
                 if obj_coords_msg is None or obj_features_msg is None:
                     self.get_logger().debug('Keine gültigen Daten zum Veröffentlichen')
@@ -99,12 +85,16 @@ class Camera(Node):
         return img_rotated
 
     def process_img(self, frame):
+
         warped_image = self.PrePro.warp_image(frame)
+
         contours = self.PrePro.segment_object(warped_image)
 
         if not contours:
             self.get_logger().info('Keine Konturen gefunden')
             return None, None
+
+        #TODO Berechne für jede einzelne contour welche eine größere Fläche als 25 px hat, derene position im welt koordinatensystem
 
         pixel_obj_coords = self.PrePro.obj_position(contours)
         
@@ -115,6 +105,11 @@ class Camera(Node):
         print(pixel_obj_coords)
 
         world_obj_coords = self.PrePro.pixel_to_world(pixel_obj_coords)
+
+        #TODO FAnge beim ersten Objekt an und gleiche die WErte mit x_min und x_max ab ob das Objekt sich schon im sicheren Bereich befindet
+
+        #TODO verwende das am weitesten fortgeschrittene Objekt und extrahiere aus diesem seine features und publishe dies alles
+
         obj_features_dict = self.PrePro.extract_features_from_contour(contours[0])
 
         if obj_features_dict is None:
@@ -128,7 +123,7 @@ class Camera(Node):
         
         obj_coords_msg = ObjCoords()
         obj_coords_msg.pose2d = pose2d
-        obj_coords_msg.timestamp = self.time_since_start()
+        obj_coords_msg.timestamp = time.time()
         obj_coords_msg.id = self.id_count
 
         obj_features_msg = ObjFeatures()
@@ -138,11 +133,7 @@ class Camera(Node):
         
         return obj_coords_msg, obj_features_msg
     
-    def time_since_start(self):
-            
-        timestamp = time.time()
 
-        return timestamp
  
 def main(args=None):
     rclpy.init(args=args)
