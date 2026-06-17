@@ -12,6 +12,14 @@ class Camera(Node):
 
 #TODO Logik für das erkennen mehrerer Objekt auf dem Fliesband
 
+#TODO implementiren der richtigen ID zuordnung
+            # wenn objekt position um einen bestimmten wert wieder hinter dem vorherigen liegt soll dem objekt eine neue id zu geordnet werden
+            # bereich für Erkennung von objekten soll nur in einem limitierten bereich passieren so dass immer das volle objekt zu erkennen ist bei der berechnung des schwerpunktes
+            # nur eine bstimmte größe von konturen soll betrachtet werden   
+
+#TODO entfernen des testmode
+
+
     def __init__(self):
         super().__init__('camera')
 
