@@ -188,7 +188,7 @@ class Camera(Node):
     
     def time_since_start(self):
             
-        timestamp = time.time() - self.start_time
+        timestamp = time.time()
 
         return timestamp
  
