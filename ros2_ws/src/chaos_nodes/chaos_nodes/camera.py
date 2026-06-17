@@ -8,13 +8,6 @@ from camera.preprocessing import ImagePreprocessor
 import time
 import numpy as np
 
-# Testmodus
-import testmode
-import os
-_TESTMODE_DIR = os.path.dirname(testmode.__file__)
-img_path_obj   = os.path.join(_TESTMODE_DIR, 'unicorn_0.png')
-img_path_aruco = os.path.join(_TESTMODE_DIR, 'aruco.png')
-
 class Camera(Node):
 
 #TODO Logik für das erkennen mehrerer Objekt auf dem Fliesband
@@ -26,11 +19,7 @@ class Camera(Node):
         self.pub_obj_festures = self.create_publisher(ObjFeatures, '/obj_features', 10)
         timer_time = 1/5   
 
-        self.start_time = time.time() #TODO kamera 
-
-        # Zum Testen ohne Kamera
-        self.testmode = False
-
+        self.start_time = time.time() #TODO kamera time ändern
 
         self.id_count = 1  #TODO implementiren der richtigen ID zuordnung
 
@@ -42,76 +31,31 @@ class Camera(Node):
             self.get_logger().error(f'Fehler bei ImagePrepocessor: {str(e)}')
             raise e            
 
-        if self.testmode:
-            try:
-                init_frame = cv.imread(img_path_aruco)
-                
-                if init_frame is None:
-                    self.get_logger().error(f"TEST: Konnte das Bild unter {img_path_aruco} nicht laden. Überprüfen Sie den Pfad.")
-                    raise Exception("TEST: Bild konnte nicht geladen werden.")
-                
 
-                self.PrePro.setup(init_frame)
-            except Exception as e:
-                self.get_logger().error(f'TEST: Fehler beim Setup der Kamera: {str(e)}')
-                raise e
-            
-            if self.PrePro.M_all_inv is None:
-                self.get_logger().info('TEST: Setup gescheitert')
+        try:
+            self.img = cv.VideoCapture(path_camera)
+        except Exception as e:
+            self.get_logger().error(f'Fehler beim Initialisieren der Kamera: {str(e)}')
+            raise e
 
-        else:
+        self.img.set(cv.CAP_PROP_BUFFERSIZE, 0)
+
+        while(True):
+            print('Setup Kamera...')
 
             try:
-                self.img = cv.VideoCapture(path_camera)
+                self.PrePro.setup(self.read_camera())
             except Exception as e:
-                self.get_logger().error(f'Fehler beim Initialisieren der Kamera: {str(e)}')
+                self.get_logger().error(f'Fehler beim Lesen der Kamera: {str(e)}')
                 raise e
-
-            self.img.set(cv.CAP_PROP_BUFFERSIZE, 0)
-
-            while(True):
-                print('Setup Kamera...')
-
-                try:
-                    self.PrePro.setup(self.read_camera())
-                except Exception as e:
-                    self.get_logger().error(f'Fehler beim Lesen der Kamera: {str(e)}')
-                    raise e
                 
-                if self.PrePro.M_all_inv is not None:
-                    break
+            if self.PrePro.M_all_inv is not None:
+                break
 
         self.data = self.create_timer(timer_time, self.timer_callback)
         self.get_logger().info('Kamera-Node gestartet')
 
     def timer_callback(self): #TODO Einfügen der features nicht korrekt
-
-        if self.testmode:
-            frame = cv.imread(img_path_obj)
-            
-            if frame is None:
-                self.get_logger().error(f"TEST: Konnte das Bild unter {img_path_obj} nicht laden.")
-                return
-
-            try:
-                obj_coords_msg, obj_features_msg = self.process_img(frame)
-                
-                if obj_coords_msg is None or obj_features_msg is None:
-                    self.get_logger().debug('TEST: Keine gültigen Daten zum Veröffentlichen')
-                    return
-                
-            except Exception as e:
-                self.get_logger().error(f'TEST: Fehler bei der Bildverarbeitung: {str(e)}')
-                return
-
-            try:
-                self.pub_obj_coords.publish(obj_coords_msg)
-                self.pub_obj_festures.publish(obj_features_msg)
-                self.get_logger().info('TEST: Daten erfolgreich veröffentlicht')
-            except Exception as e:
-                self.get_logger().error(f'TEST: Fehler beim Senden der Daten: {str(e)}')
-
-        else:
 
             frame = self.read_camera()
 
