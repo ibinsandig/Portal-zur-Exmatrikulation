@@ -9,13 +9,12 @@ from functools import partial
 
     #TODO obj data hat speed dazu bekommen
     #TODO logik implementieren
-
-    # in einer Warteschlange befinden sich die zu verarbeitenden Objekte mit typ, id, pos, speed.
-    # das Offset je nach Objekt typ wir berechnet
-    # die erhaltenen DAten von future position und objtype werden zusammengeführt unabhängig, welches als erstes ankommt.
-    # wenn über sub_obj_finished ein id typ zurückgegeben wird soll dieser eintrag aus der queue gelöscht werden
-    # der objtype rejected solll direkt verworfen werden
-    # mit jedem durchlauf des listener callbacks soll der aktuell neueste Eintrag in der queue gepublished werden im format wie ObjData.msg
+        # in einer Warteschlange befinden sich die zu verarbeitenden Objekte mit typ, id, pos, speed.
+        # das Offset je nach Objekt typ wir berechnet
+        # die erhaltenen DAten von future position und objtype werden zusammengeführt unabhängig, welches als erstes ankommt.
+        # wenn über sub_obj_finished ein id typ zurückgegeben wird soll dieser eintrag aus der queue gelöscht werden
+        # der objtype rejected solll direkt verworfen werden
+        # mit jedem durchlauf des listener callbacks soll der aktuell neueste Eintrag in der queue gepublished werden im format wie ObjData.msg
 
 
 class Planner(Node):

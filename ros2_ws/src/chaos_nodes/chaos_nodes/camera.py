@@ -63,7 +63,7 @@ class Camera(Node):
         self.data = self.create_timer(timer_time, self.timer_callback)
         self.get_logger().info('Kamera-Node gestartet')
 
-    def timer_callback(self): #TODO Einfügen der features nicht korrekt
+    def timer_callback(self):
 
             frame = self.read_camera()
 
