@@ -7,8 +7,8 @@ OFFSET_AREA = None
 
 OFFSET_OBJ_TYPE = None
 
-X_MIN_SAFE = 10.0
-X_MAX_SAFE = 200.0
+X_MIN_SAFE = 100.0
+X_MAX_SAFE = 550.0
 
 GRIP_OFFSETS = {
     0:  (0.0,  0.0),   # rejected

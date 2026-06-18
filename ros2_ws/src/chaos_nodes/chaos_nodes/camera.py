@@ -18,7 +18,7 @@ class Camera(Node):
         self.pub_obj_festures = self.create_publisher(ObjFeatures, '/obj_features', 10)
         timer_time = 1/5   # nicht zu groß wählen, sonst gibt es Probleme mit der id vergabe
 
-        path_camera = 1    # PortalCam = /dev/video4
+        path_camera = 4    # PortalCam = /dev/video4
 
         self.currend_id = 1
         self.last_pos_x = None
@@ -47,10 +47,15 @@ class Camera(Node):
                 raise e
                 
             if self.PrePro.M_all_inv is not None:
+                i=0
+                while(i < 10):
+                    self.get_logger().info("Entfernen Sie den Aruco-Marker")
+                    time.sleep(1)
+                    i += 1
                 break
 
         self.data = self.create_timer(timer_time, self.timer_callback)
-        self.get_logger().info('Kamera-Node gestartet')
+        self.get_logger().info('Kamera-Node gestartet!!!')
 
     def timer_callback(self):
 
@@ -114,6 +119,7 @@ class Camera(Node):
             self.get_logger().warn('Keine Objekte mit Weltkoordinaten gefunden')
             return None, None
 
+        print(objects)
         # Nur Objekte im sicheren Bereich
         valid_objects = [
             obj for obj in objects

@@ -113,8 +113,6 @@ class ImagePreprocessor:
 
     def obj_position(self, contours):
 
-        #TODO mehrere Objekte Ausgeben oder die Logik für mehrere Objekte hier implementieren
-
         if not contours:
             return None
             print("Klasse: Keine Konturen gefunden")
@@ -132,7 +130,7 @@ class ImagePreprocessor:
 
     def pixel_to_world(self, pixel):
         if pixel is None:
-            print("zero pixel")
+            print("no pixel")
             return None
 
         pixel_array = np.array([pixel], dtype=np.float32).reshape(-1, 1, 2)
@@ -153,8 +151,8 @@ class ImagePreprocessor:
             hu_log = -np.sign(hu_raw) * np.log10(np.abs(hu_raw) + 1e-10)
         
         return {
-            'hu_2': float(hu_log[2]),
-            'hu_3': float(hu_log[3]),
+            'hu_2': hu_log[2],
+            'hu_3': hu_log[3],
         }
     
     def extract_orientation(self, cnt):
