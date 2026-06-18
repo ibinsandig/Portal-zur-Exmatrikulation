@@ -37,6 +37,9 @@ class Camera(Node):
 
         self.img.set(cv.CAP_PROP_BUFFERSIZE, 0)
 
+        self.get_logger().info("Legen Sie den Aruco-Marker ein")
+        time.sleep(5)
+
         while(True):
             print('Setup Kamera...')
 
@@ -99,14 +102,12 @@ class Camera(Node):
             self.get_logger().info('Keine Konturen gefunden')
             return None, None
 
-        # Konturen mit Fläche > 25px filtern
         valid_contours = [cnt for cnt in contours if cv.contourArea(cnt) > 25]
 
         if not valid_contours:
             self.get_logger().info('Keine gültigen Konturen gefunden')
             return None, None
 
-        # Weltkoordinaten für jede gültige Kontur berechnen
         objects = []
         for cnt in valid_contours:
             pixel_pos = self.PrePro.obj_position([cnt])
@@ -162,12 +163,12 @@ class Camera(Node):
 
         return obj_coords_msg, obj_features_msg
 
-    def assign_id(self, x, threshold=30.0):
+    def assign_id(self, x, threshold=30.0): # x = 200
         
-        if self.last_pos_x is not None:
-            distance = abs(x - self.last_pos_x)
+        if self.last_pos_x is not None:     # = 220
+            distance = abs(x - self.last_pos_x) # = 20
 
-            if distance > threshold:
+            if distance >= threshold:   # 20 >= 30  -> false
                 self.currend_id += 1
                 self.last_pos_x = x
                 return self.currend_id

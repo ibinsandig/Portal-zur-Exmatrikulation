@@ -22,7 +22,8 @@ class ImagePreprocessor:
         self.H_pre_inv = None   # setup
         self.M_all = None      # world to pixel
         self.M_all_inv = None  # pixel to world
-
+        self.H_inv = None
+        self.H = None
         self.pts2_proportional = None
         self.width = None
         self.height = None
@@ -53,10 +54,10 @@ class ImagePreprocessor:
         world_coords = cv.perspectiveTransform(pts1_reshaped, H_pre_inv)
 
         offset_raw = np.array([
-            [-6, +6],  # mm - X offset -6, Y offset -6
-            [+6, +6],  # mm - X offset +6, Y offset -6
-            [-6, -6],  # mm - X offset -6, Y offset +6
-            [+6, -6]   # mm - X offset +6, Y offset +6
+            [+6, +6],  # mm - X offset -6, Y offset -6
+            [-6, +6],  # mm - X offset +6, Y offset -6
+            [+6, -6],  # mm - X offset -6, Y offset +6
+            [-6, -6]   # mm - X offset +6, Y offset +6
         ], dtype=np.float32)
 
         offset = offset_raw.reshape(-1, 1, 2)
@@ -124,8 +125,8 @@ class ImagePreprocessor:
         if M["m00"] == 0:
             return None
         
-        cX = int(M["m10"] / M["m00"])
-        cY = int(M["m01"] / M["m00"])
+        cY = int(M["m10"] / M["m00"])
+        cX = int(M["m01"] / M["m00"])
         return (cX, cY)
 
     def pixel_to_world(self, pixel):
@@ -134,7 +135,7 @@ class ImagePreprocessor:
             return None
 
         pixel_array = np.array([pixel], dtype=np.float32).reshape(-1, 1, 2)
-        world = cv.perspectiveTransform(pixel_array, self.M_all_inv)
+        world = cv.perspectiveTransform(pixel_array, self.H_inv)
         print(world[0, 0])
         return world[0, 0]
 
