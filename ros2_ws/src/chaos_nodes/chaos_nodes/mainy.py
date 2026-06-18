@@ -94,18 +94,19 @@ class Mainy(Node):
 #================================================================================================================
 
     def set_obj_data(self, msg):
+        '''
+        Empfängt Objektdaten von PlannerNode. msg.z von POINT32 wird nicht übernommen, da nicht benötigt.
+        '''
         obj_id = msg.id
         obj_typ = msg.obj_typ
-        goal_coord_x = msg.coord_x
-        goal_coord_y = msg.coord_y
-        goal_theta = msg.theta
+        goal_coord_x = msg.point.x
+        goal_coord_y = msg.point.y
         obj_speed = msg.obj_speed
         self.mainylogic.auftragseingang_main(obj_id)
         self.mainylogic.obj_current_pos( 
             obj_typ, 
             goal_coord_x, 
             goal_coord_y,
-            goal_theta,
             obj_speed)
 
         zeit_jetzt = self.get_clock().now().nanoseconds / 1e9

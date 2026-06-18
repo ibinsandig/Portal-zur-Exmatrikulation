@@ -29,7 +29,8 @@ setup(
         'coord_pred = chaos_nodes.coord_pred:main',
         'machine_learning = chaos_nodes.machine_learning:main',
         'mainy = chaos_nodes.mainy:main',
-        'planner = chaos_nodes.planner:main'
+        'planner = chaos_nodes.planner:main',
+        'test_planner = chaos_nodes.test_planner_node:main'
         ],
     },
 )

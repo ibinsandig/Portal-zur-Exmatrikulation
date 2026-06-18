@@ -10,8 +10,7 @@ class MainyLogic():
         self.obj_coord_x = None
         self.obj_coord_y = None
         self.obj_coord_z_up = 0.07          
-        self.obj_coord_z_down = 0.095       
-        self.obj_coord_theta = None
+        self.obj_coord_z_down = 0.099       
         self.obj_speed = None               
 
         self.obj_coord_x_extrapolated = 0.0
@@ -58,12 +57,11 @@ class MainyLogic():
     
     #================================================================================================================
 
-    def obj_current_pos(self, obj_typ, obj_coord_x, obj_coord_y, obj_coord_theta, obj_speed):
+    def obj_current_pos(self, obj_typ, obj_coord_x, obj_coord_y, obj_speed):
 
         self.obj_typ = obj_typ 
         self.obj_coord_x = obj_coord_x
         self.obj_coord_y = obj_coord_y
-        self.obj_coord_theta = obj_coord_theta
         self.obj_speed = obj_speed
 
 #================================================================================================================
@@ -126,7 +124,7 @@ class MainyLogic():
             #Anfahren der zweiten Vorposition in Y und Z. X noch in Default lassen. In dieser Zeit bekommen wir zwei DatenPuntke für die Extrapolation.
 
             if self.goal_reached_rising == True:
-                self.state = "obj_pick_request" 
+                self.state = "obj_pick_up" 
             
             print(f"State: {self.state}, x:{self.coord_x_default}, y:{self.obj_coord_y}, z:{self.obj_coord_z_mid}, True, True")
             return self.coord_x_default, self.obj_coord_y, self.obj_coord_z_mid, True, True
