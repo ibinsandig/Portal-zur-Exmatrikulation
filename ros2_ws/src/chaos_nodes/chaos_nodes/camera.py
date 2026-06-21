@@ -35,7 +35,7 @@ class Camera(Node):
             self.get_logger().error(f'Fehler beim Initialisieren der Kamera: {str(e)}')
             raise e
 
-        self.img.set(cv.CAP_PROP_BUFFERSIZE, 0)
+        #self.img.set(cv.CAP_PROP_BUFFERSIZE, 0)
 
         self.get_logger().info("Legen Sie den Aruco-Marker ein")
         time.sleep(5)
@@ -49,13 +49,14 @@ class Camera(Node):
                 self.get_logger().error(f'Fehler beim Lesen der Kamera: {str(e)}')
                 raise e
                 
-            if self.PrePro.M_all_inv is not None:
+            if self.PrePro.H_inv is not None:
                 i=0
                 while(i < 10):
                     self.get_logger().info("Entfernen Sie den Aruco-Marker")
                     time.sleep(1)
                     i += 1
                 break
+            
 
         self.data = self.create_timer(timer_time, self.timer_callback)
         self.get_logger().info('Kamera-Node gestartet!!!')

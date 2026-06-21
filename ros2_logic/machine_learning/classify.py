@@ -36,20 +36,17 @@ class Classifier:
         prediction = self.model.predict(X_sel)[0]
         confidence = float(self.model.predict_proba(X_sel).max())
 
+        label_map = {"rejected": 0, "cat": 1, "unicorn": 2}
+
         if isinstance(prediction, str):
-            try:
-                prediction = int(prediction)
-            except Exception:
-                prediction = 0
+            prediction = label_map.get(prediction, 0)
         else:
             prediction = int(prediction)
 
-        # Label in Buffer schieben
         self.label_buffer.append(prediction)
         if len(self.label_buffer) > self.buffer_size:
             self.label_buffer.popleft()
 
-        # Median über den Buffer (abgerundet auf int)
         smoothed_label = int(statistics.median(self.label_buffer))
 
         return smoothed_label, confidence

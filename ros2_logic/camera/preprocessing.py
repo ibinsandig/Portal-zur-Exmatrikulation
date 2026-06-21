@@ -8,9 +8,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))    #TODO import korrigieren
 
 #import ros2_logic.config_vm
-import config_vm
-
-
+import config_vm as cfg
 
 class ImagePreprocessor:
     def __init__(self):
@@ -35,11 +33,11 @@ class ImagePreprocessor:
         corners, ids, rejected = self.detector.detectMarkers(init_frame)
 
         if len(corners) < 2:
-            print('Nicht genügend Marker gefunden')
+            print('Nicht genügend Marker gefunden 1')
             return 
 
         dstPoints = np.concatenate(corners, axis=1)
-        H_pre, _ = cv.findHomography(srcPoints=config_vm.SRC_COORDS, dstPoints=dstPoints, method=0)
+        H_pre, _ = cv.findHomography(srcPoints=cfg.SRC_COORDS_1, dstPoints=dstPoints, method=0)
         H_pre_inv = np.linalg.inv(H_pre)
 
         pts1 = np.float32([
@@ -47,7 +45,7 @@ class ImagePreprocessor:
             corners[1][0][1],  # oben-rechts
             corners[0][0][3],  # unten-links
             corners[0][0][2],  # unten-rechts
-        ])
+        ])  
 
         pts1_reshaped = pts1.astype(np.float32).reshape(-1, 1, 2)
 
@@ -87,14 +85,19 @@ class ImagePreprocessor:
 
         aruco_warped = cv.warpPerspective(init_frame, self.M_all, (self.width, self.height))
 
-        corners, ids, rejected = self.detector.detectMarkers(aruco_warped)
+        cv.imwrite('debug_warped_image.png', aruco_warped)
+        print("DEBUG: Das verzerrte Bild wurde als 'debug_warped_image.png' gespeichert.")
 
-        if len(corners) < 2:
+        corners_2, ids, rejected = self.detector.detectMarkers(aruco_warped)
+
+        print(len(corners_2))
+
+        if len(corners_2) < 2:
             print('Nicht genügend Marker gefunden im warped Bild')
             return 
-
-        dstPoints = np.concatenate(corners, axis=1)
-        self.H, _ = cv.findHomography(srcPoints= config_vm.SRC_COORDS, dstPoints=dstPoints, method=0)
+        print("Berechnen der Homogrphie")
+        dstPoints = np.concatenate(corners_2, axis=1)
+        self.H, _ = cv.findHomography(srcPoints= cfg.SRC_COORDS_2, dstPoints=dstPoints, method=0)
         self.H_inv = np.linalg.inv(self.H)
 
         print('Setup erfolgreich')
