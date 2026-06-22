@@ -37,7 +37,7 @@ class ImagePreprocessor:
             return 
 
         dstPoints = np.concatenate(corners, axis=1)
-        H_pre, _ = cv.findHomography(srcPoints=cfg.SRC_COORDS_1, dstPoints=dstPoints, method=0)
+        H_pre, _ = cv.findHomography(srcPoints=cfg.SRC_COORDS_2, dstPoints=dstPoints, method=0)
         H_pre_inv = np.linalg.inv(H_pre)
 
         pts1 = np.float32([
@@ -52,10 +52,10 @@ class ImagePreprocessor:
         world_coords = cv.perspectiveTransform(pts1_reshaped, H_pre_inv)
 
         offset_raw = np.array([
-            [+6, +6],  # mm - X offset -6, Y offset -6
-            [-6, +6],  # mm - X offset +6, Y offset -6
-            [+6, -6],  # mm - X offset -6, Y offset +6
-            [-6, -6]   # mm - X offset +6, Y offset +6
+            [-0.006, +0.006],  # mm - X offset -6, Y offset -6
+            [-0.006, -0.006],  # mm - X offset +6, Y offset -6
+            [+0.006, +0.006],  # mm - X offset -6, Y offset +6
+            [+0.006, -0.006] 
         ], dtype=np.float32)
 
         offset = offset_raw.reshape(-1, 1, 2)

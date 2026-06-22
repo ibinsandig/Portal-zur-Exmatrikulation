@@ -31,6 +31,8 @@ class Camera(Node):
 
         try:
             self.img = cv.VideoCapture(path_camera)
+            self.img.set(cv.CAP_PROP_FRAME_WIDTH, 1920)
+            self.img.set(cv.CAP_PROP_FRAME_HEIGHT, 1080)
         except Exception as e:
             self.get_logger().error(f'Fehler beim Initialisieren der Kamera: {str(e)}')
             raise e
