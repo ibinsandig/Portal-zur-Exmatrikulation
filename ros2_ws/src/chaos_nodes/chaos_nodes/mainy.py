@@ -54,7 +54,7 @@ class Mainy(Node):
     def timer_StateMachine(self):
 
         x,y,z,gripper,pub_block = self.mainylogic.state_machine() 
-        print(f"{x},{y},{z},{gripper},{pub_block}")
+        print(f"x: {x}, y: {y}, z: {z}, Gripper: {gripper}, PubBlock: {pub_block}")
 
         work_done, obj_id = self.mainylogic.work_done_flag()
         print(f"Auftragsabschluss:{work_done},id:{obj_id}")

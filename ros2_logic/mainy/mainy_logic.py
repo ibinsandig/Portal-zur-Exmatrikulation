@@ -126,7 +126,7 @@ class MainyLogic():
             if self.goal_reached_rising == True:
                 self.state = "obj_pick_up" 
             
-            print(f"State: {self.state}, x:{self.coord_x_default}, y:{self.obj_coord_y}, z:{self.obj_coord_z_mid}, True, True")
+            print(f"State: {self.state}")
             return self.coord_x_default, self.obj_coord_y, self.obj_coord_z_mid, True, True
         
         #=================================================
@@ -138,11 +138,11 @@ class MainyLogic():
                 
                 self.state = "obj_default_pos_grip"
 
-                print(f"State: {self.state}, x:{self.obj_coord_x}, y:{self.obj_coord_y}, z:{self.obj_coord_z_down}, True, True")
+                print(f"State: {self.state}")
                 return self.obj_coord_x_extrapolated, self.obj_coord_y, self.obj_coord_z_down, True, True
     
             else:
-                print(f"State: {self.state}, x:{self.obj_coord_x}, y:{self.obj_coord_y}, z:{self.obj_coord_z_down}, True, True")
+                print(f"State: {self.state} Obj_pick_up auf Default Pos")
                 return self.coord_x_default, self.obj_coord_y, self.obj_coord_z_mid, True, False#KEINE PUBLISHING
             
         #=================================================
@@ -152,8 +152,8 @@ class MainyLogic():
             if self.goal_reached_rising == True: 
                 self.state = "obj_sort"
 
-            print(f"State: {self.state}, x:{self.coord_x_default}, y:{self.coord_y_default}, z:{self.obj_coord_z_up}, True, True")
-            return self.obj_coord_x_extrapolated, self.obj_coord_y, self.obj_coord_z_up, True, True
+            print(f"State: {self.state}")
+            return self.obj_coord_x_extrapolated, self.coord_y_default, self.obj_coord_z_up, True, True
 
 
         #====================Pick_Prozess-Ende=============================
@@ -165,11 +165,11 @@ class MainyLogic():
                 self.state = "obj_drop"
 
             if self.obj_typ == 2: #TODO Umbenennung von Zahl auf String           
-                print(f"State: {self.state}, x:{self.coord_x_sort_unicorn}, y:{self.coord_y_sort_unicorn}, z:{self.obj_coord_z_up}, True, True")
+                print(f"State: {self.state}")
                 return self.coord_x_sort_unicorn, self.coord_y_sort_unicorn, self.obj_coord_z_up, True, True
             
             if self.obj_typ == 1:               
-                print(f"State: {self.state}, x:{self.coord_x_sort_cat}, y:{self.coord_y_sort_cat}, z:{self.obj_coord_z_up}, True, True")
+                print(f"State: {self.state}")
                 return self.coord_x_sort_cat, self.coord_y_sort_cat, self.obj_coord_z_up, True, True
 
 
@@ -178,11 +178,11 @@ class MainyLogic():
             self.state = 'obj_default_pos_lose'
 
             if self.obj_typ == 2: 
-                print(f"State: {self.state}, x:{self.coord_x_sort_unicorn}, y:{self.coord_y_sort_unicorn}, z:{self.obj_coord_z_up}, False, True")         
+                print(f"State: {self.state}")      
                 return self.coord_x_sort_unicorn, self.coord_y_sort_unicorn, self.obj_coord_z_up, False, True
         
             if self.obj_typ == 1: 
-                print(f"State: {self.state}, x:{self.coord_x_sort_cat}, y:{self.coord_y_sort_cat}, z:{self.obj_coord_z_up}, False, True")               
+                print(f"State: {self.state}")              
                 return self.coord_x_sort_cat, self.coord_y_sort_cat, self.obj_coord_z_up, False, True
             
 
@@ -192,7 +192,7 @@ class MainyLogic():
                 self.state = 'jobless'         
 
             self.work_done = True 
-            print(f"State: {self.state}, x:{self.coord_x_default}, y:{self.coord_y_default}, z:{self.obj_coord_z_up}, False, True")  
+            print(f"State: {self.state}")
             return self.coord_x_default, self.coord_y_default, self.obj_coord_z_up, False, True
         
         #=================================================
