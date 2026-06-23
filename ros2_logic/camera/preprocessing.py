@@ -37,6 +37,7 @@ class ImagePreprocessor:
             return 
 
         dstPoints = np.concatenate(corners, axis=1)
+        print(dstPoints)
         H_pre, _ = cv.findHomography(srcPoints=cfg.SRC_COORDS_2, dstPoints=dstPoints, method=0)
         H_pre_inv = np.linalg.inv(H_pre)
 
@@ -52,19 +53,17 @@ class ImagePreprocessor:
         world_coords = cv.perspectiveTransform(pts1_reshaped, H_pre_inv)
 
         offset_raw = np.array([
-            [-0.006, +0.006],  # mm - X offset -6, Y offset -6
-            [-0.006, -0.006],  # mm - X offset +6, Y offset -6
-            [+0.006, +0.006],  # mm - X offset -6, Y offset +6
-            [+0.006, -0.006] 
+            [+0.006, +0.006],  # mm - X offset -6, Y offset -6
+            [+0.006, -0.006],  # mm - X offset +6, Y offset -6
+            [-0.006, +0.006],  # mm - X offset -6, Y offset +6
+            [-0.006, -0.006] 
         ], dtype=np.float32)
 
         offset = offset_raw.reshape(-1, 1, 2)
         pts1_2 = world_coords + offset
         pts1_2_pixel = cv.perspectiveTransform(pts1_2, H_pre)
 
-
         print('Offset ausgerechnet')
-
 
         min_x = np.min(pts1_2_pixel[:, 0, 0])
         max_x = np.max(pts1_2_pixel[:, 0, 0])
@@ -100,6 +99,10 @@ class ImagePreprocessor:
         self.H, _ = cv.findHomography(srcPoints= cfg.SRC_COORDS_2, dstPoints=dstPoints, method=0)
         self.H_inv = np.linalg.inv(self.H)
 
+        test_pixel = np.float32([[[corners_2[0][0][0][0], corners_2[0][0][0][1]]]])
+        test_world = cv.perspectiveTransform(test_pixel, self.H_inv)
+        print(f"(in)Sanity check: Pixel {test_pixel} → Welt {test_world}")  #Ergebnis sollte annähernd an SRC_COORDS_2 sein
+
         print('Setup erfolgreich')
                
     def warp_image(self, frame):
@@ -118,9 +121,9 @@ class ImagePreprocessor:
     def obj_position(self, contours):
 
         if not contours:
+            print("Pos: Keine Konturen gefunden")
             return None
-            print("Klasse: Keine Konturen gefunden")
-        
+            
         print(contours)
 
         largest_contour = max(contours, key=cv.contourArea)
@@ -128,18 +131,21 @@ class ImagePreprocessor:
         if M["m00"] == 0:
             return None
         
-        cY = int(M["m10"] / M["m00"])
-        cX = int(M["m01"] / M["m00"])
+        cX = int(M["m10"] / M["m00"])
+        cY = int(M["m01"] / M["m00"])
         return (cX, cY)
 
     def pixel_to_world(self, pixel):
+
+        print(f"Pixel rein: {pixel}")  
+
         if pixel is None:
             print("no pixel")
             return None
 
         pixel_array = np.array([pixel], dtype=np.float32).reshape(-1, 1, 2)
         world = cv.perspectiveTransform(pixel_array, self.H_inv)
-        print(world[0, 0])
+        print(f"Welt raus: {world[0, 0]}")
         return world[0, 0]
 
     def extract_features_from_contour(self, cnt):

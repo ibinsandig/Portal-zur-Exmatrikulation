@@ -9,10 +9,6 @@ class CoordinatesPrediction:
         self.speed_buffer = deque() # speichert berechnete Einzelgeschwindigkeiten
 
     def add_measurement(self, id, x, t):
-        """
-        Fügt eine neue Messung hinzu und gibt dict mit id und speed zurück.
-        Gibt None zurück wenn noch keine Geschwindigkeit berechnet werden kann.
-        """
 
         # Neue ID -> Queue wird geleert
         if id != self.current_id:
@@ -31,7 +27,7 @@ class CoordinatesPrediction:
         x_curr, t_curr = self.queue[-1]
 
         if t_curr == t_prev:
-            return None  # Division durch 0 verhindern
+            return None  # Division durch 0 verhindern!!!!!!
 
         speed = (x_curr - x_prev) / (t_curr - t_prev)
 
