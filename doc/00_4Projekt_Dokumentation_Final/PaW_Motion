@@ -1,0 +1,31 @@
+# Technische Dokumentation - Motion Komponente
+
+## Grundfunktion
+
+- INIT durchführen und abschluss melden
+- Zielkoordinate erhalten, anfahren, darüber hovern und erreichen des Ziels melden
+
+## Schnittstellen 
+
+| Subscription           | Discription                                             |
+| :-----------           | :------                                                 |
+| /goal_coordinates      |  Empfängt Zielkoordinaten                               |
+| /goal_gripper          |  Empfängt Greifer zustand (offen/geschlossen)           |
+| /RobotPos              |  Empfängt die aktuellen Roboterpositionsdaten (~10Hz)   |
+
+| Publishing             |  Discription                                             |
+| :-----------           |  :--------------                                         |
+| /goal_reached          |  Übergibt Info, wenn Zielkoordinaten erreicht wurden     |
+| /init_done             |  Übergibt Info, wenn Initphase abgeschlossen ist         |
+| /RobotCmd              |  Übergibt Beschleunigungswerte & soll_greiferzustand     |
+
+
+## Einzelkomonenten 
+
+### motion (Node)
+
+### init (Python Logik)
+
+### move_logic (Python Logik)
+
+### Controller (Python Logik)

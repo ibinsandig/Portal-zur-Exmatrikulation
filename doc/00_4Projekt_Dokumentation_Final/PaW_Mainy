@@ -1,0 +1,30 @@
+# Technische Dokumentation - Mainy Komponente
+
+## Grundfunktion
+
+- Startabfrage über Motion, ob INIT = Done
+- Erwarten von Daten eines neues Objekts
+- Starten und durcharbeiten der State_Machine
+
+## Topic - Schnittstellen 
+
+| Subscription           | Discription                                             |
+| :-----------           | :------                                                 |
+| /init_done             |  Empfängt Info, wenn Initphase abgeschlossen ist        |
+| /goal_reached          |  Empfängt Info, wenn Zielkoordinaten erreicht wurden.   |
+| /obj_data              |  Empfängt Tupel an Daten über das Zielobjekt            |
+
+| Publishing             |  Discription                                                 |
+| :-----------           |  :--------------                                             |
+| /goal_coordinates      |  Übergibt die Zielkoordinaten an den Motion-Block            |
+| /goal_gripper          |  bergibt die Info, wann der Gripper schließen soll           |
+| /obj_finished          |  Übergibt die Info, ob und WELCHES Objekt abgearbeitet wurde |
+
+
+## Einzelkomonenten 
+
+### Mainy (Node)
+
+
+
+### mainy_logic (Python Logik)
