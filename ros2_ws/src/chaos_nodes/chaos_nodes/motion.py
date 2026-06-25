@@ -210,30 +210,30 @@ class Motion(Node):
         elif self.init_state == "init_done": 
             accelofx, accelofy, accelofz = self.motion_order.wanted_accel()
 
-            if (accelofx) >= 0.1:
-                self.accel_x_over = 0.1
-                #self.get_logger().info("accel_x > 0.1!")
-            elif (accelofx <= -0.1):
-                self.accel_x_over = -0.1
-                #self.get_logger().info("accel_x < -0.1!")
+            if (accelofx) >= 0.08:
+                self.accel_x_over = 0.08
+                #self.get_logger().info("accel_x > 0.08!")
+            elif (accelofx <= -0.08):
+                self.accel_x_over = -0.08
+                #self.get_logger().info("accel_x < -0.08!")
             else: 
                 self.accel_x_over = accelofx
 
-            if (accelofy) >= 0.1:
-                self.accel_y_over = 0.1
-                #self.get_logger().info("accel_y > 0.1!")
-            elif (accelofy <= -0.1):
-                self.accel_y_over = -0.1
-                #self.get_logger().info("accel_y < -0.1!")
+            if (accelofy) >= 0.08:
+                self.accel_y_over = 0.08
+                #self.get_logger().info("accel_y > 0.08!")
+            elif (accelofy <= -0.08):
+                self.accel_y_over = -0.08
+                #self.get_logger().info("accel_y < -0.08!")
             else: 
                 self.accel_y_over = accelofy
 
-            if (accelofz) >= 0.1:
-                self.accel_z_over = 0.1
-                #self.get_logger().info("accel_z > 0.1!")
-            elif (accelofz <= -0.1):
-                self.accel_z_over = -0.1
-                #self.get_logger().info("accel_z < -0.1!")
+            if (accelofz) >= 0.08:
+                self.accel_z_over = 0.08
+                #self.get_logger().info("accel_z > 0.08!")
+            elif (accelofz <= -0.08):
+                self.accel_z_over = -0.08
+                #self.get_logger().info("accel_z < -0.08!")
             else: 
                 self.accel_z_over = accelofz
 

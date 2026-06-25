@@ -71,7 +71,7 @@ class Mainy(Node):
             goal_coordinates.z = z
             self.pub_goal_coordinates.publish(goal_coordinates)
             
-            print("pub_block if erfüllt")
+            print("pub_block=true, Ziel-Coordianten und GripperANAUS gepublished")
             goal_gripper = Bool()
             goal_gripper.data = gripper
             self.pub_goal_gripper.publish(goal_gripper)

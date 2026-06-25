@@ -49,8 +49,8 @@ class MainyLogic():
         Prüft ob ein neues Objket mit neuer ID von PlannerNode kommt und startet ggf. die Statemachine. Setzt die WorkDone Flag auf False. 
         '''
         self.obj_id = obj_id
-    
-        if self.obj_id is not self.obj_id_prev: 
+
+        if self.obj_id is not self.obj_id_prev:   
             self.obj_id_prev = obj_id
             self.state = 'obj_pick_pre_pos'
             self.work_done = False
@@ -113,6 +113,7 @@ class MainyLogic():
         
         if self.state == 'jobless':
             print("State_machine ist Jobless, Publisher für aktuellen Zyklus geblockt")
+            self.work_done = False
             return self.coord_x_default,self.coord_y_default,self.obj_coord_z_up,False,False
 
 
@@ -126,7 +127,7 @@ class MainyLogic():
             if self.goal_reached_rising == True:
                 self.state = "obj_pick_up" 
             
-            print(f"State: {self.state}")
+            print(f"State: {self.state}: Zielpos Y, sowie x_default voranfahren")
             return self.coord_x_default, self.obj_coord_y, self.obj_coord_z_mid, True, True
         
         #=================================================
@@ -138,12 +139,12 @@ class MainyLogic():
                 
                 self.state = "obj_default_pos_grip"
 
-                print(f"State: {self.state}")
+                print(f"State: {self.state}: Wenn Bauteil unter x_default durch gefahren ist, picke auf x_extrapolated")
                 return self.obj_coord_x_extrapolated, self.obj_coord_y, self.obj_coord_z_down, True, True
     
             else:
-                print(f"State: {self.state} Obj_pick_up auf Default Pos")
-                return self.coord_x_default, self.obj_coord_y, self.obj_coord_z_mid, True, False#KEINE PUBLISHING
+                print(f"State: {self.state} x_default >= ist_obj_coord_x, Solange wird auf xdefault gefahren!")
+                return self.coord_x_default, self.obj_coord_y, self.obj_coord_z_mid, True, True
             
         #=================================================
 
@@ -188,7 +189,7 @@ class MainyLogic():
 
         elif self.state == "obj_default_pos_lose":
 
-            if self.goal_reached_rising == True:        #TODO BENJI EWALD EVT WENIGER NERVEN MIT == true WEG MACHEN WIEL UNNÖTIG
+            if self.goal_reached_rising == True:        
                 self.state = 'jobless'         
 
             self.work_done = True 
