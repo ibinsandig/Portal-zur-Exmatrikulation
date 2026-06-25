@@ -4,7 +4,7 @@ import cv2 as cv
 from chaos_topics.msg import ObjCoords
 from chaos_topics.msg import ObjFeatures
 from geometry_msgs.msg import Pose2D
-from camera.preprocessing import ImagePreprocessor
+from camera.preprocessing    import ImagePreprocessor
 import time
 import numpy as np
 import config_vm as cfg
@@ -41,7 +41,7 @@ class Camera(Node):
 
         self.get_logger().info("Legen Sie den Aruco-Marker ein")
         time.sleep(5)
-
+            
         while(True):
             print('Setup Kamera...')
 
@@ -93,7 +93,7 @@ class Camera(Node):
         
         gray_image = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
-        img_rotated = cv.rotate(gray_image, 2)
+        img_rotated = cv.flip(gray_image, 1 )
         return img_rotated
 
     def process_img(self, frame):
@@ -123,7 +123,7 @@ class Camera(Node):
             self.get_logger().warn('Keine Objekte mit Weltkoordinaten gefunden')
             return None, None
 
-        print(objects)
+        #print(objects)
         # Nur Objekte im sicheren Bereich
         valid_objects = [
             obj for obj in objects

@@ -4,5 +4,6 @@
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "cmake.sourceDirectory": "/home/pa99/REPOS_CODE/einhorn_03/Portal-zur-Exmatrikulation/ros2_ws/src/chaos_topics"
+    "cmake.sourceDirectory": "/home/pa99/REPOS_CODE/einhorn_03/Portal-zur-Exmatrikulation/ros2_ws/src/chaos_topics",
+    "python-envs.defaultEnvManager": "ms-python.python:system"
 }

@@ -95,13 +95,15 @@ class ImagePreprocessor:
             print('Nicht genügend Marker gefunden im warped Bild')
             return 
         print("Berechnen der Homogrphie")
+
         dstPoints = np.concatenate(corners_2, axis=1)
         self.H, _ = cv.findHomography(srcPoints= cfg.SRC_COORDS_2, dstPoints=dstPoints, method=0)
         self.H_inv = np.linalg.inv(self.H)
 
         test_pixel = np.float32([[[corners_2[0][0][0][0], corners_2[0][0][0][1]]]])
         test_world = cv.perspectiveTransform(test_pixel, self.H_inv)
-        print(f"(in)Sanity check: Pixel {test_pixel} → Welt {test_world}")  #Ergebnis sollte annähernd an SRC_COORDS_2 sein
+
+        print(f"(in)Sanity check: Pixel --> Welt {test_pixel} → Welt {test_world}")  #Ergebnis sollte annähernd an SRC_COORDS_2 sein
 
         print('Setup erfolgreich')
                
@@ -137,7 +139,7 @@ class ImagePreprocessor:
 
     def pixel_to_world(self, pixel):
 
-        print(f"Pixel rein: {pixel}")  
+        # print(f"Pixel rein: {pixel}")  
 
         if pixel is None:
             print("no pixel")
@@ -145,7 +147,10 @@ class ImagePreprocessor:
 
         pixel_array = np.array([pixel], dtype=np.float32).reshape(-1, 1, 2)
         world = cv.perspectiveTransform(pixel_array, self.H_inv)
+        print(f"Pixel rein: {pixel}")
         print(f"Welt raus: {world[0, 0]}")
+        world[0, 0, 0] = -world[0, 0, 0]
+        print(f"Welt raus invertiert: {world[0, 0]}")
         return world[0, 0]
 
     def extract_features_from_contour(self, cnt):
@@ -154,7 +159,7 @@ class ImagePreprocessor:
         perimeter = cv.arcLength(cnt, True)
         
         if area == 0 or perimeter == 0:
-            return None
+            return None 
         
         hu_raw = cv.HuMoments(cv.moments(cnt)).flatten()
         with np.errstate(divide="ignore"):
