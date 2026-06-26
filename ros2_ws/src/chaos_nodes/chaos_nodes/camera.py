@@ -93,7 +93,7 @@ class Camera(Node):
         
         gray_image = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
-        img_rotated = cv.flip(gray_image, 1 )
+        img_rotated = cv.rotate(gray_image, 2)
         return img_rotated
 
     def process_img(self, frame):
@@ -127,7 +127,7 @@ class Camera(Node):
         # Nur Objekte im sicheren Bereich
         valid_objects = [
             obj for obj in objects
-            if cfg.X_MIN_SAFE <= obj['world_pos'][0] <= cfg.X_MAX_SAFE
+            if cfg.X_MIN_SAFE < obj['world_pos'][0] < cfg.X_MAX_SAFE
         ]
 
         if not valid_objects:
@@ -147,9 +147,9 @@ class Camera(Node):
             return None, None
 
         pose2d = Pose2D()
-        pose2d.x = float(world_pos[0])                                          
-        pose2d.y = float(world_pos[1])                                          
-        pose2d.theta = self.PrePro.extract_orientation(most_advanced['contour']) 
+        pose2d.x = float(world_pos[0])
+        pose2d.y = float(world_pos[1])
+        pose2d.theta = self.PrePro.extract_orientation(most_advanced['contour'])
 
         obj_coords_msg = ObjCoords()
         obj_coords_msg.pose2d = pose2d
@@ -166,7 +166,7 @@ class Camera(Node):
 
         return obj_coords_msg, obj_features_msg
 
-    def assign_id(self, x, threshold=30.0): # x = 200
+    def assign_id(self, x, threshold=0.05): # x = 200
         
         if self.last_pos_x is not None:     # = 220
             distance = abs(x - self.last_pos_x) # = 20

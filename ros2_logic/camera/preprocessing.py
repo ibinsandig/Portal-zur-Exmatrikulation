@@ -33,7 +33,8 @@ class ImagePreprocessor:
         corners, ids, rejected = self.detector.detectMarkers(init_frame)
 
         if len(corners) < 2:
-            print('Nicht genügend Marker gefunden 1')
+            print('Nicht genügend Marker gefunden 1. Homography')
+            cv.imwrite('first_image.png', init_frame)
             return 
 
         dstPoints = np.concatenate(corners, axis=1)
@@ -53,10 +54,10 @@ class ImagePreprocessor:
         world_coords = cv.perspectiveTransform(pts1_reshaped, H_pre_inv)
 
         offset_raw = np.array([
-            [+0.006, +0.006],  # mm - X offset -6, Y offset -6
-            [+0.006, -0.006],  # mm - X offset +6, Y offset -6
-            [-0.006, +0.006],  # mm - X offset -6, Y offset +6
-            [-0.006, -0.006] 
+            [-0.006, +0.006],  # mm - X offset -6, Y offset -6
+            [-0.006, -0.006],  # mm - X offset +6, Y offset -6
+            [+0.006, +0.006],  # mm - X offset -6, Y offset +6
+            [+0.006, -0.006] 
         ], dtype=np.float32)
 
         offset = offset_raw.reshape(-1, 1, 2)
@@ -89,21 +90,44 @@ class ImagePreprocessor:
 
         corners_2, ids, rejected = self.detector.detectMarkers(aruco_warped)
 
+
+        if len(corners_2) < 2:
+            return
+
+        sorted_pairs = sorted(zip(ids.flatten(), corners_2), key=lambda x: x[0], reverse=True)
+        sorted_corners = [pair[1] for pair in sorted_pairs]
+
+        dstPoints = np.concatenate(sorted_corners, axis=1)
+
+        self.H, _ = cv.findHomography(
+            srcPoints=cfg.SRC_COORDS_2,
+            dstPoints=dstPoints,
+            method=0
+        )
+
         print(len(corners_2))
 
         if len(corners_2) < 2:
             print('Nicht genügend Marker gefunden im warped Bild')
             return 
-        print("Berechnen der Homogrphie")
+        print("Berechnen der Homographie")
 
         dstPoints = np.concatenate(corners_2, axis=1)
         self.H, _ = cv.findHomography(srcPoints= cfg.SRC_COORDS_2, dstPoints=dstPoints, method=0)
         self.H_inv = np.linalg.inv(self.H)
 
-        test_pixel = np.float32([[[corners_2[0][0][0][0], corners_2[0][0][0][1]]]])
-        test_world = cv.perspectiveTransform(test_pixel, self.H_inv)
+        #test_pixel = np.float32([[[corners_2[0][0][0][0], corners_2[0][0][0][1]]]])
+        #test_world = cv.perspectiveTransform(test_pixel, self.H_inv)
 
-        print(f"(in)Sanity check: Pixel --> Welt {test_pixel} → Welt {test_world}")  #Ergebnis sollte annähernd an SRC_COORDS_2 sein
+        #print(f"(in)Sanity check: Pixel --> Welt {test_pixel} → Welt {test_world}")  #Ergebnis sollte annähernd an SRC_COORDS_2 sein
+
+        # Vergleich aller 8 Punkte, nicht nur des ersten
+        for i, corner_set in enumerate(sorted_corners):
+            for j, corner in enumerate(corner_set[0]):
+                px = np.float32([[[corner[0], corner[1]]]])
+                world = cv.perspectiveTransform(px, self.H)
+                expected = cfg.SRC_COORDS_2[0][i*4 + j]
+                print(f"Ecke {i},{j}: Pixel {corner} → Welt {world[0,0]} | Erwartet {expected}")
 
         print('Setup erfolgreich')
                
@@ -114,7 +138,7 @@ class ImagePreprocessor:
     
     def segment_object(self, frame):
 
-        ret, img_thresh = cv.threshold(frame, 150, 255, cv.THRESH_BINARY)
+        ret, img_thresh = cv.threshold(frame, 200, 255, cv.THRESH_BINARY)
         uint8_img_thresh = img_thresh.astype(np.uint8)
         contours, hierarchy = cv.findContours(uint8_img_thresh, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
 
@@ -149,8 +173,6 @@ class ImagePreprocessor:
         world = cv.perspectiveTransform(pixel_array, self.H_inv)
         print(f"Pixel rein: {pixel}")
         print(f"Welt raus: {world[0, 0]}")
-        world[0, 0, 0] = -world[0, 0, 0]
-        print(f"Welt raus invertiert: {world[0, 0]}")
         return world[0, 0]
 
     def extract_features_from_contour(self, cnt):

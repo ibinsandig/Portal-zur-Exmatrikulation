@@ -38,8 +38,8 @@ class CoordPred(Node):
         future_position.speed = float(result['speed'])
 
         self.get_logger().info(
-            f"Speed: {future_position.speed:.2f}; ID: {future_position.id}; "
-            f"X: {future_position.pose2d.x:.2f}; Y: {future_position.pose2d.y:.2f}"
+            f"Speed: {future_position.speed:.8f}; ID: {future_position.id}; "
+            f"X: {future_position.pose2d.x:.8f}; Y: {future_position.pose2d.y:.8f}"
         )
 
         self.pub_future_position.publish(future_position)

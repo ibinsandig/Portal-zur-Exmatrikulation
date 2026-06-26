@@ -1,10 +1,13 @@
-# Kilo
-
 .kilo
+.venv
+.vscode
+.pytest_cache
 
 # Linus ml Ordner
-pic_save/
-misc/prepWork
+
+misc/prepWork/dev_ml/
+debug_contours
+
 
 # ROS2 specific ignores
 

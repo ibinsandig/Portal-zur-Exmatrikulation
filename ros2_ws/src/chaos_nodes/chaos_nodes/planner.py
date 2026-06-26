@@ -34,7 +34,7 @@ class Planner(Node):
 
     def callback_future_position(self, msg):
         self.get_logger().info("Futureposition empfangen")
-        self.PostPro.add_future_position(msg.id, msg.pose2d, msg.speed)
+        self.PostPro.add_future_position(msg.id, msg.pose2d, msg.speed, msg.timestamp)
 
     def callback_obj_finished(self, msg):
         finished_id = msg.data
