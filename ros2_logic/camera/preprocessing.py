@@ -144,6 +144,19 @@ class ImagePreprocessor:
 
         return contours
 
+    def get_grippoint(self, contours, image_shape):
+        if not contours:
+            return None
+        largest = max(contours, key=cv.contourArea)
+
+        mask = np.zeros(image_shape[:2], dtype=np.uint8)
+        cv.drawContours(mask, [largest], -1, 255, thickness=cv.FILLED)
+
+        dist = cv.distanceTransform(mask, cv.DIST_L2, 5)
+
+        _, _, _, max_loc = cv.minMaxLoc(dist)
+        return max_loc  # x, y 
+
     def obj_position(self, contours):
 
         if not contours:

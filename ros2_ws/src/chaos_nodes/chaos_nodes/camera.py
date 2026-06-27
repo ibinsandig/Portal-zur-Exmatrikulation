@@ -113,7 +113,7 @@ class Camera(Node):
 
         objects = []
         for cnt in valid_contours:
-            pixel_pos = self.PrePro.obj_position([cnt])
+            pixel_pos = self.PrePro.get_grippoint([cnt], warped_image.shape)
             if pixel_pos is None:
                 continue
             world_pos = self.PrePro.pixel_to_world(pixel_pos)
