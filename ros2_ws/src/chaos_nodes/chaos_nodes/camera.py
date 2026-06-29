@@ -16,7 +16,7 @@ class Camera(Node):
 
         self.pub_obj_coords = self.create_publisher(ObjCoords, '/obj_coords', 10)
         self.pub_obj_festures = self.create_publisher(ObjFeatures, '/obj_features', 10)
-        timer_time = 1/5   # nicht zu groß wählen, sonst gibt es Probleme mit der id vergabe
+        timer_time = 1/5
 
         path_camera = 4    # PortalCam = /dev/video4
 
@@ -37,7 +37,7 @@ class Camera(Node):
             self.get_logger().error(f'Fehler beim Initialisieren der Kamera: {str(e)}')
             raise e
 
-        #self.img.set(cv.CAP_PROP_BUFFERSIZE, 0)
+        self.img.set(cv.CAP_PROP_BUFFERSIZE, 1)
 
         self.get_logger().info("Legen Sie den Aruco-Marker ein")
         time.sleep(5)
@@ -166,12 +166,12 @@ class Camera(Node):
 
         return obj_coords_msg, obj_features_msg
 
-    def assign_id(self, x, threshold=0.05): # x = 200
+    def assign_id(self, x, threshold=0.05): 
         
-        if self.last_pos_x is not None:     # = 220
-            distance = abs(x - self.last_pos_x) # = 20
+        if self.last_pos_x is not None:  
+            distance = abs(x - self.last_pos_x) 
 
-            if distance >= threshold:   # 20 >= 30  -> false
+            if distance >= threshold:
                 self.currend_id += 1
                 self.last_pos_x = x
                 return self.currend_id
