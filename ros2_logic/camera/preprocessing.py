@@ -157,23 +157,6 @@ class ImagePreprocessor:
         _, _, _, max_loc = cv.minMaxLoc(dist)
         return max_loc  # x, y 
 
-    def obj_position(self, contours):
-
-        if not contours:
-            print("Pos: Keine Konturen gefunden")
-            return None
-            
-        print(contours)
-
-        largest_contour = max(contours, key=cv.contourArea)
-        M = cv.moments(largest_contour)
-        if M["m00"] == 0:
-            return None
-        
-        cX = int(M["m10"] / M["m00"])
-        cY = int(M["m01"] / M["m00"])
-        return (cX, cY)
-
     def pixel_to_world(self, pixel):
 
         # print(f"Pixel rein: {pixel}")  

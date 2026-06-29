@@ -49,9 +49,9 @@ class PostProcessor:
         grip = self.calculate_current_position(pose2d, timestamp, speed)
 
         if grip is None:
-            return None
+            return
         
-        if grip[['x']] < 0:
+        if grip['x'] < 0:
             self.finish_obj(id)
             print('Objekt ist außer Reichweite und wurde entfernt!!!')
             return
