@@ -138,7 +138,7 @@ class ImagePreprocessor:
     
     def segment_object(self, frame):
 
-        ret, img_thresh = cv.threshold(frame, 200, 255, cv.THRESH_BINARY)
+        ret, img_thresh = cv.threshold(frame, 210, 255, cv.THRESH_BINARY)
         uint8_img_thresh = img_thresh.astype(np.uint8)
         contours, hierarchy = cv.findContours(uint8_img_thresh, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
 

@@ -105,7 +105,7 @@ class Camera(Node):
             self.get_logger().info('Keine Konturen gefunden')
             return None, None
 
-        valid_contours = [cnt for cnt in contours if cv.contourArea(cnt) > 25]
+        valid_contours = [cnt for cnt in contours if cv.contourArea(cnt) > 100]
 
         if not valid_contours:
             self.get_logger().info('Keine gültigen Konturen gefunden')

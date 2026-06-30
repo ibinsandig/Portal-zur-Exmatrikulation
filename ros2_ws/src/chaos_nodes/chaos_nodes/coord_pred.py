@@ -43,6 +43,7 @@ class CoordPred(Node):
         )
 
         self.pub_future_position.publish(future_position)
+        self.get_logger().info(f"RAW obj_coords: id={msg.id}, x={msg.pose2d.x:.6f}, t={msg.timestamp:.6f}")
         self.get_logger().info('Future_position gepublished')
 
 def main(args=None):

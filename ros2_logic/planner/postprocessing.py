@@ -37,8 +37,11 @@ class PostProcessor:
         return None
 
     def finish_obj(self, id):
-        self.queue.pop(id, None)
-
+        try:
+            self.queue.pop(id, None)
+        except Exception as e:
+            self.get_logger().error(f'ID:{str(id)} wurde schon entfernt')
+            raise e
 
     def build_output(self, id, data):
         pose2d = data['pose2d']
@@ -51,10 +54,10 @@ class PostProcessor:
         if grip is None:
             return
         
-        if grip['x'] < 0:
-            self.finish_obj(id)
-            print('Objekt ist außer Reichweite und wurde entfernt!!!')
-            return
+        #if grip['x'] < 0:
+        #    self.finish_obj(id)
+        #    print('Objekt ist außer Reichweite und wurde entfernt!!!')
+        #    return
 
         return {
             'id': id,
