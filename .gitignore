@@ -4,7 +4,6 @@
 .pytest_cache
 
 # Linus ml Ordner
-v2/
 v3/
 debug_contours
 
