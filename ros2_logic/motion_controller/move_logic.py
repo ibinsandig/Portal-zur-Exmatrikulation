@@ -6,7 +6,7 @@ import time
 
 # Soll ist Vergleich Schwellwert: 
 
-th_move_logic= 0.0005    #TODO WEgen der Z-AChse (die war bei abs(0.00014))
+th_move_logic= 0.0006
 
 #=============================================================
 
@@ -34,7 +34,7 @@ class MotionOrder():
         self.time_step = 0.1
 
         self.controller_x = Controller(2.0,2.3) 
-        self.controller_y = Controller(2.5,2.3)
+        self.controller_y = Controller(2.5,2.5)
         self.controller_z = Controller(2.2,4.3)
 
 

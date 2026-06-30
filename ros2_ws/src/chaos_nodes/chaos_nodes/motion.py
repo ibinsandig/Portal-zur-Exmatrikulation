@@ -10,7 +10,7 @@ from ro45_portalrobot_interfaces.msg import RobotPos
 from motion_controller.move_logic import MotionOrder # Benötigt 'pip install -e .'
 from motion_controller.init import Init
 
-# Bei Verbingungsproblemem mit dem Microcontrollern: > sudo apt-get remove -y brltty (bereits passiert bei PaW)
+# Bei Verbingungsproblemem mit dem Microcontrollern: > sudo apt-get remove -y brltty 
 
 #================================================================================================================
 class Motion(Node):

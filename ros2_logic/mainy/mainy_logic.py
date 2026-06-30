@@ -4,27 +4,28 @@
 class MainyLogic():
     def __init__(self):
         
-        self.obj_id =  0                   #TODO2 Hier definieren 0 ist systembelegt (nicht für objekte)  
+        self.obj_id =  0                     
         self.obj_id_prev = 99999999                  
         self.obj_typ = 0                    # 0 ist "NICHT ERKANNT"
         self.obj_coord_x = None
         self.obj_coord_y = None
         self.obj_coord_z_up = 0.07          
-        self.obj_coord_z_down = 0.099       
+        self.obj_coord_z_down = 0.099     
         self.obj_speed = None               
 
         self.obj_coord_x_extrapolated = 0.0
+        self.obj_coord_x_extrapolated_last_point = None
         self.obj_time_last_cam_msg = None
 
         self.obj_coord_z_mid = 0.085        
 
-        self.coord_x_default = 0.15
+        self.coord_x_default = 0.20
         self.coord_y_default = -0.08
 
-        self.coord_x_sort_unicorn = 0.20    #TODO Muss noch bestimmt werden (praktisches Annähern)
+        self.coord_x_sort_unicorn = 0.20    
         self.coord_y_sort_unicorn = -0.12    #2
 
-        self.coord_x_sort_cat = 0.015        #TODO
+        self.coord_x_sort_cat = 0.10    
         self.coord_y_sort_cat = -0.12        #1
 
         self.init_done = False
@@ -61,6 +62,7 @@ class MainyLogic():
 
         self.obj_typ = obj_typ 
         self.obj_coord_x = obj_coord_x
+        print(self.obj_coord_x)
         self.obj_coord_y = obj_coord_y
         self.obj_speed = obj_speed
 
@@ -128,7 +130,7 @@ class MainyLogic():
                 self.state = "obj_pick_up" 
             
             print(f"State: {self.state}: Zielpos Y, sowie x_default voranfahren")
-            return self.coord_x_default, self.obj_coord_y, self.obj_coord_z_mid, True, True
+            return self.coord_x_default, self.obj_coord_y, self.obj_coord_z_mid, False, True
         
         #=================================================
 
@@ -137,14 +139,16 @@ class MainyLogic():
 
             if self.coord_x_default >= self.obj_coord_x:
                 
-                self.state = "obj_default_pos_grip"
+                if self.goal_reached_rising == True: 
+                    self.state = "obj_default_pos_grip"
+                    self.obj_coord_x_extrapolated_last_point = self.obj_coord_x_extrapolated
 
                 print(f"State: {self.state}: Wenn Bauteil unter x_default durch gefahren ist, picke auf x_extrapolated")
                 return self.obj_coord_x_extrapolated, self.obj_coord_y, self.obj_coord_z_down, True, True
     
             else:
                 print(f"State: {self.state} x_default >= ist_obj_coord_x, Solange wird auf xdefault gefahren!")
-                return self.coord_x_default, self.obj_coord_y, self.obj_coord_z_mid, True, True
+                return self.coord_x_default, self.obj_coord_y, self.obj_coord_z_mid, False, True
             
         #=================================================
 
@@ -154,7 +158,7 @@ class MainyLogic():
                 self.state = "obj_sort"
 
             print(f"State: {self.state}")
-            return self.obj_coord_x_extrapolated, self.coord_y_default, self.obj_coord_z_up, True, True
+            return self.obj_coord_x_extrapolated_last_point, self.coord_y_default, self.obj_coord_z_up, True, True
 
 
         #====================Pick_Prozess-Ende=============================
@@ -165,7 +169,7 @@ class MainyLogic():
             if self.goal_reached_rising == True:
                 self.state = "obj_drop"
 
-            if self.obj_typ == 2: #TODO Umbenennung von Zahl auf String           
+            if self.obj_typ == 2:           
                 print(f"State: {self.state}")
                 return self.coord_x_sort_unicorn, self.coord_y_sort_unicorn, self.obj_coord_z_up, True, True
             

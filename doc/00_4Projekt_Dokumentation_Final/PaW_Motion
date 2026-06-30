@@ -24,8 +24,19 @@
 
 ### motion (Node)
 
+Die Motion Node ist Grundlegend für das Empfangen und Versenden der Informationen über das ROS2 Netzwerk zuständig. 
+Sie erhält im ~10Hz Takt die Achsenkoordinaten über "/RobotPos" des Roboters. Die Daten werden im selben Takt an die Ausgelagerte Pyhtonlogik in "init" und "move_logic" weiter gegeben.
+Diese Frequnez ist der grundlegende Haupttakt für die Motionkomponente. Bei jedem eingehenden Koordinaten Paket wird 
+
+
 ### init (Python Logik)
 
 ### move_logic (Python Logik)
 
 ### Controller (Python Logik)
+
+## Verbresserungen
+
+- Deutlich mehr Pyhontlogik auslagern
+- Übergabe ROS2 Datenpakete (custommsg) als Funktion auslagern, für schöneren Code in MotionNode
+- Configvariablen Auslagern
