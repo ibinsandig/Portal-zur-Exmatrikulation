@@ -4,13 +4,11 @@ import numpy as np
 import sys
 import os
 
-# Add the parent directory (ros2_logic) to the system path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))    #TODO import korrigieren
-
-#import ros2_logic.config_vm
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import config_vm as cfg
 
 class ImagePreprocessor:
+    """ Bild verarbeitungsklasse, welche """
     def __init__(self):
         aruco_dict = aruco.getPredefinedDictionary(cv.aruco.DICT_4X4_100)
         parameters = aruco.DetectorParameters()
