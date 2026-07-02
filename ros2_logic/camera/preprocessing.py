@@ -8,7 +8,13 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import config_vm as cfg
 
 class ImagePreprocessor:
-    """ Bild verarbeitungsklasse, welche """
+    """
+    Verarbeitet Kamerabilder für die Objekterkennung und -lokalisierung.
+
+    Führt eine perspektivische Entzerrung (Warping) anhand von ArUco-Markern durch
+    und stellt Methoden zur Segmentierung, Greifpunkterkennung und
+    Pixel-zu-Weltkoordinaten-Transformation bereit.
+    """
     def __init__(self):
         aruco_dict = aruco.getPredefinedDictionary(cv.aruco.DICT_4X4_100)
         parameters = aruco.DetectorParameters()
@@ -26,6 +32,16 @@ class ImagePreprocessor:
         self.img_warped = None
 
     def setup(self, init_frame):
+        """
+        Initialisiert die Homographie-Matrizen anhand eines Referenzbildes mit ArUco-Markern.
+
+        Berechnet zwei Homographien: Eine grobe Vorkorrektur (H_pre) sowie eine
+        verfeinerte Homographie (H) im entzerrten Bildraum. Speichert außerdem die
+        Transformationsmatrix M_all für das spätere Warping.
+
+        Args:
+            init_frame: BGR-Bild (numpy.ndarray) mit mindestens zwei sichtbaren ArUco-Markern.
+        """
         corners = None
 
         corners, ids, rejected = self.detector.detectMarkers(init_frame)
@@ -130,11 +146,32 @@ class ImagePreprocessor:
         print('Setup erfolgreich')
                
     def warp_image(self, frame):
+        """
+        Entzerrt ein Eingabebild mit der berechneten Perspektivtransformation.
+
+        Args:
+            frame: BGR-Bild (numpy.ndarray), das transformiert werden soll.
+
+        Returns:
+            numpy.ndarray: Perspektivisch korrigiertes Bild.
+        """
         self.img_warped = cv.warpPerspective(frame, self.M_all, (self.width, self.height))
 
         return self.img_warped
     
     def segment_object(self, frame):
+        """
+        Segmentiert helle Objekte im Bild mittels Schwellwertverfahren.
+
+        Wendet einen binären Schwellwert (210) auf das Eingabebild an und
+        extrahiert die äußeren Konturen der resultierenden Regionen.
+
+        Args:
+            frame: Graustufenbild (numpy.ndarray).
+
+        Returns:
+            list: Liste der gefundenen Konturen (OpenCV-Konturformat).
+        """
 
         ret, img_thresh = cv.threshold(frame, 210, 255, cv.THRESH_BINARY)
         uint8_img_thresh = img_thresh.astype(np.uint8)
@@ -143,6 +180,7 @@ class ImagePreprocessor:
         return contours
 
     def get_grippoint(self, contours, image_shape):
+
         if not contours:
             return None
         largest = max(contours, key=cv.contourArea)
@@ -156,6 +194,18 @@ class ImagePreprocessor:
         return max_loc  # x, y 
 
     def pixel_to_world(self, pixel):
+        """
+        Transformiert einen Bildpunkt in Weltkoordinaten.
+
+        Wendet die inverse Homographie H_inv auf den übergebenen Pixelkoordinaten an.
+
+        Args:
+            pixel: Tuple oder Array (x, y) in Pixelkoordinaten.
+
+        Returns:
+            numpy.ndarray | None: Weltkoordinaten als Array [x, y],
+                                   oder None wenn kein Pixel übergeben wurde.
+        """
 
         # print(f"Pixel rein: {pixel}")  
 
@@ -170,7 +220,19 @@ class ImagePreprocessor:
         return world[0, 0]
 
     def extract_features_from_contour(self, cnt):
-        """Extract only hu_2 and hu_3 (log-scaled) for machine learning classification."""
+        """
+        Extrahiert Formmerkmale aus einer Kontur für die ML-Klassifikation.
+
+        Berechnet die logarithmisch skalierten Hu-Momente hu_2 und hu_3,
+        die rotations- und skalierungsinvariant sind.
+
+        Args:
+            cnt: Kontur im OpenCV-Format (numpy.ndarray).
+
+        Returns:
+            dict | None: Dictionary mit den Schlüsseln 'hu_2' und 'hu_3',
+                         oder None wenn Fläche oder Umfang null sind.
+        """
         area = cv.contourArea(cnt)
         perimeter = cv.arcLength(cnt, True)
         
@@ -185,13 +247,3 @@ class ImagePreprocessor:
             'hu_2': hu_log[2],
             'hu_3': hu_log[3],
         }
-    
-    def extract_orientation(self, cnt):
-        rect = cv.minAreaRect(cnt)
-            # rect = (center, (width, height), angle)
-        angle = rect[2]
-            
-        if rect[1][0] < rect[1][1]:  # width < height
-            angle += 90
-                
-        return float(angle)
