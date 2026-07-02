@@ -84,48 +84,21 @@ class Motion(Node):
         Empfängt eine Zielpositon (x, y, z) aus einer ROS-Nachricht und übergibt
         diese an die Funktion set_should_pos des motion_order-Objekts. Anschließend wird geprüft, ob der Roboter
         bereits an der Zielposition steht.
-
-        Falls Soll- und Ist-Position übereinstimmen:
-            - Sendet einen RobotCmd mit Beschleunigung 0 und aktuellem Greiferzustand
-            - Veröffentlicht goal_reached = True auf dem entsprechenden Topic
-            - Setzt has_goal auf False (kein aktiver Auftrag mehr)
-
-        Falls Soll- und Ist-Position NICHT übereinstimmen:
-            - Setzt has_goal auf True (Auftrag ist aktiv, Roboter muss noch fahren)
-
         '''
         Xr_soll = msg.x * 0.8
         Yr_soll = msg.y * 0.8 
         Zr_soll = msg.z
         self.motion_order.set_should_pos(Xr_soll, Yr_soll, Zr_soll)
 
-       # if self.motion_order.should_is_comp():
-
-       #     self.goal_reached = Bool()
-       #     self.goal_reached.data = True
-       #     self.publisher_goal_reached.publish(self.goal_reached)
-       #     self.get_logger().info("auftragseingang: Roboter ist an Zielpos! x-0=0, y-0=0, z-0=0")        
 
 #================================================================================================================
             
     def ist_pos_uebergabe(self, msg):       
         '''
-        Callback für eingehende Ist-Positionen des Portalroboters via ROS-Topic /RobotPos.
-        Taktgeber des gesamten Motion-Blocks auf Basis der eingehenden Portalroboter-Positionsdaten.
-
-        Verarbeitet die Rohposition je nach aktuellem Initialisierungszustand (init_state):
-
-        Einmalige Initialisierungsphasen:
-            - 'init_rise'     : Beschleunigt Achsen für die Fahrt zur Startposition 
-            - 'init_zero'     : Setzt Beschleunigung wieder auf 0
-            - 'init_endpoint' : Erkennt Endlage und berechnet Offsets → wechselt zu 'init_done'
-
-        Hauptloop:
-            - 'init_done'     : Normalbetrieb. 
-                                Rechnet Offset raus und übergibt Daten an Funktion set_is_pos des Motion_Order Objekts.
-                                Berechnung der Beschleunigung über Reglerfunktion wanted_accel() im Motion_Order Objekt
-                                Beschleunigungen werden auf ±0.1 begrenzt.
-                                Bei erreichter Zielposition wird goal_reached publiziert.
+    Callback für eingehende Positionsdaten des Roboters. Solange die Initialisierung läuft, fährt der Roboter eine Referenzfahrt 
+    zu den Endanschlägen, um daraus einen Positions-Offset zu berechnen. 
+    Ist die Initialisierung abgeschlossen, wird die gewünschte Beschleunigung berechnet, 
+    auf ±0.08 begrenzt und als Kommando an den Roboter gesendet.
         '''
 
         if self.init_state == "init_done":
@@ -141,68 +114,60 @@ class Motion(Node):
             #self.get_logger().info(f"Xr: {Xr_ist}, Yr: {Yr_ist}, Zr: {Zr_ist}")
 
 #----------------Ab-hier-INIT-------------------------------------------------------
+        if 1==1:
+            if not self.init_state == "init_done":
+                Xr_ist_raw = msg.pos_x
+                Yr_ist_raw = msg.pos_y
+                Zr_ist_raw = msg.pos_z
+                self.init_order.set_init_is_pos(Xr_ist_raw, Yr_ist_raw, Zr_ist_raw)
+                #self.get_logger().info(f"Bot-Rohwerte: {Xr_ist_raw}, {Yr_ist_raw}, {Zr_ist_raw}")
 
-        if not self.init_state == "init_done":
-            Xr_ist_raw = msg.pos_x
-            Yr_ist_raw = msg.pos_y
-            Zr_ist_raw = msg.pos_z
-            self.init_order.set_init_is_pos(Xr_ist_raw, Yr_ist_raw, Zr_ist_raw)
-            #self.get_logger().info(f"Bot-Rohwerte: {Xr_ist_raw}, {Yr_ist_raw}, {Zr_ist_raw}")
+            if self.init_state == "init_rise":
+                accel_x, accel_y, accel_z = self.init_order.endpoint_accel_rise()
+                robot_cmd = RobotCmd()
+                robot_cmd.accel_x = accel_x
+                robot_cmd.accel_y = accel_y
+                robot_cmd.accel_z = accel_z
+                robot_cmd.activate_gripper = self.gripper_soll
+                self.publisher_cmd.publish(robot_cmd)
 
-        if self.init_state == "init_rise":
-            accel_x, accel_y, accel_z = self.init_order.endpoint_accel_rise()
-            robot_cmd = RobotCmd()
-            robot_cmd.accel_x = accel_x
-            robot_cmd.accel_y = accel_y
-            robot_cmd.accel_z = accel_z
-            robot_cmd.activate_gripper = self.gripper_soll
-            self.publisher_cmd.publish(robot_cmd)
+                if self.init_order.counter_start() == True:
+                    self.init_state = "init_zero"
+                    self.get_logger().info("state -> init_zero")
 
-            if self.init_order.counter_start() == True:
-                self.init_state = "init_zero"
-                self.get_logger().info("state -> init_zero")
+            elif self.init_state == "init_zero": 
+                accel_x, accel_y, accel_z = self.init_order.endpoint_accel_zero()
+                robot_cmd = RobotCmd()
+                robot_cmd.accel_x = accel_x
+                robot_cmd.accel_y = accel_y
+                robot_cmd.accel_z = accel_z
+                robot_cmd.activate_gripper = self.gripper_soll
+                self.publisher_cmd.publish(robot_cmd)
 
-        elif self.init_state == "init_zero": 
-            accel_x, accel_y, accel_z = self.init_order.endpoint_accel_zero()
-            robot_cmd = RobotCmd()
-            robot_cmd.accel_x = accel_x
-            robot_cmd.accel_y = accel_y
-            robot_cmd.accel_z = accel_z
-            robot_cmd.activate_gripper = self.gripper_soll
-            self.publisher_cmd.publish(robot_cmd)
+                if self.init_order.counter_rise() == True:
+                    self.init_state = "init_endpoint"
+                    self.get_logger().info("state -> init_endpoint")
 
-            if self.init_order.counter_rise() == True:
-                self.init_state = "init_endpoint"
-                self.get_logger().info("state -> init_endpoint")
+            elif self.init_state == "init_endpoint":
+                self.init_order.endablagenabfrage()
+                endlagenerreicht = self.init_order.endablageerreicht()
+                if endlagenerreicht == True:
+                    self.pos_x_offset, self.pos_y_offset, self.pos_z_offset = self.init_order.offset_calc()
+                    
+                    default = Point32()
+                    default.x = self.default_x_pos
+                    default.y = self.default_y_pos
+                    default.z = self.default_z_pos
+                    self.auftragseingang(default)
+                    self.get_logger().info(f"Endlagen-Auftragseingang: {self.default_x_pos}, {self.default_y_pos}, {self.default_z_pos}")
 
-        elif self.init_state == "init_endpoint":
-            self.init_order.endablagenabfrage()
-            endlagenerreicht = self.init_order.endablageerreicht()
-            if endlagenerreicht == True:
-                self.pos_x_offset, self.pos_y_offset, self.pos_z_offset = self.init_order.offset_calc()
-                
-                default = Point32()
-                default.x = self.default_x_pos
-                default.y = self.default_y_pos
-                default.z = self.default_z_pos
-                self.auftragseingang(default)
-                self.get_logger().info(f"Endlagen-Auftragseingang: {self.default_x_pos}, {self.default_y_pos}, {self.default_z_pos}")
-
-                # default = Point32()
-                # default.x = self.default_x_pos
-                # default.y = self.default_y_pos
-                # default.z = self.default_z_pos
-                # self.auftragseingang(default)
-                # self.get_logger().info(f"Endlagen-Auftragseingang: {self.default_x_pos}, {self.default_y_pos}, {self.default_z_pos}")
-                #TODO: Anfahren des Default Punktes hat nicht direkt geklappt. Für den Meilenstein, ist er erstmal aber irrelevant. Das Problem hier könnte das Aufrufen der Callback-Funktion aus dieser hier sein. Evt noch mal testen.
-
-                self.init_state = "init_done"
-                self.get_logger().info("state -> init_done")
-                msg = Bool()
-                msg.data = True
-                self.publisher_init.publish(msg) 
-            else: 
-                pass
+                    self.init_state = "init_done"
+                    self.get_logger().info("state -> init_done")
+                    msg = Bool()
+                    msg.data = True
+                    self.publisher_init.publish(msg) 
+                else: 
+                    pass
 
 #----------------Bis-hier-INIT-------------------------------------------------------
 #----------------Ab-hier-Punkt-anfahren----------------------------------------------

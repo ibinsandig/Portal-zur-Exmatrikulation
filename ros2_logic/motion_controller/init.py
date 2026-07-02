@@ -111,14 +111,14 @@ class Init():
     def counter_start(self):
         self.count_start += 1
         if self.count_start >= 20:
-            self.logger.info(" [INIT] counter_start: ist bei 10 angekommen")
+            self.logger.info(" [INIT] Beschleunigung 1 pub: ist bei 10 angekommen")
             return True
         return False
     
     def counter_rise(self):
         self.count_rise += 1
         if self.count_rise >= 30:
-            self.logger.info(" [INIT] counter_rise: ist bei 10 angekommen")
+            self.logger.info(" [INIT] Beschleunigung 0 pub: ist bei 10 angekommen")
             return True
         return False
 

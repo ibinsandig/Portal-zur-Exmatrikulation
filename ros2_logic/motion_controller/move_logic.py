@@ -109,3 +109,5 @@ class MotionOrder():
         print("accel berechnet")
 
         return accelofx, accelofy, accelofz
+    
+
