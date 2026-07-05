@@ -6,14 +6,15 @@ import statistics
 
 
 class Classifier:
-    """
-    Klassifiziert Objekte anhand ihrer Hu-Momenten-Features mittels eines trainierten Entscheidungsbaums.
+    """Klassifiziert Objekte anhand von Hu-Momenten mit einem vortrainierten Decision-Tree-Modell und glättet Vorhersagen per Median-Buffer."""
 
-    Lädt ein vortrainiertes Modell und glättet einzelne Vorhersagen über einen
-    Median-Buffer, um Ausreißer bei aufeinanderfolgenden Messungen desselben Objekts
-    zu unterdrücken.
-    """
     def __init__(self, buffer_size=5):
+        """Lädt das Decision-Tree-Modell aus model/decision_tree.pkl und initialisiert Label-Buffer.
+
+        Args:
+            buffer_size (int): Anzahl der gepufferten Vorhersagen für die Glättung (Standard: 5)
+        """
+
         model_path = os.path.join(os.path.dirname(__file__), "model", "decision_tree.pkl")
         data = joblib.load(model_path)
         self.model        = data
@@ -25,21 +26,16 @@ class Classifier:
         self.label_buffer = deque()   # speichert einzelne Label-Vorhersagen
 
     def classify(self, id, hu_2, hu_3):
-        """
-        Klassifiziert ein Objekt anhand seiner Hu-Momenten-Features.
-
-        Bei einer neuen ID wird der Label-Buffer geleert. Die rohe Vorhersage
-        des Modells wird in den Buffer aufgenommen und mittels Median geglättet,
-        um stabile Ergebnisse über mehrere Frames zu liefern.
+        """Klassifiziert ein Objekt anhand von hu_2 und hu_3 und gibt ein per Median geglättetes Label sowie die Konfidenz zurück.
 
         Args:
-            id:   Eindeutige Objekt-ID.
-            hu_2: Logarithmisch skaliertes Hu-Moment Nr. 2 der Kontur.
-            hu_3: Logarithmisch skaliertes Hu-Moment Nr. 3 der Kontur.
+            id (int): Objekt-ID (Buffer wird bei neuer ID geleert)
+            hu_2 (float): Logarithmiertes Hu-Moment hu_2
+            hu_3 (float): Logarithmiertes Hu-Moment hu_3
 
         Returns:
-            tuple: (smoothed_label, confidence) – geglättetes Label als int
-                   (0=rejected, 1=cat, 2=unicorn) und Konfidenz des Modells als float.
+            tuple: (smoothed_label: int, confidence: float)
+                Label: 0=rejected, 1=cat, 2=unicorn
         """
 
         # Neue ID → Buffer leeren

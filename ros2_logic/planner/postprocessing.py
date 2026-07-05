@@ -2,25 +2,18 @@ import time
 from collections import OrderedDict
 
 class PostProcessor:
-    """
-    Verwaltet eine geordnete Warteschlange von Objekten und berechnet deren aktuelle Position.
+    """Verwaltet eine geordnete Queue von Objekten und berechnet deren aktuellen Greifpunkt auf Basis von Geschwindigkeit und verstrichener Zeit."""
 
-    Kombiniert Objekttyp, Pose, Geschwindigkeit und Zeitstempel zu einem vollständigen
-    Ausgabedatensatz. Die aktuelle Position wird zum Abfragezeitpunkt live aus der
-    gespeicherten Pose und Geschwindigkeit extrapoliert.
-    """
     def __init__(self):
+        """Initialisiert die geordnete Objekt-Queue."""
         self.queue = OrderedDict()
 
     def add_obj_type(self, id, obj_type):
-        """
-        Speichert den Objekttyp für eine gegebene ID in der Warteschlange.
-
-        Objekte mit ID 0 (rejected) werden ignoriert.
+        """Fügt den Objekttyp eines Eintrags in die Queue ein oder aktualisiert ihn.
 
         Args:
-            id:       Eindeutige Objekt-ID.
-            obj_type: Klassifikationsergebnis des Objekts (z.B. 'cat', 'unicorn').
+            id (int): Objekt-ID (ID 0 wird verworfen)
+            obj_type (int): Objekttyp (0=rejected, 1=cat, 2=unicorn)
         """
 
         if id == 0:
@@ -33,16 +26,13 @@ class PostProcessor:
         self.queue[id]['obj_type'] = obj_type
 
     def add_future_position(self, id, pose2d, speed, timestamp):
-        """
-        Speichert Pose, Geschwindigkeit und Zeitstempel eines Objekts in der Warteschlange.
-
-        Objekte mit ID 0 (rejected) werden ignoriert.
+        """Fügt Pose, Geschwindigkeit und Zeitstempel eines Eintrags in die Queue ein oder aktualisiert sie.
 
         Args:
-            id:        Eindeutige Objekt-ID.
-            pose2d:    Pose-Objekt mit x- und y-Koordinaten (Weltkoordinaten).
-            speed:     Geschwindigkeit des Objekts in x-Richtung.
-            timestamp: Zeitstempel der Messung (Unix-Zeit als float).
+            id (int): Objekt-ID (ID 0 wird verworfen)
+            pose2d (geometry_msgs/Pose2D): Aktuelle 2D-Position
+            speed (float): Objektgeschwindigkeit in m/s
+            timestamp (float): Unix-Zeitstempel der Messung
         """
 
         if id == 0:
@@ -57,17 +47,12 @@ class PostProcessor:
         self.queue[id]['timestamp']  = timestamp 
 
     def get_next(self):
-        """
-        Gibt das nächste vollständige Objekt aus der Warteschlange zurück.
-
-        Durchsucht die Warteschlange nach dem ersten Eintrag, der alle benötigten
-        Felder (obj_type, pose2d, speed, timestamp) enthält, und gibt dessen
-        berechnete Ausgabe zurück.
+        """Gibt das nächste vollständig beschriebene Objekt (Typ + Pose + Speed + Timestamp) als Dict zurück.
 
         Returns:
-            dict | None: Ausgabe-Dictionary mit 'id', 'obj_type', 'speed' und
-                         'grip_point', oder None wenn kein vollständiger Eintrag vorliegt.
+            dict: Ausgabe-Dict von build_output() oder None wenn kein vollständiges Objekt vorhanden
         """
+
         for id, data in self.queue.items():
             if 'obj_type' in data and 'pose2d' in data and 'speed' in data and 'timestamp' in data:
                 return self.build_output(id, data)
@@ -75,15 +60,12 @@ class PostProcessor:
         return None
 
     def finish_obj(self, id):
-        """
-        Entfernt ein abgearbeitetes Objekt aus der Warteschlange.
+        """Entfernt ein Objekt anhand seiner ID aus der Queue.
 
         Args:
-            id: Eindeutige Objekt-ID, die entfernt werden soll.
-
-        Raises:
-            Exception: Wird weitergegeben, falls die ID bereits entfernt wurde.
+            id (int): ID des abzuschließenden Objekts
         """
+
         try:
             self.queue.pop(id, None)
         except Exception as e:
@@ -91,17 +73,16 @@ class PostProcessor:
             raise e
 
     def build_output(self, id, data):
-        """
-        Erstellt das Ausgabe-Dictionary für ein Objekt mit aktueller Greifposition.
+        """Erstellt das Ausgabe-Dict mit berechnetem Greifpunkt für ein Objekt.
 
         Args:
-            id:   Eindeutige Objekt-ID.
-            data: Dictionary mit 'pose2d', 'obj_type', 'timestamp' und 'speed'.
+            id (int): Objekt-ID
+            data (dict): Queue-Eintrag mit 'obj_type', 'pose2d', 'speed', 'timestamp'
 
         Returns:
-            dict | None: Dictionary mit 'id', 'obj_type', 'speed' und 'grip_point',
-                         oder None wenn die Positionsberechnung fehlschlägt.
+            dict: {'id', 'obj_type', 'speed', 'grip_point'} oder None wenn Greifpunkt nicht berechenbar
         """
+
         pose2d = data['pose2d']
         obj_type = data['obj_type']
         timestamp = data['timestamp']
@@ -125,21 +106,17 @@ class PostProcessor:
         }
 
     def calculate_current_position(self, pose2d, timestamp, speed):
-        """
-        Extrapoliert die aktuelle Position eines Objekts zum jetzigen Zeitpunkt.
-
-        Berechnet die verstrichene Zeit seit dem gespeicherten Zeitstempel und
-        schätzt die aktuelle x-Position anhand der bekannten Geschwindigkeit.
-        Die y-Position wird als konstant angenommen.
+        """Berechnet die aktuelle X-Position anhand von Ausgangsposition, Geschwindigkeit und verstrichener Zeit.
 
         Args:
-            pose2d:    Pose-Objekt mit x- und y-Koordinaten der letzten Messung.
-            timestamp: Zeitstempel der letzten Messung (Unix-Zeit als float).
-            speed:     Geschwindigkeit des Objekts in x-Richtung.
+            pose2d (geometry_msgs/Pose2D): Ausgangsposition mit x und y
+            timestamp (float): Unix-Zeitstempel der Ausgangsposition
+            speed (float): Objektgeschwindigkeit in m/s
 
         Returns:
-            dict: Dictionary mit 'x', 'y' und 'theta' (aktuell immer 0).
+            dict: {'x': float, 'y': float, 'theta': 0}
         """
+
         timestamp_aktuell = time.time()
 
         timestamp_diff = timestamp_aktuell - timestamp

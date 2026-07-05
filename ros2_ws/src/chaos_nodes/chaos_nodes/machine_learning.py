@@ -5,8 +5,10 @@ from chaos_topics.msg import ObjFeatures
 from machine_learning.classify import Classifier
 
 class Machine_learning(Node):
+    """ROS2-Node: Klassifiziert Objekte anhand ihrer Hu-Moment-Features und publiziert den Objekttyp auf '/obj_type'."""
 
     def __init__(self):
+        """Initialisiert Subscriber für '/obj_features', Publisher für '/obj_type' und Classifier."""
         super().__init__('machine_learning')
 
         self.sub_obj_features = self.create_subscription(
@@ -23,6 +25,11 @@ class Machine_learning(Node):
         self.get_logger().info("Machine Learning Node gestartet...")
 
     def listener_callback(self, msg):
+        """ROS2-Callback: Empfängt ObjFeatures, klassifiziert das Objekt und publiziert den ObjType.
+
+        Args:
+            msg (chaos_topics/ObjFeatures): Eingehende Objekt-Features mit ID, hu_2 und hu_3
+        """
 
         smoothed_label, confidence = self.classifier.classify(
             id=msg.id,

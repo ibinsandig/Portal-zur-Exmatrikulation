@@ -8,14 +8,10 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import config_vm as cfg
 
 class ImagePreprocessor:
-    """
-    Verarbeitet Kamerabilder für die Objekterkennung und -lokalisierung.
+    """Bildvorverarbeitung: Führt Kamerakalibrierung via ArUco-Marker durch und stellt Methoden zur Bildentzerrung, Segmentierung und Feature-Extraktion bereit."""
 
-    Führt eine perspektivische Entzerrung (Warping) anhand von ArUco-Markern durch
-    und stellt Methoden zur Segmentierung, Greifpunkterkennung und
-    Pixel-zu-Weltkoordinaten-Transformation bereit.
-    """
     def __init__(self):
+        """Initialisiert ArUco-Detektor (DICT_4X4_100) und interne Homographie-Matrizen."""
         aruco_dict = aruco.getPredefinedDictionary(cv.aruco.DICT_4X4_100)
         parameters = aruco.DetectorParameters()
         self.detector = aruco.ArucoDetector(aruco_dict, parameters)
@@ -32,16 +28,12 @@ class ImagePreprocessor:
         self.img_warped = None
 
     def setup(self, init_frame):
-        """
-        Initialisiert die Homographie-Matrizen anhand eines Referenzbildes mit ArUco-Markern.
-
-        Berechnet zwei Homographien: Eine grobe Vorkorrektur (H_pre) sowie eine
-        verfeinerte Homographie (H) im entzerrten Bildraum. Speichert außerdem die
-        Transformationsmatrix M_all für das spätere Warping.
+        """Berechnet Homographie-Matrizen anhand von ArUco-Markern im Initialisierungsbild. Setzt H_inv bei Erfolg.
 
         Args:
-            init_frame: BGR-Bild (numpy.ndarray) mit mindestens zwei sichtbaren ArUco-Markern.
+            init_frame (numpy.ndarray): Grayscale-Bild mit mindestens 2 sichtbaren ArUco-Markern
         """
+
         corners = None
 
         corners, ids, rejected = self.detector.detectMarkers(init_frame)
@@ -146,31 +138,27 @@ class ImagePreprocessor:
         print('Setup erfolgreich')
                
     def warp_image(self, frame):
-        """
-        Entzerrt ein Eingabebild mit der berechneten Perspektivtransformation.
+        """Entzerrt einen Frame mit der berechneten Perspektivtransformation M_all.
 
         Args:
-            frame: BGR-Bild (numpy.ndarray), das transformiert werden soll.
+            frame (numpy.ndarray): Grayscale-Rohbild
 
         Returns:
-            numpy.ndarray: Perspektivisch korrigiertes Bild.
+            numpy.ndarray: Entzerrtes Bild in Weltgröße (self.width x self.height)
         """
+
         self.img_warped = cv.warpPerspective(frame, self.M_all, (self.width, self.height))
 
         return self.img_warped
     
     def segment_object(self, frame):
-        """
-        Segmentiert helle Objekte im Bild mittels Schwellwertverfahren.
-
-        Wendet einen binären Schwellwert (210) auf das Eingabebild an und
-        extrahiert die äußeren Konturen der resultierenden Regionen.
+        """Schwellenwertbasierte Segmentierung zur Konturfindung heller Objekte (Threshold > 210).
 
         Args:
-            frame: Graustufenbild (numpy.ndarray).
+            frame (numpy.ndarray): Entzerrtes Grayscale-Bild
 
         Returns:
-            list: Liste der gefundenen Konturen (OpenCV-Konturformat).
+            tuple: Konturliste (OpenCV-Format)
         """
 
         ret, img_thresh = cv.threshold(frame, 210, 255, cv.THRESH_BINARY)
@@ -180,6 +168,15 @@ class ImagePreprocessor:
         return contours
 
     def get_grippoint(self, contours, image_shape):
+        """Berechnet den optimalen Greifpunkt der größten Kontur.
+
+        Args:
+            contours (list): Liste von OpenCV-Konturen
+            image_shape (tuple): Shape des Quellbilds (h, w, ...)
+
+        Returns:
+            tuple: (x, y) Pixelkoordinate des Greifpunkts oder None bei leerer Konturliste
+        """
 
         if not contours:
             return None
@@ -194,17 +191,13 @@ class ImagePreprocessor:
         return max_loc  # x, y 
 
     def pixel_to_world(self, pixel):
-        """
-        Transformiert einen Bildpunkt in Weltkoordinaten.
-
-        Wendet die inverse Homographie H_inv auf den übergebenen Pixelkoordinaten an.
+        """Transformiert eine Pixelkoordinate via inverser Homographie in Weltkoordinaten.
 
         Args:
-            pixel: Tuple oder Array (x, y) in Pixelkoordinaten.
+            pixel (tuple): (x, y) Pixelkoordinate
 
         Returns:
-            numpy.ndarray | None: Weltkoordinaten als Array [x, y],
-                                   oder None wenn kein Pixel übergeben wurde.
+            numpy.ndarray: Weltkoordinate [x, y] in Metern oder None bei ungültigem Eingabewert
         """
 
         # print(f"Pixel rein: {pixel}")  
@@ -220,19 +213,15 @@ class ImagePreprocessor:
         return world[0, 0]
 
     def extract_features_from_contour(self, cnt):
-        """
-        Extrahiert Formmerkmale aus einer Kontur für die ML-Klassifikation.
-
-        Berechnet die logarithmisch skalierten Hu-Momente hu_2 und hu_3,
-        die rotations- und skalierungsinvariant sind.
+        """Extrahiert logarithmierte Hu-Momente (hu_2, hu_3) aus einer Kontur.
 
         Args:
-            cnt: Kontur im OpenCV-Format (numpy.ndarray).
+            cnt (numpy.ndarray): OpenCV-Kontur
 
         Returns:
-            dict | None: Dictionary mit den Schlüsseln 'hu_2' und 'hu_3',
-                         oder None wenn Fläche oder Umfang null sind.
+            dict: {'hu_2': float, 'hu_3': float} oder None bei Fläche/Umfang == 0
         """
+
         area = cv.contourArea(cnt)
         perimeter = cv.arcLength(cnt, True)
         

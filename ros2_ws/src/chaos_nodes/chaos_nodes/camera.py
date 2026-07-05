@@ -10,8 +10,10 @@ import numpy as np
 import config_vm as cfg
 
 class Camera(Node):
+    """ROS2-Node: Erfasst Kamerabilder , verarbeitet sie und publiziert Objekt-Koordinaten auf '/obj_coords' und Features auf '/obj_features'."""
 
     def __init__(self):
+        """Initialisiert Publisher, Timer, Kamera, ImagePreprocessor und führt Kalibrierungs-Setup mit ArUco-Marker durch."""
         super().__init__('camera')
 
         self.pub_obj_coords = self.create_publisher(ObjCoords, '/obj_coords', 10)
@@ -64,27 +66,33 @@ class Camera(Node):
         self.get_logger().info('Kamera-Node gestartet!!!')
 
     def timer_callback(self):
+        """Wird vom Timer aufgerufen: Liest Frame, verarbeitet ihn und publiziert ObjCoords und ObjFeatures."""
 
-            try:
-                obj_coords_msg, obj_features_msg = self.process_img(self.read_camera())
+        try:
+            obj_coords_msg, obj_features_msg = self.process_img(self.read_camera())
                 
-                if obj_coords_msg is None or obj_features_msg is None:
-                    self.get_logger().debug('Keine gültigen Daten zum Veröffentlichen')
-                    return
-                
-            except Exception as e:
-                self.get_logger().error(f'Fehler bei der Bildverarbeitung: {str(e)}')
+            if obj_coords_msg is None or obj_features_msg is None:
+                self.get_logger().debug('Keine gültigen Daten zum Veröffentlichen')
                 return
+                
+        except Exception as e:
+            self.get_logger().error(f'Fehler bei der Bildverarbeitung: {str(e)}')
+            return
 
-            try:
-                self.pub_obj_coords.publish(obj_coords_msg)
-                self.pub_obj_festures.publish(obj_features_msg)
+        try:
+            self.pub_obj_coords.publish(obj_coords_msg)
+            self.pub_obj_festures.publish(obj_features_msg)
 
-            except Exception as e:
-                self.get_logger().error(f'Fehler beim Senden der Daten: {str(e)}')
+        except Exception as e:
+            self.get_logger().error(f'Fehler beim Senden der Daten: {str(e)}')
 
 
     def read_camera(self):
+        """Liest Frame von Kamera, konvertiert BGR→Grayscale und rotiert das Bild um 180°.
+
+        Returns:
+            numpy.ndarray: Rotiertes Grayscale-Bild (shape=(h,w), dtype=uint8) oder None bei Fehler
+        """
         success , frame = self.img.read()
 
         if not success:
@@ -97,6 +105,14 @@ class Camera(Node):
         return img_rotated
 
     def process_img(self, frame):
+        """Verarbeitet einen Frame: Entzerrt, segmentiert, wählt das führende Objekt im sicheren Bereich, extrahiert Features und erstellt ROS2-Nachrichten.
+
+        Args:
+            frame (numpy.ndarray): Grayscale-Bild von read_camera()
+
+        Returns:
+            tuple: (ObjCoords, ObjFeatures) oder (None, None) bei keinem gültigen Objekt
+        """
 
         warped_image = self.PrePro.warp_image(frame)
         contours = self.PrePro.segment_object(warped_image)
@@ -166,7 +182,16 @@ class Camera(Node):
 
         return obj_coords_msg, obj_features_msg
 
-    def assign_id(self, x, threshold=0.05): 
+    def assign_id(self, x, threshold=0.05):
+        """Weist einem Objekt basierend auf seiner X-Position eine ID zu. Neue ID bei Positionssprung ≥ threshold.
+
+        Args:
+            x (float): Aktuelle X-Weltkoordinate des Objekts
+            threshold (float): Mindestabstand für eine neue ID (Standard: 0.05 m)
+
+        Returns:
+            int: Aktuelle Objekt-ID
+        """
         
         if self.last_pos_x is not None:  
             distance = abs(x - self.last_pos_x) 

@@ -2,35 +2,25 @@ from collections import deque
 import statistics
 
 class CoordinatesPrediction:
-    """
-    Schätzt die Geschwindigkeit eines sich bewegenden Objekts aus aufeinanderfolgenden Messungen.
+    """Schätzt die Objektgeschwindigkeit aus X-Koordinatenmessungen mittels gleitendem Median-Filter."""
 
-    Puffert Positions- und Zeitmessungen pro Objekt-ID und berechnet eine
-    geglättete Geschwindigkeit mittels Median über einen gleitenden Buffer.
-    """
     def __init__(self):
+        """Initialisiert Mess-Queue, Geschwindigkeits-Buffer (Größe 5) und aktuelle Objekt-ID."""
         self.buffer_size = 5
         self.current_id = None
         self.queue = deque()        # speichert (x, t) Tupel
         self.speed_buffer = deque() # speichert berechnete Einzelgeschwindigkeiten
 
     def add_measurement(self, id, x, t):
-        """
-        Fügt eine neue Positionsmessung hinzu und berechnet die geglättete Geschwindigkeit.
-
-        Bei einer neuen ID werden alle bisherigen Puffer geleert. Die Geschwindigkeit
-        wird aus den letzten zwei Messpunkten berechnet und über einen Median-Filter
-        der Größe buffer_size geglättet.
+        """Fügt eine Messung hinzu und gibt die per Median geglättete Geschwindigkeit zurück.
 
         Args:
-            id:  Eindeutige Objekt-ID.
-            x:   Aktuelle x-Position des Objekts (in Weltkoordinaten).
-            t:   Aktueller Zeitstempel der Messung.
+            id (int): Objekt-ID (Queue wird bei neuer ID geleert)
+            x (float): X-Weltkoordinate in Metern
+            t (float): Zeitstempel in Sekunden
 
         Returns:
-            dict | None: Dictionary mit 'id' und 'speed' (geglättete Geschwindigkeit),
-                         oder None wenn noch keine zwei Messpunkte vorliegen bzw.
-                         der Zeitunterschied null ist.
+            dict: {'id': int, 'speed': float} oder None bei zu wenig Messungen / identischen Zeitstempeln
         """
 
         # Neue ID -> Queue wird geleert

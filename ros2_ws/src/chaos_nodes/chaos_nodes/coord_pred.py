@@ -5,7 +5,10 @@ from chaos_topics.msg import ObjCoords
 from coord_pred.coord_pred import CoordinatesPrediction
 
 class CoordPred(Node):
+    """ROS2-Node: Empfängt Objektkoordinaten auf '/obj_coords', berechnet die Objektgeschwindigkeit und publiziert Zukunftspositionen auf '/future_position'."""
+
     def __init__(self):
+        """Initialisiert Subscriber für '/obj_coords', Publisher für '/future_position' und CoordinatesPrediction."""
         super().__init__('coord_pred')
 
         self.sub_obj_coords = self.create_subscription(
@@ -21,6 +24,11 @@ class CoordPred(Node):
         self.get_logger().info('CoordPred-Node gestartet')
 
     def listener_callback(self, msg):
+        """ROS2-Callback: Verarbeitet ObjCoords-Nachricht, berechnet Geschwindigkeit und publiziert FuturePosition.
+
+        Args:
+            msg (chaos_topics/ObjCoords): Eingehende Objektkoordinaten mit ID, Pose2D und Zeitstempel
+        """
         result = self.PrePro.add_measurement(
             id = msg.id,
             x = msg.pose2d.x,
