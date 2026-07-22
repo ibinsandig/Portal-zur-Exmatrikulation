@@ -6,7 +6,6 @@ from chaos_topics.msg import ObjFeatures
 from geometry_msgs.msg import Pose2D
 from camera.preprocessing    import ImagePreprocessor
 import time
-import numpy as np
 import config_vm as cfg
 
 class Camera(Node):

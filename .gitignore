@@ -3,6 +3,8 @@
 .vscode
 .pytest_cache
 
+
+*.egg-info/
 # Linus ml Ordner
 
 debug_contours
